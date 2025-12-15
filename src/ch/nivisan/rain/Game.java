@@ -1,0 +1,142 @@
+package ch.nivisan.rain;
+
+import ch.nivisan.rain.graphics.Screen;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+
+public class Game extends Canvas implements Runnable {
+    public static final int scale = 3;
+    public static final int width = 300;
+    public static final int height = width / 16 * 9;
+    private static final long serialVersionUID = 1L;
+    public static String title = "Rain";
+    private final JFrame frame;
+    private final Screen screen;
+    // creating an image
+    private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    // allowing to draw to the image or accessing the image
+    private final int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
+    int x = 0, y = 0;
+    private Thread gameThread;
+    private boolean isRunning = false;
+
+    public Game() {
+        var size = new Dimension(width * scale, height * scale);
+        setPreferredSize(size);
+        screen = new Screen(width, height);
+
+        frame = new JFrame();
+
+    }
+
+    public static void main(String[] args) {
+        var game = new Game();
+
+        game.frame.setResizable(false);
+        game.frame.setTitle(Game.title);
+        game.frame.add(game);
+        game.frame.pack();
+        game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        game.frame.setLocationRelativeTo(null);
+        game.frame.setVisible(true);
+
+        game.start();
+    }
+
+    public synchronized void start() {
+        isRunning = true;
+        gameThread = new Thread(this, "Display");
+        gameThread.start();
+    }
+
+    public synchronized void stop() {
+        isRunning = false;
+        try {
+            gameThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        long timer = System.currentTimeMillis();
+        long lastTime = System.nanoTime();
+        final double framerate = 60.0;
+        // calculate how many nanoseconds it takes to update the game once
+        // this is so we can calculate how many it would need for 60 frames per second
+        // calculate how much time each frame should take
+        final double nanosecond = 1_000_000_000.0 / framerate;
+        // delta is used to keep track how much time has passed since last update
+        double delta = 0;
+        int framesPerSecond = 0;
+        int updatesPerSecond = 0;
+
+        while (isRunning) {
+            long now = System.nanoTime();
+
+            // calculates how much time has passed since the last loop
+            // then determines how much this calculates into a fraction of a second (frame)
+            // and adds it to delta.
+            // when delta reaches 1, a frame is ready to be updated so our game runs at e.g 60 fps
+            // check underneath to see if it's > 1.
+            //	System.out.println("LastTime :" + lastTime + " now: "+ now);
+            // +++ rename to either :
+            // ++++ elapsedFrames , timeAccumulated, frameTime , updateTime
+            delta += (now - lastTime) / nanosecond;
+            //	System.out.println("Delta is : " + delta);
+            //	System.out.println("Time taken to update: " + (now - lastTime));
+            lastTime = now;
+
+            // wait until 1/60 of a second has gone by (determinted by framerate)
+            // so start the update function of the game which makes games run at specific frames per second
+            while (delta >= 1) {
+                update();
+                updatesPerSecond++;
+                delta--;
+            }
+            render();
+            framesPerSecond++;
+
+            if (System.currentTimeMillis() - timer > 1000) {
+                timer += 1000;
+                frame.setTitle(title + " | " + updatesPerSecond + " ups, " + framesPerSecond + "fps ");
+                framesPerSecond = 0;
+                updatesPerSecond = 0;
+            }
+        }
+        stop();
+    }
+
+    public void update() {
+        x++;
+        y++;
+    }
+
+    public void render() {
+        var bs = getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(3);
+            return;
+        }
+
+        screen.clear();
+        screen.render(x, y);
+
+        for (int i = 0; i < pixels.length; i++) {
+            pixels[i] = screen.pixels[i];
+        }
+
+        var graphics = bs.getDrawGraphics();
+        // graphics.setColor(Color.GREEN);
+        // graphics.fillRect(0, 0, getWidth(), getHeight());
+
+        graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
+
+        graphics.dispose();
+        bs.show();
+    }
+}
+
