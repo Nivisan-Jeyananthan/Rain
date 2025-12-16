@@ -8,10 +8,10 @@ public class Screen {
 	public final int MapSize = 8;
 	public final int MapSizeMask = MapSize -1;
 	public int[] tiles = new int[MapSize * MapSize];
-	
+
 	private Random random = new Random();
-	
-	
+
+
 	public Screen(int width, int height) {
 		this.width = width;
 		this.height = height;
@@ -31,7 +31,7 @@ public class Screen {
 	}
 	
 	public void render(int widthOffset, int heightOffset) {
-		
+
 		for(int row = 0; row < height; row++) {
 			// check negative bounds
 			int y = row + heightOffset; 

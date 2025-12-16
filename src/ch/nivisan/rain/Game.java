@@ -1,6 +1,7 @@
 package ch.nivisan.rain;
 
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.input.Keyboard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +16,13 @@ public class Game extends Canvas implements Runnable {
     public static String title = "Rain";
     private final JFrame frame;
     private final Screen screen;
+    private Keyboard keyboard;
+
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     // allowing to draw to the image or accessing the image
+    // area in memory where buffer data is located, not a copy of it.
+    // that is why we can manipulate pixels and it changes the buffer data itself.
     private final int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
     int x = 0, y = 0;
     private Thread gameThread;
@@ -26,10 +31,12 @@ public class Game extends Canvas implements Runnable {
     public Game() {
         var size = new Dimension(width * scale, height * scale);
         setPreferredSize(size);
-        screen = new Screen(width, height);
 
+        screen = new Screen(width, height);
         frame = new JFrame();
 
+        keyboard = new Keyboard();
+        addKeyListener(keyboard);
     }
 
     public static void main(String[] args) {
@@ -61,14 +68,16 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         long timer = System.currentTimeMillis();
         long lastTime = System.nanoTime();
         final double framerate = 60.0;
+        final double nanosecondsInSeconds = 1_000_000_000.0;
         // calculate how many nanoseconds it takes to update the game once
         // this is so we can calculate how many it would need for 60 frames per second
         // calculate how much time each frame should take
-        final double nanosecond = 1_000_000_000.0 / framerate;
+        final double nanoFrame = nanosecondsInSeconds / framerate;
         // delta is used to keep track how much time has passed since last update
         double delta = 0;
         int framesPerSecond = 0;
@@ -85,7 +94,7 @@ public class Game extends Canvas implements Runnable {
             //	System.out.println("LastTime :" + lastTime + " now: "+ now);
             // +++ rename to either :
             // ++++ elapsedFrames , timeAccumulated, frameTime , updateTime
-            delta += (now - lastTime) / nanosecond;
+            delta += (now - lastTime) / nanoFrame;
             //	System.out.println("Delta is : " + delta);
             //	System.out.println("Time taken to update: " + (now - lastTime));
             lastTime = now;
@@ -111,6 +120,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void update() {
+        keyboard.update();
         x++;
         y++;
     }
@@ -129,13 +139,16 @@ public class Game extends Canvas implements Runnable {
             pixels[i] = screen.pixels[i];
         }
 
+        // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
         // graphics.setColor(Color.GREEN);
         // graphics.fillRect(0, 0, getWidth(), getHeight());
 
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
 
+        // release system ressource
         graphics.dispose();
+        // changes the buffers which reside in memory
         bs.show();
     }
 }
