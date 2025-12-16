@@ -54,7 +54,7 @@ public class Screen {
 				// multiplication by width because we need to go through all rows.
 				// e.g 0*300 + 0 or 1*300 + 20 or 20*300 
 				// since this is a single dimension array.
-				pixels[column + (row * width)] = tiles[tileIndex];
+				pixels[column + (row * width)] = Sprite.grass.pixels[(column & 15) + (row & 15) * Sprite.grass.size];
 			}
 		}
 	}
