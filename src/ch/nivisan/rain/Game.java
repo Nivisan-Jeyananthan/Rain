@@ -83,6 +83,8 @@ public class Game extends Canvas implements Runnable {
         int framesPerSecond = 0;
         int updatesPerSecond = 0;
 
+        requestFocus();
+
         while (isRunning) {
             long now = System.nanoTime();
 
@@ -121,10 +123,10 @@ public class Game extends Canvas implements Runnable {
 
     public void update() {
         keyboard.update();
-       if (keyboard.up)  y--;
-       if (keyboard.down)  y++;
-       if (keyboard.left)  x--;
-       if (keyboard.right)  x++;
+       if (keyboard.up)  y++;
+       if (keyboard.down)  y--;
+       if (keyboard.left)  x++;
+       if (keyboard.right)  x--;
     }
 
     public void render() {

@@ -1,0 +1,14 @@
+package ch.nivisan.rain.level.tile;
+
+import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.Sprite;
+
+public class GrassTile extends Tile{
+    public GrassTile(Sprite sprite) {
+        super(sprite);
+    }
+
+    public void render(int x, int y, Screen screen){
+        // do render here!
+    }
+}
