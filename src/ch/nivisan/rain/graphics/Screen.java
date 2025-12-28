@@ -1,5 +1,7 @@
 package ch.nivisan.rain.graphics;
 
+import ch.nivisan.rain.level.tile.Tile;
+
 import java.util.Arrays;
 import java.util.Random;
 
@@ -39,6 +41,12 @@ public class Screen {
 				if(x < 0  || x >= width) continue;
 				pixels[x + y * width] = Sprite.grass.pixels[(column & (Sprite.grass.size -1)) + (row & (Sprite.grass.size -1)) * Sprite.grass.size];
 			}
+		}
+	}
+
+	public void renderTile(int xPixel, int yPixel, Tile tile){
+		for (int i = 0; i< tile.sprite.size; i++) {
+			int absolutePosition = yPixel + i;
 		}
 	}
 }

@@ -3,6 +3,8 @@ package ch.nivisan.rain.level.tile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 
+// is an object which has a sprite.
+// it can be anything from
 public class Tile {
     public int width, height;
     public Sprite sprite;

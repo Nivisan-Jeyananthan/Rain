@@ -1,5 +1,6 @@
 package ch.nivisan.rain.graphics;
 
+// Is a part of a image (16 pixels by 16 pixels)
 public class Sprite {
     public final int size;
     private int x,y;
@@ -25,7 +26,10 @@ public class Sprite {
         {
             for (int x = 0; x < size; x++)
             {
-                pixels[x + y * size] = sheet.pixels[(x + this.x) + (y + this.y) * sheet.size];
+                int pixelIndex = x + y * size;
+                int sheetIndex = (x + this.x) + (y + this.y) * sheet.size;
+
+                pixels[pixelIndex] = sheet.pixels[sheetIndex];
             }
         }
 
