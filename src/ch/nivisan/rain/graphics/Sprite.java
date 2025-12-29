@@ -4,6 +4,7 @@ package ch.nivisan.rain.graphics;
 public class Sprite {
     public final int size;
     private int x,y;
+    // which pixels of the sprite get rendered
     public int[] pixels;
     private SpriteSheet sheet;
 
@@ -20,6 +21,7 @@ public class Sprite {
        loadSpriteFromSheet();
     }
 
+    // goes through the SpriteSheet and loads it into the pixels array
     private void loadSpriteFromSheet()
     {
         for (int y = 0; y < size; y++)

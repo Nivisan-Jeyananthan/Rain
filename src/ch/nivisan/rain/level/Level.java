@@ -1,6 +1,7 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.level.tile.Tile;
 
 public class Level {
   protected int width;
@@ -33,5 +34,20 @@ public class Level {
   }
 
   public void render(int xScroll, int yScroll, Screen screen) {
+      // defines render region of screen:
+
+      // same as (xScroll / 16) = divides into tiles of 16
+      int xStart = xScroll >> 4;
+      int xEnd = (xScroll + screen.width) >> 4;
+      int yStart = yScroll >> 4;
+      int yEnd = (yScroll + screen.height) >> 4;
+
+
+  }
+
+  // convert pixel position data to tile position data
+  public Tile getTile(int x, int y){
+      if(tiles[x + y * width] == 0) return Tile.grass;
+      return null;
   }
 }

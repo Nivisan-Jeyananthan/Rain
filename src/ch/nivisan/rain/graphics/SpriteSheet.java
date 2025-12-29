@@ -3,6 +3,7 @@ package ch.nivisan.rain.graphics;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 
 public class SpriteSheet {
     public final int size;
@@ -20,7 +21,7 @@ public class SpriteSheet {
 
   private void  loadImage(){
       try {
-          BufferedImage image = ImageIO.read(SpriteSheet.class.getResource(path));
+          BufferedImage image = ImageIO.read(Objects.requireNonNull(SpriteSheet.class.getResource(path)));
           int width = image.getWidth();
           int height = image.getHeight();
 

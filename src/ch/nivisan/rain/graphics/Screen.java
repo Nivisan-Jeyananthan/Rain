@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class Screen {
 	public int width , height;
+	// which pixels of the screen get rendered
 	public int[] pixels;
 	public final int MapSize = 8;
 	public final int MapSizeMask = MapSize -1;
@@ -44,9 +45,19 @@ public class Screen {
 		}
 	}
 
+	// render square thats why the same size in y and x.
 	public void renderTile(int xPixel, int yPixel, Tile tile){
-		for (int i = 0; i< tile.sprite.size; i++) {
-			int absolutePosition = yPixel + i;
+		for (int y = 0; y < tile.sprite.size; y++) {
+			int absoluteYPosition = yPixel + y;
+			for (int x = 0; x < tile.sprite.size; x++) {
+				int absoluteXPosition = xPixel + x;
+
+				// so we only render the tiles that are visible on our monitor and nothing else
+				if(absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= width) {
+					break;
+				}
+				pixels[absoluteXPosition * width] = tile.sprite.pixels[x + y * tile.sprite.size];
+			}
 		}
 	}
 }
