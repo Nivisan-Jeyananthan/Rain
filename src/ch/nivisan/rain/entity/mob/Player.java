@@ -1,5 +1,7 @@
 package ch.nivisan.rain.entity.mob;
 
+import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 
 public class Player extends Mob{
@@ -17,14 +19,22 @@ public class Player extends Mob{
 
     @Override
     public void update(){
-        if(input.up) y--;
-        if(input.down) y++;
-        if(input.right) x++;
-        if(input.left) x--;
+        int xAbsolute = 0, yAbsolute = 0;
+
+        if(input.up)
+            yAbsolute--;
+        if(input.down)
+            yAbsolute++;
+        if(input.right)
+            xAbsolute++;
+        if(input.left)
+            xAbsolute--;
+
+        if(xAbsolute != 0 || yAbsolute != 0)
+            move(xAbsolute, yAbsolute);
     }
 
-    @Override
-    public void render(){
-
+    public void render(Screen screen){
+        screen.renderPlayer(x,y, Sprite.playerBack);
     }
 }

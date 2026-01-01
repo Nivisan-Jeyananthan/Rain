@@ -1,5 +1,6 @@
 package ch.nivisan.rain.graphics;
 
+import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.level.tile.Tile;
 
 import java.util.Arrays;
@@ -53,6 +54,28 @@ public class Screen {
 					absoluteXPosition = 0;
 
 				pixels[absoluteXPosition + absoluteYPosition * width] = tile.sprite.pixels[xPixel + yPixel * tile.sprite.size];
+			}
+		}
+	}
+
+	public void renderPlayer(int xPosition, int yPosition, Sprite sprite){
+		xPosition -= xOffset;
+		yPosition -= yOffset;
+
+		for (int yPixel = 0; yPixel < sprite.size; yPixel++) {
+			int absoluteYPosition = yPosition + yPixel;
+			for (int xPixel = 0; xPixel < sprite.size; xPixel++) {
+				int absoluteXPosition = xPosition + xPixel;
+
+				// so we only render the tiles that are visible on our monitor and nothing else
+				if(absoluteXPosition < -sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+					break;
+				}
+
+				if(absoluteXPosition < 0)
+					absoluteXPosition = 0;
+
+				pixels[absoluteXPosition + absoluteYPosition * width] = sprite.pixels[xPixel + yPixel * sprite.size];
 			}
 		}
 	}
