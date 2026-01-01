@@ -45,9 +45,13 @@ public class Screen {
 				int absoluteXPosition = xPosition + xPixel;
 
 				// so we only render the tiles that are visible on our monitor and nothing else
-				if(absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= width) {
+				if(absoluteXPosition < -tile.sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
 					break;
 				}
+
+				if(absoluteXPosition < 0)
+					absoluteXPosition = 0;
+
 				pixels[absoluteXPosition + absoluteYPosition * width] = tile.sprite.pixels[xPixel + yPixel * tile.sprite.size];
 			}
 		}

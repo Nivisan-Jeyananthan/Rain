@@ -40,9 +40,9 @@ public class Level {
 
       // same as (xScroll / 16) = divides into tiles of 16
       int xStart = xScroll >> 4;
-      int xEnd = (xScroll + screen.width) >> 4;
+      int xEnd = (xScroll + screen.width + 16) >> 4;
       int yStart = yScroll >> 4;
-      int yEnd = (yScroll + screen.height) >> 4;
+      int yEnd = (yScroll + screen.height + 16) >> 4;
 
       for(int y = yStart; y < yEnd; y++){
        for(int x = xStart; x < xEnd; x++){
@@ -54,6 +54,9 @@ public class Level {
 
   // convert pixel position data to tile position data
   public Tile getTile(int x, int y){
+      if(x < 0 || y < 0 || x >= width || y >= height)
+          return Tile.empty;
+
       if(tiles[x + y * width] == 0) return Tile.grass;
       return Tile.empty;
   }
