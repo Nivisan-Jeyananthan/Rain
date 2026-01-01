@@ -1,5 +1,6 @@
 package ch.nivisan.rain;
 
+import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.level.Level;
@@ -24,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     private final Screen screen;
     private final Keyboard keyboard;
     private Level level;
+    private Player player;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -31,7 +33,6 @@ public class Game extends Canvas implements Runnable {
     // area in memory where buffer data is located, not a copy of it.
     // that is why we can manipulate pixels and it changes the buffer data itself.
     private final int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
-    int x = 0, y = 0;
     private Thread gameThread;
     private boolean isRunning = false;
 
@@ -46,6 +47,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(keyboard);
 
         level = new RandomLevel(64,64);
+        player = new Player(keyboard);
     }
 
     public static void main(String[] args) {
@@ -132,11 +134,7 @@ public class Game extends Canvas implements Runnable {
 
     public void update() {
         keyboard.update();
-
-       if (keyboard.up)  y--;
-       if (keyboard.down)  y++;
-       if (keyboard.left)  x--;
-       if (keyboard.right)  x++;
+        player.update();
     }
 
     public void render() {
@@ -147,7 +145,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         screen.clear();
-        level.render(x,y,screen);
+        level.render(player.x,player.y,screen);
 
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = screen.pixels[i];
@@ -155,11 +153,10 @@ public class Game extends Canvas implements Runnable {
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
-        // graphics.setColor(Color.GREEN);
-        // graphics.fillRect(0, 0, getWidth(), getHeight());
-
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
-
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font("Verdana", 0, 30));
+        graphics.drawString("X: " + player.x + " Y: " + player.y, 700, 25);
         // release system ressource
         graphics.dispose();
         // changes the buffers which reside in memory
