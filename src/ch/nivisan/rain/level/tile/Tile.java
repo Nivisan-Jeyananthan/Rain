@@ -9,6 +9,7 @@ public class Tile {
     public int width, height;
     public Sprite sprite;
     public static Tile grass = new GrassTile(Sprite.grass);
+    public static Tile empty = new EmptyTile(Sprite.empty);
 
     public Tile(Sprite sprite) {
        this.sprite = sprite;

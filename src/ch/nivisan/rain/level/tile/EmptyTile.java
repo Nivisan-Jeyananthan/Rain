@@ -3,9 +3,9 @@ package ch.nivisan.rain.level.tile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 
-public class GrassTile extends Tile{
-    public GrassTile(Sprite sprite) {
-        super(sprite);
+public class EmptyTile extends Tile {
+    public EmptyTile(Sprite empty) {
+        super(empty);
     }
 
     public void render(int x, int y, Screen screen){

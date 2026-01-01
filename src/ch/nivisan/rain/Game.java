@@ -2,21 +2,28 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
+import ch.nivisan.rain.level.Level;
+import ch.nivisan.rain.level.RandomLevel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.Serial;
+import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     public static final int scale = 3;
     public static final int width = 300;
     public static final int height = width / 16 * 9;
-    private static final long serialVersionUID = 1L;
     public static String title = "Rain";
     private final JFrame frame;
     private final Screen screen;
-    private Keyboard keyboard;
+    private final Keyboard keyboard;
+    private Level level;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -37,6 +44,8 @@ public class Game extends Canvas implements Runnable {
 
         keyboard = new Keyboard();
         addKeyListener(keyboard);
+
+        level = new RandomLevel(64,64);
     }
 
     public static void main(String[] args) {
@@ -123,10 +132,11 @@ public class Game extends Canvas implements Runnable {
 
     public void update() {
         keyboard.update();
-       if (keyboard.up)  y++;
-       if (keyboard.down)  y--;
-       if (keyboard.left)  x++;
-       if (keyboard.right)  x--;
+
+       if (keyboard.up)  y--;
+       if (keyboard.down)  y++;
+       if (keyboard.left)  x--;
+       if (keyboard.right)  x++;
     }
 
     public void render() {
@@ -137,7 +147,7 @@ public class Game extends Canvas implements Runnable {
         }
 
         screen.clear();
-        screen.render(x, y);
+        level.render(x,y,screen);
 
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = screen.pixels[i];

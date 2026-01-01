@@ -1,5 +1,7 @@
 package ch.nivisan.rain.graphics;
 
+import java.util.Arrays;
+
 // Is a part of a image (16 pixels by 16 pixels)
 public class Sprite {
     public final int size;
@@ -9,6 +11,7 @@ public class Sprite {
     private SpriteSheet sheet;
 
     public static Sprite grass = new Sprite(16 ,0 ,0, SpriteSheet.tiles);
+    public static Sprite empty = new Sprite(16,0x1B87E0);
 
     public Sprite(int size , int x, int y,SpriteSheet sheet)
     {
@@ -19,6 +22,16 @@ public class Sprite {
         pixels = new int[size * size];
 
        loadSpriteFromSheet();
+    }
+
+    public Sprite(int size, int color){
+        this.size = size;
+        pixels = new int[size * size];
+        setColor(color);
+    }
+
+    private void setColor(int color) {
+        Arrays.fill(pixels, color);
     }
 
     // goes through the SpriteSheet and loads it into the pixels array

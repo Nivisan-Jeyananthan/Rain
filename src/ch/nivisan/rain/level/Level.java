@@ -34,6 +34,8 @@ public class Level {
   }
 
   public void render(int xScroll, int yScroll, Screen screen) {
+      screen.setOffsets(xScroll, yScroll);
+
       // defines render region of screen:
 
       // same as (xScroll / 16) = divides into tiles of 16
@@ -42,12 +44,17 @@ public class Level {
       int yStart = yScroll >> 4;
       int yEnd = (yScroll + screen.height) >> 4;
 
+      for(int y = yStart; y < yEnd; y++){
+       for(int x = xStart; x < xEnd; x++){
+           getTile(x,y).render(x,y,screen);
+       }
+      }
 
   }
 
   // convert pixel position data to tile position data
   public Tile getTile(int x, int y){
       if(tiles[x + y * width] == 0) return Tile.grass;
-      return null;
+      return Tile.empty;
   }
 }
