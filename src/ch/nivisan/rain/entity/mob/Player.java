@@ -35,6 +35,13 @@ public class Player extends Mob{
     }
 
     public void render(Screen screen){
-        screen.renderPlayer(x,y, Sprite.playerBack);
+        int xCenter = x - 16;
+        int yCenter = y - 16;
+
+        screen.renderPlayer(xCenter,yCenter, Sprite.playerBack1);
+        screen.renderPlayer(xCenter + 16,yCenter, Sprite.playerBack2);
+        screen.renderPlayer(xCenter,yCenter + 16, Sprite.playerBack3);
+        screen.renderPlayer(xCenter + 16,yCenter + 16, Sprite.playerBack4);
+
     }
 }

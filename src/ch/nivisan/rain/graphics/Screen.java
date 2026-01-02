@@ -75,7 +75,14 @@ public class Screen {
 				if(absoluteXPosition < 0)
 					absoluteXPosition = 0;
 
-				pixels[absoluteXPosition + absoluteYPosition * width] = sprite.pixels[xPixel + yPixel * sprite.size];
+				int color = sprite.pixels[xPixel + yPixel * 16];
+				// Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
+				// so instead of the hex color code only, we also add the alpha channel code at the beginning.
+				int transparentColor = 0xffff00ff;
+
+				if(color != transparentColor) {
+					pixels[absoluteXPosition + absoluteYPosition * width] = color;
+				}
 			}
 		}
 	}

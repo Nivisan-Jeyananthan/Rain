@@ -12,10 +12,10 @@ public class Sprite {
 
     public static Sprite grass = new Sprite(16 ,0 ,0, SpriteSheet.tiles);
     public static Sprite empty = new Sprite(16,0x1B87E0);
-    public static Sprite playerBack = new Sprite(16,0,10, SpriteSheet.tiles);
-    public static Sprite playerFront = new Sprite(16,1,10, SpriteSheet.tiles);
-    public static Sprite playerSideRight = new Sprite(16,0,11, SpriteSheet.tiles);
-    public static Sprite playerSideLeft = new Sprite(16,1,11, SpriteSheet.tiles);
+    public static Sprite playerBack1 = new Sprite(16,0,10, SpriteSheet.tiles);
+    public static Sprite playerBack2 = new Sprite(16,1,10, SpriteSheet.tiles);
+    public static Sprite playerBack3 = new Sprite(16,0,11, SpriteSheet.tiles);
+    public static Sprite playerBack4 = new Sprite(16,1,11, SpriteSheet.tiles);
 
     public Sprite(int size , int x, int y,SpriteSheet sheet)
     {
