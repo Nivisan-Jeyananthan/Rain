@@ -6,14 +6,14 @@ import ch.nivisan.rain.graphics.Sprite;
 // anything that moves and needs to be displayed
 public abstract class Mob extends Entity {
     protected Sprite sprite;
-    protected int facingDirection = 0;
+    protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
 
     public void move(int xAbsolute, int yAbsolute){
-        if(xAbsolute > 0) facingDirection = 1;
-        if(xAbsolute < 0) facingDirection = 3;
-        if(yAbsolute > 0) facingDirection = 2;
-        if(yAbsolute < 0) facingDirection = 0;
+        if(yAbsolute < 0) facingDirection = Direction.North;
+        if(xAbsolute > 0) facingDirection = Direction.East;
+        if(yAbsolute > 0) facingDirection = Direction.South;
+        if(xAbsolute < 0) facingDirection = Direction.West;
 
         if(!collision()){
             x += xAbsolute;

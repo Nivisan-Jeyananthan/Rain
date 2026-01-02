@@ -1,5 +1,6 @@
 package ch.nivisan.rain.graphics;
 
+import ch.nivisan.rain.entity.mob.FlipState;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -58,14 +59,23 @@ public class Screen {
 		}
 	}
 
-	public void renderPlayer(int xPosition, int yPosition, Sprite sprite){
+	public void renderPlayer(int xPosition, int yPosition, Sprite sprite, FlipState flip){
 		xPosition -= xOffset;
 		yPosition -= yOffset;
 
 		for (int yPixel = 0; yPixel < sprite.size; yPixel++) {
 			int absoluteYPosition = yPosition + yPixel;
+			int yPixelFlipped = yPixel;
+
+			if(flip == FlipState.YFlipped || flip == FlipState.XYFlipped){
+				yPixelFlipped = (sprite.size - 1) - yPixel;
+			}
 			for (int xPixel = 0; xPixel < sprite.size; xPixel++) {
 				int absoluteXPosition = xPosition + xPixel;
+				int xPixelFlipped = xPixel;
+				if(flip == FlipState.XFlipped || flip == FlipState.XYFlipped) {
+					 xPixelFlipped = (sprite.size - 1) - xPixel;
+				}
 
 				// so we only render the tiles that are visible on our monitor and nothing else
 				if(absoluteXPosition < -sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
@@ -75,7 +85,7 @@ public class Screen {
 				if(absoluteXPosition < 0)
 					absoluteXPosition = 0;
 
-				int color = sprite.pixels[xPixel + yPixel * 16];
+				int color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.size];
 				// Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
 				// so instead of the hex color code only, we also add the alpha channel code at the beginning.
 				int transparentColor = 0xffff00ff;

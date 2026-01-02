@@ -12,10 +12,21 @@ public class Sprite {
 
     public static Sprite grass = new Sprite(16 ,0 ,0, SpriteSheet.tiles);
     public static Sprite empty = new Sprite(16,0x1B87E0);
-    public static Sprite playerBack1 = new Sprite(16,0,10, SpriteSheet.tiles);
-    public static Sprite playerBack2 = new Sprite(16,1,10, SpriteSheet.tiles);
-    public static Sprite playerBack3 = new Sprite(16,0,11, SpriteSheet.tiles);
-    public static Sprite playerBack4 = new Sprite(16,1,11, SpriteSheet.tiles);
+
+    // unused since mathematically flipped
+    public static Sprite playerLeft = new Sprite(32,3,5, SpriteSheet.tiles);
+
+    public static Sprite playerBack = new Sprite(32,0,5, SpriteSheet.tiles);
+    public static Sprite playerBack1 = new Sprite(32,0,6,SpriteSheet.tiles);
+    public static Sprite playerBack2 = new Sprite(32,0,7,SpriteSheet.tiles);
+
+    public static Sprite playerRight = new Sprite(32,1,5, SpriteSheet.tiles);
+    public static Sprite playerRight1 = new Sprite(32,1,6, SpriteSheet.tiles);
+    public static Sprite playerRight2 = new Sprite(32,1,7, SpriteSheet.tiles);
+
+    public static Sprite playerFront = new Sprite(32,2,5, SpriteSheet.tiles);
+    public static Sprite playerFront1 = new Sprite(32,2,6, SpriteSheet.tiles);
+    public static Sprite playerFront2 = new Sprite(32,2,7, SpriteSheet.tiles);
 
     public Sprite(int size , int x, int y,SpriteSheet sheet)
     {
