@@ -83,12 +83,14 @@ public class Player extends Mob{
         if(facingDirection == Direction.West){
             flip = FlipState.XFlipped;
             sprite = Sprite.playerRight;
-            if(anim % 20 > 10){
-                sprite = Sprite.playerRight1;
-            }if(anim % 40 > 30){
-                sprite = Sprite.playerRight2;
+            if(walking) {
+                if (anim % 20 > 10) {
+                    sprite = Sprite.playerRight1;
+                }
+                if (anim % 40 > 30) {
+                    sprite = Sprite.playerRight2;
+                }
             }
-
         }
 
         int xCenter = x - 16;
