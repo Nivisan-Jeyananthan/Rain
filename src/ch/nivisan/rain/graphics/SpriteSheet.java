@@ -9,7 +9,8 @@ public class SpriteSheet {
     public final int size;
     public int[] pixels;
     private final String path;
-    public static SpriteSheet tiles = new SpriteSheet("../assets/New_Grass.png", 256);
+    public static SpriteSheet tiles = new SpriteSheet("../assets/sheets/Sprites.png", 256);
+    public static SpriteSheet spawnLevel = new SpriteSheet("../assets/sheets/spawn_level.png",48);
 
 
     public SpriteSheet(String path, int size) {

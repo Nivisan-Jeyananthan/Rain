@@ -15,6 +15,14 @@ public class Sprite {
     public static Sprite rock = new Sprite(16 ,2,0, SpriteSheet.tiles);
     public static Sprite empty = new Sprite(16,0x1B87E0);
 
+    public static Sprite spawn_grass = new Sprite(16,0,0, SpriteSheet.spawnLevel);
+    public static Sprite spawn_hedge = new Sprite(16,1,0, SpriteSheet.spawnLevel);
+    public static Sprite spawn_water = new Sprite(16,2,0, SpriteSheet.spawnLevel);
+    public static Sprite spawn_wall1 = new Sprite(16,0,1, SpriteSheet.spawnLevel);
+    public static Sprite spawn_wall2 = new Sprite(16,0,2, SpriteSheet.spawnLevel);
+    public static Sprite spawn_floor = new Sprite(16,1,1, SpriteSheet.spawnLevel);
+
+    // player sprites here:
     // unused since mathematically flipped
     public static Sprite playerLeft = new Sprite(32,3,5, SpriteSheet.tiles);
 
