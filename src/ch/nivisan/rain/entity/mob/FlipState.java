@@ -4,5 +4,5 @@ public enum FlipState {
     None,
     XFlipped,
     YFlipped,
-    XYFlipped
+    XYFlipped,
 }

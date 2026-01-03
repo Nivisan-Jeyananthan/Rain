@@ -5,6 +5,7 @@ import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.level.RandomLevel;
+import ch.nivisan.rain.level.SpawnLevel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,7 +47,7 @@ public class Game extends Canvas implements Runnable {
         keyboard = new Keyboard();
         addKeyListener(keyboard);
 
-        level = new RandomLevel(64,64);
+        level = new SpawnLevel("../assets/Level.png");
         player = new Player(keyboard);
     }
 
