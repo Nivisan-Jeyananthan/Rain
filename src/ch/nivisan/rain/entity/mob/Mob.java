@@ -9,15 +9,15 @@ public abstract class Mob extends Entity {
     protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
 
-    public void move(int xAbsolute, int yAbsolute){
-        if(yAbsolute < 0) facingDirection = Direction.North;
-        if(xAbsolute > 0) facingDirection = Direction.East;
-        if(yAbsolute > 0) facingDirection = Direction.South;
-        if(xAbsolute < 0) facingDirection = Direction.West;
+    public void move(int xMovement, int yMovement){
+        if(yMovement < 0) facingDirection = Direction.North;
+        if(xMovement > 0) facingDirection = Direction.East;
+        if(yMovement > 0) facingDirection = Direction.South;
+        if(xMovement < 0) facingDirection = Direction.West;
 
         if(!collision()){
-            x += xAbsolute;
-            y += yAbsolute;
+            x += xMovement;
+            y += yMovement;
         }
     }
 

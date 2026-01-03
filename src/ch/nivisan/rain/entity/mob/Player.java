@@ -58,10 +58,37 @@ public class Player extends Mob{
                 }
             }
         }
-        if(facingDirection == Direction.East) sprite = Sprite.playerRight;
-        if(facingDirection == Direction.South) sprite = Sprite.playerFront;
+        if(facingDirection == Direction.East) {
+            sprite = Sprite.playerRight;
+            if(walking){
+                if (anim % 20 > 10) {
+                    sprite = Sprite.playerRight1;
+                }
+                if (anim % 40 > 30){
+                    sprite = Sprite.playerRight2;
+                }
+            }
+        }
+        if(facingDirection == Direction.South) {
+            sprite = Sprite.playerFront;
+            if(walking){
+                if (anim % 20 > 10) {
+                    sprite = Sprite.playerFront1;
+                }
+                if (anim % 40 > 30){
+                    sprite = Sprite.playerFront2;
+                }
+            }
+        }
         if(facingDirection == Direction.West){
             flip = FlipState.XFlipped;
+            sprite = Sprite.playerRight;
+            if(anim % 20 > 10){
+                sprite = Sprite.playerRight1;
+            }if(anim % 40 > 30){
+                sprite = Sprite.playerRight2;
+            }
+
         }
 
         int xCenter = x - 16;
