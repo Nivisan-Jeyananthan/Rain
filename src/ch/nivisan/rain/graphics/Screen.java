@@ -15,7 +15,8 @@ public class Screen {
 	public final int MapSizeMask = MapSize -1;
 	public int[] tiles = new int[MapSize * MapSize];
 
-	public int xOffset, yOffset;
+	// offests to keep our player centered as main focus
+	private int xOffset, yOffset;
 
 	private Random random = new Random();
 
@@ -36,15 +37,16 @@ public class Screen {
         Arrays.fill(pixels, 0);
 	}
 
-	// render square thats why the same size in y and x.
-	public void renderTile(int xPosition, int yPosition, Tile tile){
-		xPosition -= xOffset;
-		yPosition -= yOffset;
+	// when the player moves we need to move our tiles accordingly
+	// thats why we have offsets calculated with them
+	public void renderTile(int xTilePosition, int yTilePosition, Tile tile){
+		xTilePosition -= xOffset;
+		yTilePosition -= yOffset;
 
 		for (int yPixel = 0; yPixel < tile.sprite.size; yPixel++) {
-			int absoluteYPosition = yPosition + yPixel;
+			int absoluteYPosition = yTilePosition + yPixel;
 			for (int xPixel = 0; xPixel < tile.sprite.size; xPixel++) {
-				int absoluteXPosition = xPosition + xPixel;
+				int absoluteXPosition = xTilePosition + xPixel;
 
 				// so we only render the tiles that are visible on our monitor and nothing else
 				if(absoluteXPosition < -tile.sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
@@ -54,7 +56,9 @@ public class Screen {
 				if(absoluteXPosition < 0)
 					absoluteXPosition = 0;
 
-				pixels[absoluteXPosition + absoluteYPosition * width] = tile.sprite.pixels[xPixel + yPixel * tile.sprite.size];
+				int index = absoluteXPosition + absoluteYPosition * width;
+				int spriteIndex = xPixel + yPixel * tile.sprite.size;
+				pixels[index] = tile.sprite.pixels[spriteIndex];
 			}
 		}
 	}

@@ -47,8 +47,8 @@ public class Game extends Canvas implements Runnable {
         keyboard = new Keyboard();
         addKeyListener(keyboard);
 
-        level = new SpawnLevel("../assets/levels/Level.png");
-        player = new Player(7*16,12*16,keyboard);
+        level = Level.spawn;
+        player = new Player(keyboard);
     }
 
     public static void main(String[] args) {
@@ -146,6 +146,9 @@ public class Game extends Canvas implements Runnable {
         }
 
         screen.clear();
+        // how many pixels our character moved so we have adjust the map accordingly
+        // when our player moved 2 pixels right, map should move 2 pixel left
+        // offset essentially
         int xScroll = player.x - screen.width / 2;
         int yScroll = player.y - screen.height / 2;
 

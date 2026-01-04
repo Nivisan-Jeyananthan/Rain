@@ -6,7 +6,7 @@ import ch.nivisan.rain.level.tile.spawnLevels.*;
 
 // is an object which has a sprite.
 // it can be anything from
-public abstract class Tile {
+public class Tile {
     public int width, height;
     public Sprite sprite;
     public static Tile grass = new GrassTile(Sprite.grass);
@@ -21,7 +21,14 @@ public abstract class Tile {
     public static Tile spawnWall2 = new SpawnWallTile(Sprite.spawn_wall2);
     public static Tile spawnFloor = new SpawnFloorTile(Sprite.spawn_floor);
 
+    // unused
+    public static final int color_spawnHedge = 0;
+    public static final int color_spawnWater = 1;
 
+    public static final int color_spawnGrass = 0xff00ff00;
+    public static final int color_spawnWall1 = 0xff4d7807;
+    public static final int color_spawnWall2 = 0xff3b5b05;
+    public static final int color_spawnFloor = 0xffffffff;
 
 
     public Tile(Sprite sprite) {
