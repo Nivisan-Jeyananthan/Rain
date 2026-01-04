@@ -24,7 +24,10 @@ So, let's look at the code, shall we?
 int xt = ((x + xa) + (c % 2)) / 16;
 int yt = ((y + ya) + (c / 2)) / 16;
 ```
-
+> **x** here is the player position at coordinate **x**.   
+> While **xa** refers to the players movement in the **x** direction, where it can be 1,0 or -1.   
+> Depending on the movement.  
+> Same applies to y and ya  
 
 (I removed the little adjustments, just look at these variables right now)
 
@@ -32,13 +35,15 @@ Firstly, we can see that the entire expression, `((x + xa) + (c % 2))`,  is divi
 (x + xa) is the x-position of where you would be. Now what is (c % 2)?  
 If we look at the table I mentioned earlier, you can see the values of `(c % 2)` can be **0** or **1**.   
 1. iteration : So, if `(c % 2)` is **0**, well, nothing happens.  
-2. Iteration : You do the calculation as always. But if `(c % 2)` is **1**, then you add **1** to `(x + xa)`.
+2. Iteration : You do the calculation as always. But if `(c % 2)` is **1**, then you add **1** to `(x + xa)`.  
 
 If you move the value by 1 pixel, it's *possible* that you are checking another tile.     
-But **not** always. For example, if `(x + xa)` was 14, then we'd shift it by 1, giving us 15. Dividing 15 by 16 would give us 0, as would 14/16.    
-There is no change. But if `(x + xa)` was instead 15,you would divide (15 + 1) by 16, giving us 1, instead of 0.  
+But **not always**. For example, if `(x + xa)` was 14, then we'd shift it by 1, giving us 15.  
+Dividing 15 by 16 would give us 0, as would 14/16.      
+There is no change.   
+But if `(x + xa)` was instead 15,you would divide (15 + 1) by 16, giving us 1, instead of 0.  
 
-Now, let's talk about the adjustments. Something like this:  
+Now, let's talk about the adjustments (the multipliers 10 here). Something like this:  
 
 ```java
 int xt = ((x + xa) + (c % 2) * 10) / 16;
@@ -46,7 +51,7 @@ int yt = ((y + ya) + (c / 2) * 10) / 16;
 ```
 
 In this case, we do `(c % 2)`, then multiply that value by **10**.   
-So, when `(c % 2)` results into 1, instead of just shifting the pixel by 1 spot, you shift it by 10. A big difference.   
+So, when `(c % 2)` results into 1, instead of just shifting the pixel by 1 spot, you shift it by 10 instead. A big difference.     
 However, note that if `(c % 2)` or `(c / 2)` is **0**, the multiplier doesn't make any difference.  
 0 multiplied by anything is always 0. That's important, because we also want to check (x + xa) without any changes.  
 
