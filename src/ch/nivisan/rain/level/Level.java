@@ -46,15 +46,14 @@ public class Level {
       // set the 4 corner pins (x,y) top left, bottom right (x,y)
       // convert from pixel precision to tile based so we do not have to deal with huge numbers
       int xStart = xScroll >> 4;
-      // without the tilesize we would get black bars around right and bottom
+      // without adding the tilesize we would get black bars around right and bottom
       int xEnd = (xScroll + screen.width + tileSize) >> 4;
       int yStart = yScroll >> 4;
       int yEnd = (yScroll + screen.height + tileSize) >> 4;
 
       for(int y = yStart; y < yEnd; y++){
        for(int x = xStart; x < xEnd; x++) {
-            var t  =getTile(x,y);
-            t.render(x,y,screen);
+           getTile(x,y).render(x,y,screen);
        }
       }
   }

@@ -15,8 +15,11 @@ public abstract class Mob extends Entity {
         if(yMovement > 0) facingDirection = Direction.South;
         if(xMovement < 0) facingDirection = Direction.West;
 
-        if(!collision()){
+        if(!collision(xMovement,0)){
             x += xMovement;
+        }
+
+        if(!collision(0,yMovement)){
             y += yMovement;
         }
     }
@@ -27,7 +30,9 @@ public abstract class Mob extends Entity {
 
     }
 
-    private boolean collision(){
-        return false;
+    private boolean collision(int xMovement, int yMovement){
+        boolean solid = false;
+
+        return level.getTile(((xMovement + x) >> 4), ((yMovement+y) >> 4)).solid();
     }
 }

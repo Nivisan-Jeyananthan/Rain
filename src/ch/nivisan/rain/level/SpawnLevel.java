@@ -1,7 +1,5 @@
 package ch.nivisan.rain.level;
 
-import ch.nivisan.rain.level.tile.Tile;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

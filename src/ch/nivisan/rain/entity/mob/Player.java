@@ -5,7 +5,7 @@ import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 
 public class Player extends Mob{
-    private Keyboard input;
+    private final Keyboard input;
     private Sprite sprite;
     private boolean walking = false;
     private int anim = 0;

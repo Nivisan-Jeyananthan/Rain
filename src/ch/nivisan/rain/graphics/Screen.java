@@ -1,7 +1,6 @@
 package ch.nivisan.rain.graphics;
 
 import ch.nivisan.rain.entity.mob.FlipState;
-import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.level.tile.Tile;
 
 import java.util.Arrays;
@@ -18,7 +17,7 @@ public class Screen {
 	// offests to keep our player centered as main focus
 	private int xOffset, yOffset;
 
-	private Random random = new Random();
+	private final Random random = new Random();
 
 
 	public Screen(int width, int height) {
@@ -43,6 +42,7 @@ public class Screen {
 		xTilePosition -= xOffset;
 		yTilePosition -= yOffset;
 
+		// iterate through each pixel in our tile and set it to main pixels
 		for (int yPixel = 0; yPixel < tile.sprite.size; yPixel++) {
 			int absoluteYPosition = yTilePosition + yPixel;
 			for (int xPixel = 0; xPixel < tile.sprite.size; xPixel++) {

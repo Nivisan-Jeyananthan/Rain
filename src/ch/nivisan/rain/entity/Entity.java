@@ -12,6 +12,10 @@ public abstract class Entity {
     protected Level level;
     protected final Random random = new Random();
 
+    public void init(Level level){
+        this.level = level;
+    }
+
     public void update(Screen screen){
     }
 

@@ -4,15 +4,13 @@ import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.level.Level;
-import ch.nivisan.rain.level.RandomLevel;
-import ch.nivisan.rain.level.SpawnLevel;
+import ch.nivisan.rain.level.TileCoordinate;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.Serial;
-import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
     @Serial
@@ -25,8 +23,9 @@ public class Game extends Canvas implements Runnable {
     private final JFrame frame;
     private final Screen screen;
     private final Keyboard keyboard;
-    private Level level;
-    private Player player;
+    private final Level level;
+    private final Player player;
+    private final TileCoordinate playerSpawnLocation;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -48,10 +47,13 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(keyboard);
 
         level = Level.spawn;
-        player = new Player(keyboard);
+        playerSpawnLocation = new TileCoordinate(20,60);
+        player = new Player(playerSpawnLocation.getX(),playerSpawnLocation.getY(),keyboard);
+        player.init(level);
+
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         var game = new Game();
 
         game.frame.setResizable(false);
@@ -155,9 +157,7 @@ public class Game extends Canvas implements Runnable {
         level.render(xScroll,yScroll,screen);
         player.render(screen);
 
-        for (int i = 0; i < pixels.length; i++) {
-            pixels[i] = screen.pixels[i];
-        }
+        System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
