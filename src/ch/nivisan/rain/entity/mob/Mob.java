@@ -10,16 +10,19 @@ public abstract class Mob extends Entity {
     protected boolean moving = false;
 
     public void move(int xMovement, int yMovement){
+        if(xMovement != 0 &&  yMovement != 0) {
+            move(xMovement,0);
+            move(0,yMovement);
+            return;
+        }
+
         if(yMovement < 0) facingDirection = Direction.North;
         if(xMovement > 0) facingDirection = Direction.East;
         if(yMovement > 0) facingDirection = Direction.South;
         if(xMovement < 0) facingDirection = Direction.West;
 
-        if(!collision(xMovement,0)){
+        if(!collision(xMovement,yMovement)){
             x += xMovement;
-        }
-
-        if(!collision(0,yMovement)){
             y += yMovement;
         }
     }
@@ -30,9 +33,29 @@ public abstract class Mob extends Entity {
 
     }
 
+    /**
+     * Checks if any of the upcoming 4 tiles overlaps with our player which would cause a collision
+     * when it would, returns true, making our player not able to walk past it
+     * Divides by 4 so it is in tile system not pixel
+     * @param xMovement
+     * @param yMovement
+     * @return
+     */
     private boolean collision(int xMovement, int yMovement){
-        boolean solid = false;
+          boolean solid = false;
 
-        return level.getTile(((xMovement + x) >> 4), ((yMovement+y) >> 4)).solid();
+        int cornerX = 0, cornerY = 0;
+        int vertexAmount = 2;
+        int collisionWidth = 14;
+        int collisionHeight = 12;
+
+         for(int cornerIndex = 0; cornerIndex < 4; cornerIndex++){
+            cornerX = ((xMovement + x) + (cornerIndex % vertexAmount) * collisionWidth -8) >> 4;
+            cornerY = ((yMovement + y) + (cornerIndex / vertexAmount) * collisionHeight + 3 ) >> 4;
+
+           if(level.getTile(cornerX, cornerY).solid()) solid = true;
+        }
+        return solid;
+
     }
 }

@@ -47,7 +47,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(keyboard);
 
         level = Level.spawn;
-        playerSpawnLocation = new TileCoordinate(20,60);
+        playerSpawnLocation = new TileCoordinate(20,10);
         player = new Player(playerSpawnLocation.getX(),playerSpawnLocation.getY(),keyboard);
         player.init(level);
 
@@ -164,7 +164,7 @@ public class Game extends Canvas implements Runnable {
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
-        graphics.drawString("X: " + player.x + " Y: " + player.y, 700, 25);
+        graphics.drawString("X: " + (player.x >> 4) + " Y: " + (player.y >> 4), 700, 25);
         // release system ressource
         graphics.dispose();
         // changes the buffers which reside in memory
