@@ -3,6 +3,7 @@ package ch.nivisan.rain;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
+import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.level.TileCoordinate;
 
@@ -16,10 +17,10 @@ public class Game extends Canvas implements Runnable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final int scale = 3;
-    public static final int width = 300;
-    public static final int height = width / 16 * 9;
-    public static String title = "Rain";
+    private static final int scale = 3;
+    private static final int width = 300;
+    private static final int height = width / 16 * 9;
+    private static final String title = "Rain";
     private final JFrame frame;
     private final Screen screen;
     private final Keyboard keyboard;
@@ -45,12 +46,23 @@ public class Game extends Canvas implements Runnable {
 
         keyboard = new Keyboard();
         addKeyListener(keyboard);
+        Mouse mouse = new Mouse();
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
 
         level = Level.spawn;
-        playerSpawnLocation = new TileCoordinate(20,10);
-        player = new Player(playerSpawnLocation.getX(),playerSpawnLocation.getY(),keyboard);
+        playerSpawnLocation = new TileCoordinate(20, 60);
+        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard);
         player.init(level);
 
+    }
+
+    public static int getWindowWidth() {
+        return width * scale;
+    }
+
+    public static int getWindowHeight() {
+        return height * scale;
     }
 
     static void main(String[] args) {
@@ -96,10 +108,11 @@ public class Game extends Canvas implements Runnable {
         double delta = 0;
         int framesPerSecond = 0;
         int updatesPerSecond = 0;
-
         requestFocus();
 
+
         while (isRunning) {
+
             long now = System.nanoTime();
 
             // calculates how much time has passed since the last loop
@@ -138,6 +151,7 @@ public class Game extends Canvas implements Runnable {
     public void update() {
         keyboard.update();
         player.update();
+        level.update();
     }
 
     public void render() {
@@ -148,13 +162,15 @@ public class Game extends Canvas implements Runnable {
         }
 
         screen.clear();
+        // updates the values of xScroll and yScroll every render, so we accurately track, which coordinate is
+        // the left most pixel (x) and the top most (y) = x,y so we can render the entire screen.
         // how many pixels our character moved so we have adjust the map accordingly
         // when our player moved 2 pixels right, map should move 2 pixel left
         // offset essentially
         int xScroll = player.x - screen.width / 2;
         int yScroll = player.y - screen.height / 2;
 
-        level.render(xScroll,yScroll,screen);
+        level.render(xScroll, yScroll, screen);
         player.render(screen);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
@@ -164,7 +180,9 @@ public class Game extends Canvas implements Runnable {
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
-        graphics.drawString("X: " + (player.x >> 4) + " Y: " + (player.y >> 4), 700, 25);
+        graphics.drawString("Player X: " + (player.x >> 4) + " Y: " + (player.y >> 4), 600, 25);
+        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 50);
+
         // release system ressource
         graphics.dispose();
         // changes the buffers which reside in memory

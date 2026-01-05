@@ -9,8 +9,8 @@ public class SpawnHedgeTile extends Tile {
         super(sprite);
     }
 
-    public void render(int x, int y, Screen screen){
-        screen.renderTile(x << 4,y << 4,this);
+    public void render(int x, int y, Screen screen) {
+        screen.renderTile(x << 4, y << 4, this);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class SpawnHedgeTile extends Tile {
         return true;
     }
 
-    public boolean breakable(){
+    public boolean breakable() {
         return true;
     }
 }
