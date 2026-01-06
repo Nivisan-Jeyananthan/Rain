@@ -5,8 +5,8 @@ import ch.nivisan.rain.graphics.Sprite;
 
 public class WizardProjectile extends Projectile {
     public WizardProjectile(int xOrigin, int yOrigin, double angle) {
-        super(xOrigin, yOrigin, angle,Sprite.grass);
-        range = 300;
+        super(xOrigin, yOrigin, angle,Sprite.wizardProjectile);
+        range = 200;
         damage = 20;
         rateOfFire = 15;
         speed = 4;
@@ -16,7 +16,7 @@ public class WizardProjectile extends Projectile {
     }
 
     public void update(){
-
+        move();
     }
 
     protected void move(){
@@ -25,6 +25,6 @@ public class WizardProjectile extends Projectile {
     }
 
     public void render(Screen screen){
-        screen.renderSprite(x,y,sprite);
+        screen.renderProjectile(x,y,this);
     }
 }

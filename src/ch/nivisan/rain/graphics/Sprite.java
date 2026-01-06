@@ -26,7 +26,11 @@ public class Sprite {
     public static Sprite playerFront = new Sprite(32, 2, 5, SpriteSheet.tiles);
     public static Sprite playerFront1 = new Sprite(32, 2, 6, SpriteSheet.tiles);
     public static Sprite playerFront2 = new Sprite(32, 2, 7, SpriteSheet.tiles);
-    public final int size;
+
+    // projectiles
+    public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
+
+    private final int size;
     // which pixels of the sprite get rendered
     public int[] pixels;
     private int x, y;
@@ -46,6 +50,10 @@ public class Sprite {
         this.size = size;
         pixels = new int[size * size];
         setColor(color);
+    }
+
+    public int getSize(){
+        return size;
     }
 
     private void setColor(int color) {

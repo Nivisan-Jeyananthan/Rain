@@ -42,8 +42,8 @@ public abstract class Mob extends Entity {
     }
 
     protected void shoot(int x, int y, double direction) {
-        direction = Math.toDegrees(direction);
-        //  direction *= (180 / Math.PI);
+        // direction = Math.toDegrees(direction);
+        // direction *= 180 / Math.PI;
 
         Projectile p = new WizardProjectile(x,y,direction);
         projectiles.add(p);

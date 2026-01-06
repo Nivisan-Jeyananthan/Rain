@@ -144,6 +144,8 @@ public class Game extends Canvas implements Runnable {
                 framesPerSecond = 0;
                 updatesPerSecond = 0;
             }
+
+
         }
         stop();
     }

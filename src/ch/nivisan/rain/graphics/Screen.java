@@ -1,6 +1,7 @@
 package ch.nivisan.rain.graphics;
 
 import ch.nivisan.rain.entity.mob.FlipState;
+import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.level.tile.Tile;
 
 import java.util.Arrays;
@@ -41,13 +42,13 @@ public class Screen {
         yTilePosition -= yOffset;
 
         // iterate through each pixel in our tile and set it to main pixels
-        for (int yPixel = 0; yPixel < tile.sprite.size; yPixel++) {
+        for (int yPixel = 0; yPixel < tile.sprite.getSize(); yPixel++) {
             int absoluteYPosition = yTilePosition + yPixel;
-            for (int xPixel = 0; xPixel < tile.sprite.size; xPixel++) {
+            for (int xPixel = 0; xPixel < tile.sprite.getSize(); xPixel++) {
                 int absoluteXPosition = xTilePosition + xPixel;
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -tile.sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -tile.sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -55,24 +56,27 @@ public class Screen {
                     absoluteXPosition = 0;
 
                 int index = absoluteXPosition + absoluteYPosition * width;
-                int spriteIndex = xPixel + yPixel * tile.sprite.size;
+                int spriteIndex = xPixel + yPixel * tile.sprite.getSize();
                 pixels[index] = tile.sprite.pixels[spriteIndex];
             }
         }
     }
 
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite) {
+
+    public void renderProjectile(int xTilePosition, int yTilePosition, Projectile projectile) {
         xTilePosition -= xOffset;
         yTilePosition -= yOffset;
+        var sprite = projectile.getSprite();
+
 
         // iterate through each pixel in our tile and set it to main pixels
-        for (int yPixel = 0; yPixel < sprite.size; yPixel++) {
+        for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
             int absoluteYPosition = yTilePosition + yPixel;
-            for (int xPixel = 0; xPixel < sprite.size; xPixel++) {
+            for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
                 int absoluteXPosition = xTilePosition + xPixel;
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -80,8 +84,13 @@ public class Screen {
                     absoluteXPosition = 0;
 
                 int index = absoluteXPosition + absoluteYPosition * width;
-                int spriteIndex = xPixel + yPixel * sprite.size;
-                pixels[index] = sprite.pixels[spriteIndex];
+                int spriteIndex = xPixel + yPixel * sprite.getSize();
+                var transparentColor = 0xffff00ff;
+                var color = sprite.pixels[spriteIndex];
+
+                if(color != transparentColor) {
+                    pixels[index] = color;
+                }
             }
         }
     }
@@ -90,29 +99,29 @@ public class Screen {
         xPosition -= xOffset;
         yPosition -= yOffset;
 
-        for (int yPixel = 0; yPixel < sprite.size; yPixel++) {
+        for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
             int absoluteYPosition = yPosition + yPixel;
             int yPixelFlipped = yPixel;
 
             if (flip == FlipState.YFlipped || flip == FlipState.XYFlipped) {
-                yPixelFlipped = (sprite.size - 1) - yPixel;
+                yPixelFlipped = (sprite.getSize() - 1) - yPixel;
             }
-            for (int xPixel = 0; xPixel < sprite.size; xPixel++) {
+            for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
                 int absoluteXPosition = xPosition + xPixel;
                 int xPixelFlipped = xPixel;
                 if (flip == FlipState.XFlipped || flip == FlipState.XYFlipped) {
-                    xPixelFlipped = (sprite.size - 1) - xPixel;
+                    xPixelFlipped = (sprite.getSize() - 1) - xPixel;
                 }
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.size || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
                     break;
                 }
 
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                int color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.size];
+                int color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
                 // so instead of the hex color code only, we also add the alpha channel code at the beginning.
                 int transparentColor = 0xffff00ff;

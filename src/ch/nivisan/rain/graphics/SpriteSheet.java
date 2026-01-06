@@ -8,6 +8,8 @@ import java.util.Objects;
 public class SpriteSheet {
     public static SpriteSheet tiles = new SpriteSheet("../assets/sheets/Sprites.png", 256);
     public static SpriteSheet spawnLevel = new SpriteSheet("../assets/sheets/spawn_level.png", 48);
+    public static SpriteSheet wizardProjectiles = new SpriteSheet("../assets/sheets/projectiles/wizard.png", 48);
+
     public final int size;
     private final String path;
     public int[] pixels;
