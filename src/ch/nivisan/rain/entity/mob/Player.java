@@ -1,6 +1,9 @@
 package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
+import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.projectile.Projectile;
+import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
@@ -12,6 +15,7 @@ public class Player extends Mob {
     private Sprite sprite;
     private boolean walking = false;
     private int anim = 0;
+    private double fireRate = 0;
 
     public Player(Keyboard input) {
         this.input = input;
@@ -21,10 +25,14 @@ public class Player extends Mob {
         this.x = x;
         this.y = y;
         this.input = input;
+        this.fireRate = WizardProjectile.fireRate;
+
     }
 
     @Override
     public void update() {
+        if(fireRate > 0) fireRate--;
+
         int xAbsolute = 0, yAbsolute = 0;
         if (anim < 7_500) anim++;
         else anim = 0;
@@ -47,6 +55,7 @@ public class Player extends Mob {
             walking = false;
         }
 
+
         updateShooting();
     }
 
@@ -54,7 +63,7 @@ public class Player extends Mob {
      * projectile calculations
      */
     private void updateShooting() {
-        if (Mouse.getButton() == 1) {
+        if (Mouse.getButton() == 1 && fireRate <= 0) {
             int midpointWidth = Game.getWindowWidth() / 2;
             int midpointHeight = Game.getWindowHeight() / 2;
 
@@ -63,6 +72,7 @@ public class Player extends Mob {
             double dir = Math.atan2(dy, dx);
 
             shoot(x, y, dir);
+            fireRate = WizardProjectile.fireRate;
         }
     }
 

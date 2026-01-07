@@ -1,6 +1,7 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -13,6 +14,7 @@ public class Level {
     protected int height;
     protected int[] tiles;
     private final List<Entity> entities = new ArrayList<Entity>();
+    private final List<Projectile> projectiles = new ArrayList<>();
 
     public Level(int width, int height) {
         this.width = width;
@@ -33,6 +35,10 @@ public class Level {
         entities.add(entity);
     }
 
+    public void addProjectile(Projectile projectile){
+        projectiles.add(projectile);
+    }
+
     protected void generateLevel() {
     }
 
@@ -46,12 +52,31 @@ public class Level {
         for (Entity entity : entities) {
             entity.update();
         }
+
+        for(int i = 0; i< projectiles.size(); i++){
+            var projectile = projectiles.get(i);
+            if(projectile.isRemoved()){
+                projectiles.remove(projectile);
+            }else {
+                projectile.update();
+            }
+
+        }
+        System.out.println(projectiles.size());
     }
 
     public void render(int xScroll, int yScroll, Screen screen) {
-        int tileSize = 16;
+
         screen.setOffsets(xScroll, yScroll);
 
+        renderTiles(xScroll,yScroll,screen);
+        renderEntities(screen);
+        renderProjectiles(screen);
+
+    }
+
+    private void renderTiles(int xScroll, int yScroll, Screen screen){
+        int tileSize = 16;
         // defines render region of the current visible window region:
 
         // same as (xScroll / 16) = divides into tiles of 16
@@ -68,11 +93,18 @@ public class Level {
                 getTile(x, y).render(x, y, screen);
             }
         }
+    }
 
+    private void renderProjectiles(Screen screen){
+        for (Projectile projectile : projectiles) {
+            projectile.render(screen);
+        }
+    }
+
+    private void renderEntities(Screen screen){
         for (Entity entity : entities) {
             entity.render(screen);
         }
-
     }
 
     // convert pixel position data to tile position data

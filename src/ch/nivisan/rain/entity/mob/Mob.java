@@ -14,7 +14,6 @@ public abstract class Mob extends Entity {
     protected Sprite sprite;
     protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
-    protected List<Projectile> projectiles = new ArrayList<Projectile>();
 
     public void move(int xMovement, int yMovement) {
         if (xMovement != 0 && yMovement != 0) {
@@ -35,6 +34,7 @@ public abstract class Mob extends Entity {
     }
 
     public void update() {
+
     }
 
     public void render() {
@@ -42,14 +42,8 @@ public abstract class Mob extends Entity {
     }
 
     protected void shoot(int x, int y, double direction) {
-        // direction = Math.toDegrees(direction);
-        // direction *= 180 / Math.PI;
-
         Projectile p = new WizardProjectile(x,y,direction);
-        projectiles.add(p);
-        level.addEntity(p);
-
-        System.out.println("Angle: " + direction);
+        level.addProjectile(p);
     }
 
     /**
