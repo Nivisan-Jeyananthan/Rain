@@ -30,30 +30,49 @@ public class Sprite {
     // projectiles
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
 
-    private final int size;
+    private final int width;
+    private final int height;
     // which pixels of the sprite get rendered
-    public int[] pixels;
+    public final int[] pixels;
     private int x, y;
     private SpriteSheet sheet;
 
+    public Sprite(int width, int height,int color){
+        this.width = width;
+        this.height = height;
+        this.pixels = new int[height * width];
+        setColor(color);
+    }
+
     public Sprite(int size, int x, int y, SpriteSheet sheet) {
-        this.size = size;
         this.x = x * size;
         this.y = y * size;
         this.sheet = sheet;
+        this.height = size;
+        this.width = size;
+
         pixels = new int[size * size];
 
         loadSpriteFromSheet();
     }
 
     public Sprite(int size, int color) {
-        this.size = size;
+        this.height = size;
+        this.width = size;
         pixels = new int[size * size];
         setColor(color);
     }
 
     public int getSize(){
-        return size;
+        return width;
+    }
+
+    public int getWidth(){
+        return width;
+    }
+
+    public int getHeight(){
+        return height;
     }
 
     private void setColor(int color) {
@@ -62,9 +81,9 @@ public class Sprite {
 
     // goes through the SpriteSheet and loads it into the pixels array
     private void loadSpriteFromSheet() {
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                int pixelIndex = x + y * size;
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < height; x++) {
+                int pixelIndex = x + y * width;
                 int sheetIndex = (x + this.x) + (y + this.y) * sheet.size;
 
                 pixels[pixelIndex] = sheet.pixels[sheetIndex];

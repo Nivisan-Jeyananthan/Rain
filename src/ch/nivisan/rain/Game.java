@@ -2,6 +2,7 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.Serial;
+import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
     @Serial
@@ -172,6 +174,15 @@ public class Game extends Canvas implements Runnable {
 
         level.render(xScroll, yScroll, screen);
         player.render(screen);
+
+        Sprite sprite = new Sprite(2,2,0xff00ff);
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            int x = random.nextInt(20);
+            int y = random.nextInt(20);
+            screen.renderSprite(width - 60 + x,50 + y,sprite, true);
+        }
+
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 

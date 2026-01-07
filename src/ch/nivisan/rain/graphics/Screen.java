@@ -35,6 +35,29 @@ public class Screen {
         Arrays.fill(pixels, 0);
     }
 
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed){
+        if(fixed) {
+            xTilePosition -= xOffset;
+            yTilePosition -= yOffset;
+        }
+
+        for (int yPixel = 0; yPixel < sprite.getHeight(); yPixel++) {
+            int absoluteYPosition = yTilePosition + yPixel;
+            for (int xPixel = 0; xPixel < sprite.getWidth(); xPixel++) {
+                int absoluteXPosition = xTilePosition + xPixel;
+
+                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                    continue;
+                }
+
+                int index = absoluteXPosition + absoluteYPosition * width;
+                int spriteIndex = xPixel + yPixel * sprite.getSize();
+                pixels[index] = sprite.pixels[spriteIndex];
+            }
+        }
+
+    }
+
     // when the player moves we need to move our tiles accordingly
     // thats why we have offsets calculated with them
     public void renderTile(int xTilePosition, int yTilePosition, Tile tile) {
@@ -42,9 +65,9 @@ public class Screen {
         yTilePosition -= yOffset;
 
         // iterate through each pixel in our tile and set it to main pixels
-        for (int yPixel = 0; yPixel < tile.sprite.getSize(); yPixel++) {
+        for (int yPixel = 0; yPixel < tile.sprite.getHeight(); yPixel++) {
             int absoluteYPosition = yTilePosition + yPixel;
-            for (int xPixel = 0; xPixel < tile.sprite.getSize(); xPixel++) {
+            for (int xPixel = 0; xPixel < tile.sprite.getWidth(); xPixel++) {
                 int absoluteXPosition = xTilePosition + xPixel;
 
                 // so we only render the tiles that are visible on our monitor and nothing else
