@@ -48,6 +48,30 @@ public class Level {
     private void time() {
     }
 
+    /**
+     * Checks if any of the upcoming 4 tiles overlaps with our player which would cause a collision
+     * when it would, returns true, making our player not able to walk past it
+     * Divides by 4 so it is in tile system not pixel
+     *
+     * @param xMovement
+     * @param yMovement
+     * @return
+     */
+    public boolean tileCollision(double x,double y,double xMovement, double yMovement, int size) {
+        boolean solid = false;
+
+        int cornerX = 0, cornerY = 0;
+        int vertexAmount = 2;
+
+        for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
+            cornerX = (( (int) xMovement + (int)x) + ( cornerIndex % 2) * size / 8) / 16;
+            cornerY = (((int)yMovement +(int) y) + (cornerIndex / 2) * size / 8) / 16;
+
+            if (getTile((int)cornerX,(int) cornerY).solid()) return true;
+        }
+        return solid;
+    }
+
     public void update() {
         for (Entity entity : entities) {
             entity.update();

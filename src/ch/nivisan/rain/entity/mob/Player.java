@@ -9,6 +9,7 @@ import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.input.MouseButtonState;
+import ch.nivisan.rain.level.Level;
 
 public class Player extends Mob {
     private final Keyboard input;
@@ -17,15 +18,19 @@ public class Player extends Mob {
     private int anim = 0;
     private double fireRate = 0;
 
-    public Player(Keyboard input) {
+    public Player(Keyboard input, Level level) {
+        super(level);
         this.input = input;
     }
 
-    public Player(int x, int y, Keyboard input) {
+    public Player(int x, int y, Keyboard input,Level level) {
+        super(level);
+
         this.x = x;
         this.y = y;
         this.input = input;
         this.fireRate = WizardProjectile.fireRate;
+
 
     }
 

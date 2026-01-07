@@ -12,7 +12,11 @@ public abstract class Entity {
     protected Level level;
     private boolean removed = false;
 
-    public void init(Level level) {
+    public Entity(Level level) {
+        this.level = level;
+    }
+
+    public void setLevel(Level level) {
         this.level = level;
     }
 

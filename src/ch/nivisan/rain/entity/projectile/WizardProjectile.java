@@ -2,12 +2,13 @@ package ch.nivisan.rain.entity.projectile;
 
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
+import ch.nivisan.rain.level.Level;
 
 public class WizardProjectile extends Projectile {
-    public static final double fireRate = 15;
+    public static final double fireRate = 0.5;
 
-    public WizardProjectile(int xOrigin, int yOrigin, double angle) {
-        super(xOrigin, yOrigin, angle,Sprite.wizardProjectile);
+    public WizardProjectile(int xOrigin, int yOrigin, double angle, Level level) {
+        super(xOrigin, yOrigin, angle,Sprite.wizardProjectile, level);
         range = 200;
         damage = 20;
         speed = 4;
@@ -17,16 +18,17 @@ public class WizardProjectile extends Projectile {
     }
 
     public void update(){
+        removeOnCondition();
         move();
     }
 
     protected void move(){
-        x +=  nx;
-        y +=  ny;
+            x += nx;
+            y += ny;
+    }
 
-        if(calculateDistance() > range){
-            remove();
-        }
+    private void removeOnCondition(){
+        if(calculateDistance() > range || level.tileCollision(x,y,nx,ny, sprite.getSize())) remove();
     }
 
     private double calculateDistance(){

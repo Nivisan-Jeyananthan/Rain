@@ -2,6 +2,7 @@ package ch.nivisan.rain.entity.projectile;
 
 import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.graphics.Sprite;
+import ch.nivisan.rain.level.Level;
 
 import java.util.Random;
 
@@ -15,7 +16,8 @@ public abstract class Projectile extends Entity {
     protected double x,y;
     protected static final Random random = new Random();
 
-    public Projectile(int x, int y, double angle, Sprite sprite){
+    public Projectile(int x, int y, double angle, Sprite sprite, Level level){
+        super(level);
         this.angle = angle;
         this.xOrigin = x;
         this.yOrigin = y;

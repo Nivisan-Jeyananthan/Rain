@@ -52,9 +52,7 @@ public class Game extends Canvas implements Runnable {
 
         level = Level.spawn;
         playerSpawnLocation = new TileCoordinate(20, 60);
-        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard);
-        player.init(level);
-
+        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard,level);
     }
 
     public static int getWindowWidth() {
