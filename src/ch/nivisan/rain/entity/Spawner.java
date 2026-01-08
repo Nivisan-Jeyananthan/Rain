@@ -9,23 +9,18 @@ import java.util.List;
 
 public class Spawner extends Entity {
     private List<Entity> entities = new ArrayList<Entity>();
-    private EntityType type;
+    private SpawnerType spawnerType;
 
-    public Spawner(int x, int y, EntityType entityType, int amount, Level level) {
+    public Spawner(int x, int y, SpawnerType spawnerType, int amount, Level level) {
         super(level);
         this.x = x;
         this.y = y;
-        this.type = entityType;
+        this.spawnerType = spawnerType;
 
         for (int i = 0; i < amount; i++) {
-            if (type == EntityType.Particle) {
+            if (this.spawnerType == SpawnerType.Particle) {
                 level.addEntity(new Particle(x, y, 50, Sprite.particleDefault, level));
             }
         }
-    }
-
-    public enum EntityType {
-        Mob,
-        Particle,
     }
 }

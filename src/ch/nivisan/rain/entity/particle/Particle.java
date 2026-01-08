@@ -14,6 +14,8 @@ public class Particle extends Entity {
         super(level);
         this.x = x;
         this.y = y;
+        this.actualX = x;
+        this.actualY = y;
         this.lifeTime = lifeTime;
         this.sprite = Sprite.particleDefault;
 

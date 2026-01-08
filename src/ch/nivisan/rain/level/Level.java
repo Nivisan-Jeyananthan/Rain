@@ -2,6 +2,7 @@ package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.Spawner;
+import ch.nivisan.rain.entity.SpawnerType;
 import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.graphics.Screen;
@@ -32,7 +33,7 @@ public class Level {
         loadLevel(path);
         generateLevel();
 
-        addEntity(new Spawner(20 << 4, 60 << 4, Spawner.EntityType.Particle, 50, this));
+        addEntity(new Spawner(21 * 16, 60 * 16, SpawnerType.Particle, 50, this));
     }
 
     public void addEntity(Entity entity) {
