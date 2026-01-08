@@ -6,17 +6,13 @@ import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 // anything that moves and needs to be displayed
 public abstract class Mob extends Entity {
     protected Sprite sprite;
     protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
 
-    public Mob(Level level){
+    public Mob(Level level) {
         super(level);
     }
 
@@ -47,8 +43,8 @@ public abstract class Mob extends Entity {
     }
 
     protected void shoot(int x, int y, double direction) {
-        Projectile p = new WizardProjectile(x,y,direction, level);
-        level.addProjectile(p);
+        Projectile p = new WizardProjectile(x, y, direction, level);
+        level.addEntity(p);
     }
 
     /**

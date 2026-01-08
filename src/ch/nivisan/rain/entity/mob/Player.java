@@ -1,14 +1,11 @@
 package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
-import ch.nivisan.rain.entity.Entity;
-import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
-import ch.nivisan.rain.input.MouseButtonState;
 import ch.nivisan.rain.level.Level;
 
 public class Player extends Mob {
@@ -23,7 +20,7 @@ public class Player extends Mob {
         this.input = input;
     }
 
-    public Player(int x, int y, Keyboard input,Level level) {
+    public Player(int x, int y, Keyboard input, Level level) {
         super(level);
 
         this.x = x;
@@ -36,7 +33,7 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        if(fireRate > 0) fireRate--;
+        if (fireRate > 0) fireRate--;
 
         int xAbsolute = 0, yAbsolute = 0;
         if (anim < 7_500) anim++;

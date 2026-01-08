@@ -30,14 +30,16 @@ public class Sprite {
     // projectiles
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
 
-    private final int width;
-    private final int height;
+    // particles
+    public static Sprite particleDefault = new Sprite(3, 0xAAAAAAAA);
     // which pixels of the sprite get rendered
     public final int[] pixels;
+    private final int width;
+    private final int height;
     private int x, y;
     private SpriteSheet sheet;
 
-    public Sprite(int width, int height,int color){
+    public Sprite(int width, int height, int color) {
         this.width = width;
         this.height = height;
         this.pixels = new int[height * width];
@@ -63,15 +65,15 @@ public class Sprite {
         setColor(color);
     }
 
-    public int getSize(){
+    public int getSize() {
         return width;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 

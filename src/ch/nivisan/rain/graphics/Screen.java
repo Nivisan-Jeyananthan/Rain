@@ -35,27 +35,26 @@ public class Screen {
         Arrays.fill(pixels, 0);
     }
 
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed){
-        if(fixed) {
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
+        if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
         }
 
         for (int yPixel = 0; yPixel < sprite.getHeight(); yPixel++) {
-            int absoluteYPosition = yTilePosition + yPixel;
+            int absoluteYPosition = yPixel + yTilePosition;
             for (int xPixel = 0; xPixel < sprite.getWidth(); xPixel++) {
-                int absoluteXPosition = xTilePosition + xPixel;
+                int absoluteXPosition = xPixel + xTilePosition;
 
                 if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
                     continue;
                 }
 
                 int index = absoluteXPosition + absoluteYPosition * width;
-                int spriteIndex = xPixel + yPixel * sprite.getSize();
+                int spriteIndex = xPixel + yPixel * sprite.getWidth();
                 pixels[index] = sprite.pixels[spriteIndex];
             }
         }
-
     }
 
     // when the player moves we need to move our tiles accordingly
@@ -111,7 +110,7 @@ public class Screen {
                 var transparentColor = 0xffff00ff;
                 var color = sprite.pixels[spriteIndex];
 
-                if(color != transparentColor) {
+                if (color != transparentColor) {
                     pixels[index] = color;
                 }
             }

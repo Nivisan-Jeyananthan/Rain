@@ -1,6 +1,8 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.Spawner;
+import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.level.tile.Tile;
@@ -10,11 +12,12 @@ import java.util.List;
 
 public class Level {
     public static Level spawn = new SpawnLevel("../assets/levels/spawn.png");
+    private final List<Entity> entities = new ArrayList<Entity>();
+    private final List<Projectile> projectiles = new ArrayList<Projectile>();
+    private final List<Particle> particles = new ArrayList<Particle>();
     protected int width;
     protected int height;
     protected int[] tiles;
-    private final List<Entity> entities = new ArrayList<Entity>();
-    private final List<Projectile> projectiles = new ArrayList<>();
 
     public Level(int width, int height) {
         this.width = width;
@@ -29,14 +32,17 @@ public class Level {
         loadLevel(path);
         generateLevel();
 
+        addEntity(new Spawner(20 << 4, 60 << 4, Spawner.EntityType.Particle, 50, this));
     }
 
-    public void addEntity(Entity entity){
-        entities.add(entity);
-    }
-
-    public void addProjectile(Projectile projectile){
-        projectiles.add(projectile);
+    public void addEntity(Entity entity) {
+        if (entity instanceof Particle) {
+            particles.add((Particle) entity);
+        } else if (entity instanceof Projectile) {
+            projectiles.add((Projectile) entity);
+        } else {
+            entities.add(entity);
+        }
     }
 
     protected void generateLevel() {
@@ -57,17 +63,17 @@ public class Level {
      * @param yMovement
      * @return
      */
-    public boolean tileCollision(double x,double y,double xMovement, double yMovement, int size) {
+    public boolean tileCollision(double x, double y, double xMovement, double yMovement, int size) {
         boolean solid = false;
 
         int cornerX = 0, cornerY = 0;
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            cornerX = (( (int) xMovement + (int)x) + ( cornerIndex % 2) * size / 8) / 16;
-            cornerY = (((int)yMovement +(int) y) + (cornerIndex / 2) * size / 8) / 16;
+            cornerX = (((int) xMovement + (int) x) + (cornerIndex % 2) * size / 8) / 16;
+            cornerY = (((int) yMovement + (int) y) + (cornerIndex / 2) * size / 8) / 16;
 
-            if (getTile((int)cornerX,(int) cornerY).solid()) return true;
+            if (getTile((int) cornerX, (int) cornerY).solid()) return true;
         }
         return solid;
     }
@@ -77,29 +83,32 @@ public class Level {
             entity.update();
         }
 
-        for(int i = 0; i< projectiles.size(); i++){
+        for (int i = 0; i < projectiles.size(); i++) {
             var projectile = projectiles.get(i);
-            if(projectile.isRemoved()){
+            if (projectile.isRemoved()) {
                 projectiles.remove(projectile);
-            }else {
+            } else {
                 projectile.update();
             }
-
         }
-        System.out.println(projectiles.size());
+
+        for (Particle particle : particles) {
+            particle.update();
+        }
+
     }
 
     public void render(int xScroll, int yScroll, Screen screen) {
 
         screen.setOffsets(xScroll, yScroll);
 
-        renderTiles(xScroll,yScroll,screen);
+        renderTiles(xScroll, yScroll, screen);
         renderEntities(screen);
         renderProjectiles(screen);
-
+        renderParticles(screen);
     }
 
-    private void renderTiles(int xScroll, int yScroll, Screen screen){
+    private void renderTiles(int xScroll, int yScroll, Screen screen) {
         int tileSize = 16;
         // defines render region of the current visible window region:
 
@@ -119,13 +128,19 @@ public class Level {
         }
     }
 
-    private void renderProjectiles(Screen screen){
+    private void renderParticles(Screen screen) {
+        for (Particle particle : particles) {
+            particle.render(screen);
+        }
+    }
+
+    private void renderProjectiles(Screen screen) {
         for (Projectile projectile : projectiles) {
             projectile.render(screen);
         }
     }
 
-    private void renderEntities(Screen screen){
+    private void renderEntities(Screen screen) {
         for (Entity entity : entities) {
             entity.render(screen);
         }

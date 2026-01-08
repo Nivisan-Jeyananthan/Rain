@@ -7,16 +7,16 @@ import ch.nivisan.rain.level.Level;
 import java.util.Random;
 
 public abstract class Projectile extends Entity {
+    protected static final Random random = new Random();
     protected final int xOrigin;
     protected final int yOrigin;
     protected final double angle;
     protected final Sprite sprite;
-    protected double nx,ny;
+    protected double nx, ny;
     protected double speed, range, damage;
-    protected double x,y;
-    protected static final Random random = new Random();
+    protected double x, y;
 
-    public Projectile(int x, int y, double angle, Sprite sprite, Level level){
+    public Projectile(int x, int y, double angle, Sprite sprite, Level level) {
         super(level);
         this.angle = angle;
         this.xOrigin = x;
@@ -26,7 +26,7 @@ public abstract class Projectile extends Entity {
         this.y = y;
     }
 
-    public Sprite getSprite(){
+    public Sprite getSprite() {
         return sprite;
     }
 }

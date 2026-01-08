@@ -2,7 +2,6 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
-import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -13,7 +12,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.Serial;
-import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
     @Serial
@@ -54,7 +52,7 @@ public class Game extends Canvas implements Runnable {
 
         level = Level.spawn;
         playerSpawnLocation = new TileCoordinate(20, 60);
-        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard,level);
+        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard, level);
     }
 
     public static int getWindowWidth() {
@@ -144,8 +142,6 @@ public class Game extends Canvas implements Runnable {
                 framesPerSecond = 0;
                 updatesPerSecond = 0;
             }
-
-
         }
         stop();
     }
@@ -175,15 +171,6 @@ public class Game extends Canvas implements Runnable {
         level.render(xScroll, yScroll, screen);
         player.render(screen);
 
-        Sprite sprite = new Sprite(2,2,0xff00ff);
-        Random random = new Random();
-        for (int i = 0; i < 100; i++) {
-            int x = random.nextInt(20);
-            int y = random.nextInt(20);
-            screen.renderSprite(width - 60 + x,50 + y,sprite, true);
-        }
-
-
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
@@ -192,7 +179,8 @@ public class Game extends Canvas implements Runnable {
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
         graphics.drawString("Player X: " + (player.x >> 4) + " Y: " + (player.y >> 4), 600, 25);
-        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 50);
+        graphics.drawString("Pixel X: " + (player.x) + " Y: " + (player.y), 600, 50);
+        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
 
         // release system ressource
         graphics.dispose();

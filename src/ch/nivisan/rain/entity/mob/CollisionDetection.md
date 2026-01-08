@@ -61,15 +61,20 @@ Now, let's look at the code as a whole. Let's look at the big picture, and see w
 
 ```java
 
-    for (int c = 0; c < 4; c++) {
+for(int c = 0;
+c< 4;c++){
 
-         int xt = ((x + xa) + (c % 2)) / 16;
-         int yt = ((y + ya) + (c / 2)) / 16;
+int xt = ((x + xa) + (c % 2)) / 16;
+int yt = ((y + ya) + (c / 2)) / 16;
 
-         if (level.getTile(xt, yt).solid())
-             return true;
-    }
-    return false;
+         if(level.
+
+getTile(xt, yt).
+
+solid())
+        return true;
+        }
+        return false;
 ```
 
 (Again, its simplified, so we can get to the good stuff)  
