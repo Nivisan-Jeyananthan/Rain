@@ -1,4 +1,4 @@
-package ch.nivisan.rain.entity;
+package ch.nivisan.rain.entity.spawner;
 
 public enum SpawnerType {
     Mob,
