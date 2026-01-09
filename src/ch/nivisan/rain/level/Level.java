@@ -63,15 +63,15 @@ public class Level {
      * @param yMovement
      * @return
      */
-    public boolean tileCollision(double x, double y, double xMovement, double yMovement, int size) {
+    public boolean tileCollision(int x, int y, int size) {
         boolean solid = false;
 
         int cornerX = 0, cornerY = 0;
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            cornerX = (((int) xMovement + (int) x) + (cornerIndex % vertexAmount) * size / 8) / 16;
-            cornerY = (((int) yMovement + (int) y) + (cornerIndex / vertexAmount) * size / 8) / 16;
+            cornerX = (x - (cornerIndex % vertexAmount) * size) >> 16;
+            cornerY = (y - (cornerIndex / vertexAmount) * size) >> 16;
 
             if (getTile((int) cornerX, (int) cornerY).solid())
                 return true;

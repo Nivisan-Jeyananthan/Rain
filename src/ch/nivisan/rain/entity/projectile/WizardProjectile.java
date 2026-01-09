@@ -29,7 +29,7 @@ public class WizardProjectile extends Projectile {
     }
 
     private void removeOnCondition() {
-        if (calculateDistance() > range || level.tileCollision(x, y, nx, ny, sprite.getSize())) {
+        if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny), sprite.getSize())) {
             level.addEntity(new ParticleSpawner((int) x, (int) y, 100, 0.5f, level));
             remove();
         }
