@@ -57,23 +57,27 @@ public class Level {
      * Checks if any of the upcoming 4 tiles overlaps with our player which would
      * cause a collision
      * when it would, returns true, making our player not able to walk past it
-     * Divides by 4 so it is in tile system not pixel
+     * Divides by 4 so it is in tile system not pixel.
+     * Checks based on offset, useful when having a sprite that is in center or does not fill entire
+     * sprite.
      *
-     * @param xMovement
-     * @param yMovement
+     * @param y position y
+     * @param x position x
+     * @param size the size of the sprite without surroundings (width)
+     * @param xOffset the pixel offset in x direction left to right
+     * @param yOffset the pixel offset in y direction from top down
      * @return
      */
-    public boolean tileCollision(int x, int y, int size) {
+    public boolean tileCollision(int x, int y,  int xOffset, int yOffset,int size) {
         boolean solid = false;
-
         int cornerX = 0, cornerY = 0;
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            cornerX = (x - (cornerIndex % vertexAmount) * size) >> 16;
-            cornerY = (y - (cornerIndex / vertexAmount) * size) >> 16;
+            cornerX = (x - (cornerIndex % vertexAmount) * size + xOffset) >> 4;
+            cornerY = (y - (cornerIndex / vertexAmount) * size + yOffset) >> 4;
 
-            if (getTile((int) cornerX, (int) cornerY).solid())
+            if (getTile(cornerX, cornerY).solid())
                 return true;
         }
         return solid;
@@ -106,10 +110,6 @@ public class Level {
                 particle.update();
             }
         }
-
-    }
-
-    private void remove() {
 
     }
 

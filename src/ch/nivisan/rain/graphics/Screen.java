@@ -35,7 +35,7 @@ public class Screen {
         Arrays.fill(pixels, 0);
     }
 
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
+     public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
