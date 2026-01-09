@@ -13,7 +13,7 @@ public class ParticleSpawner extends Spawner {
         this.lifeTime = lifeTime;
 
         for (int i = 0; i < amount; i++) {
-            level.addEntity(new Particle(x, y, lifeTime, Sprite.particleDefault, level));
+            level.addEntity(new Particle(x, y, 0.5f, Sprite.particleDefault, level));
         }
     }
 }

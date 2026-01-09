@@ -30,7 +30,7 @@ public class WizardProjectile extends Projectile {
 
     private void removeOnCollision() {
         if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny),4,4, 8)) {
-            level.addEntity(new ParticleSpawner((int) x, (int) y, 3, 3.0f, level));
+            level.addEntity(new ParticleSpawner((int) x, (int) y, 500, 3.0f, level));
             remove();
         }
     }
@@ -41,11 +41,11 @@ public class WizardProjectile extends Projectile {
      */
     private double calculateDistance() {
         double distance = 0;
-        distance = Math.sqrt(Math.abs(((x - xOrigin) * (x - xOrigin)) + ((y - yOrigin) * (y - yOrigin))));
+        distance = Math.sqrt(Math.abs(((xOrigin - x) * (xOrigin - x)) + ((yOrigin - y) * (yOrigin - y))));
         return distance;
     }
 
     public void render(Screen screen) {
-        screen.renderProjectile((int) x - 5, (int) y - 11, this);
+        screen.renderProjectile((int) x, (int) (y), this);
     }
 }
