@@ -7,7 +7,11 @@ public class Sprite {
     public static Sprite grass = new Sprite(16, 0, 0, SpriteSheet.tiles);
     public static Sprite flower = new Sprite(16, 1, 0, SpriteSheet.tiles);
     public static Sprite rock = new Sprite(16, 2, 0, SpriteSheet.tiles);
+    public static Sprite walls = new Sprite(16, 3, 0, SpriteSheet.tiles);
+    public static Sprite walls2 = new Sprite(16, 4, 0, SpriteSheet.tiles);
+    public static Sprite woodFloor = new Sprite(16, 5, 0, SpriteSheet.tiles);
     public static Sprite empty = new Sprite(16, 0x1B87E0);
+
     public static Sprite spawn_grass = new Sprite(16, 0, 0, SpriteSheet.spawnLevel);
     public static Sprite spawn_hedge = new Sprite(16, 1, 0, SpriteSheet.spawnLevel);
     public static Sprite spawn_water = new Sprite(16, 2, 0, SpriteSheet.spawnLevel);

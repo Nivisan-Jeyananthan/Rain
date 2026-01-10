@@ -6,6 +6,7 @@ import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
 public class WizardProjectile extends Projectile {
+    // refers to the rate of how many per second (60 = 1)
     public static final double fireRate = 30;
 
     public WizardProjectile(int xOrigin, int yOrigin, double angle, Level level) {
@@ -30,7 +31,7 @@ public class WizardProjectile extends Projectile {
 
     private void removeOnCollision() {
         if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny),4,4, 8)) {
-            level.addEntity(new ParticleSpawner((int) x, (int) y, 500, 3.0f, level));
+            level.addEntity(new ParticleSpawner((int) x, (int) y, 500, 1.0f, level));
             remove();
         }
     }
