@@ -14,13 +14,16 @@ public class Tile {
     public static final int color_spawnWall1 = 0xff4d7807;
     public static final int color_spawnWall2 = 0xff3b5b05;
     public static final int color_spawnFloor = 0xffffffff;
+    public static final int color_spawnFloor2 = 0xff4d4d4d;
+
 
     public static Tile grass = new GrassTile(Sprite.grass);
     public static Tile flower = new FlowerTile(Sprite.flower);
     public static Tile rock = new RockTile(Sprite.rock);
-    public static Tile wallsStone = new RockTile(Sprite.rock);
-    public static Tile wallsRock = new RockTile(Sprite.rock);
-    public static Tile woodFloor = new RockTile(Sprite.woodFloor);
+    public static Tile wallsStone = new SpawnWallTile(Sprite.walls);
+    public static Tile wallsRock = new SpawnWallTile(Sprite.walls2);
+    public static Tile woodFloor = new SpawnFloorTile(Sprite.woodFloor);
+    public static Tile woodFloorBase = new SpawnFloorTile(Sprite.woodFloorBase);
 
 
     public static Tile empty = new EmptyTile(Sprite.empty);

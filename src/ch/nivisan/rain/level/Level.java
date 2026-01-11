@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Level {
-    public static Level spawn = new SpawnLevel("../assets/levels/spawn.png");
+    public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
     private final List<Entity> entities = new ArrayList<Entity>();
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
     private final List<Particle> particles = new ArrayList<Particle>();
@@ -128,13 +128,17 @@ public class Level {
                 return Tile.spawnHedge;
             }
             case Tile.color_spawnWall1 -> {
-                return Tile.spawnWall1;
+                return Tile.wallsStone;
             }
             case Tile.color_spawnWall2 -> {
                 return Tile.spawnWall2;
             }
             case Tile.color_spawnFloor -> {
-                return Tile.spawnFloor;
+                return Tile.woodFloor;
+            }
+            case Tile.color_spawnFloor2 ->
+            {
+                return Tile.woodFloorBase;
             }
             case Tile.color_spawnWater -> {
                 return Tile.spawnWater;
