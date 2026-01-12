@@ -2,6 +2,7 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -170,6 +171,7 @@ public class Game extends Canvas implements Runnable {
 
         level.render(xScroll, yScroll, screen);
         player.render(screen);
+        screen.renderSheet(40,40, SpriteSheet.playerDown,false);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 

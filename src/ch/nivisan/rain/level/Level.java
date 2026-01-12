@@ -131,7 +131,7 @@ public class Level {
                 return Tile.wallsStone;
             }
             case Tile.color_spawnWall2 -> {
-                return Tile.spawnWall2;
+                return Tile.wallsRock;
             }
             case Tile.color_spawnFloor -> {
                 return Tile.woodFloor;

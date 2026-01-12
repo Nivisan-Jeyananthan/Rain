@@ -35,7 +35,30 @@ public class Screen {
         Arrays.fill(pixels, 0);
     }
 
-     public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
+    public void renderSheet(int xTilePosition, int yTilePosition, SpriteSheet spriteSheet, boolean fixed) {
+        if (fixed) {
+            xTilePosition -= xOffset;
+            yTilePosition -= yOffset;
+        }
+
+        for (int yPixel = 0; yPixel < spriteSheet.getHeight(); yPixel++) {
+            int absoluteYPosition = yPixel + yTilePosition;
+            for (int xPixel = 0; xPixel < spriteSheet.getWidth(); xPixel++) {
+                int absoluteXPosition = xPixel + xTilePosition;
+
+                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                    continue;
+                }
+
+                int index = absoluteXPosition + absoluteYPosition * width;
+                int spriteIndex = xPixel + yPixel * spriteSheet.getWidth();
+                pixels[index] = spriteSheet.pixels[spriteIndex];
+            }
+        }
+    }
+
+
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;

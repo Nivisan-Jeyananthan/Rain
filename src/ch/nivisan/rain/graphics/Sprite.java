@@ -7,10 +7,10 @@ public class Sprite {
     public static Sprite grass = new Sprite(16, 0, 0, SpriteSheet.tiles);
     public static Sprite flower = new Sprite(16, 1, 0, SpriteSheet.tiles);
     public static Sprite rock = new Sprite(16, 2, 0, SpriteSheet.tiles);
-    public static Sprite walls = new Sprite(16, 6, 0, SpriteSheet.tiles);
-    public static Sprite walls2 = new Sprite(16, 4, 0, SpriteSheet.tiles);
-    public static Sprite woodFloor = new Sprite(16, 12, 0, SpriteSheet.tiles);
-    public static Sprite woodFloorBase = new Sprite(16, 12, 0, SpriteSheet.tiles);
+    public static Sprite walls = new Sprite(16, 0, 1, SpriteSheet.tiles);
+    public static Sprite walls2 = new Sprite(16, 6, 1, SpriteSheet.tiles);
+    public static Sprite woodFloor = new Sprite(16, 5, 1, SpriteSheet.tiles);
+    public static Sprite woodFloorBase = new Sprite(16, 5, 1, SpriteSheet.tiles);
     public static Sprite empty = new Sprite(16, 0x1B87E0);
 
     public static Sprite spawn_grass = new Sprite(16, 0, 0, SpriteSheet.spawnLevel);
@@ -91,7 +91,7 @@ public class Sprite {
         for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
                 int pixelIndex = x + y * width;
-                int sheetIndex = (x + this.x) + (y + this.y) * sheet.size;
+                int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
 
                 pixels[pixelIndex] = sheet.pixels[sheetIndex];
             }
