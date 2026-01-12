@@ -2,8 +2,10 @@ package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
+import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
+import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -14,6 +16,7 @@ public class Player extends Mob {
     private boolean walking = false;
     private int anim = 0;
     private double fireRate = 0;
+    private AnimatedSprite test = new AnimatedSprite(SpriteSheet.playerDown,32,32,3);
 
     public Player(Keyboard input, Level level) {
         super(level);
@@ -33,6 +36,7 @@ public class Player extends Mob {
 
     @Override
     public void update() {
+        test.update();
         if (fireRate > 0) fireRate--;
 
         int xAbsolute = 0, yAbsolute = 0;
@@ -129,6 +133,7 @@ public class Player extends Mob {
         int xCenter = x - 16;
         int yCenter = y - 16;
 
+        sprite = test.getSprite();
         screen.renderPlayer(xCenter, yCenter, sprite, flip);
     }
 }

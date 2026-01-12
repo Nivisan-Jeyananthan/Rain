@@ -42,7 +42,7 @@ public class Sprite {
     private final int width;
     private final int height;
     private int x, y;
-    private SpriteSheet sheet;
+    protected SpriteSheet sheet;
 
     public Sprite(int width, int height, int color) {
         this.width = width;
@@ -51,6 +51,20 @@ public class Sprite {
         setColor(color);
     }
 
+    protected Sprite(SpriteSheet spriteSheet,int width, int height){
+        this.width = width;
+        this.height = height;
+        this.sheet = spriteSheet;
+        this.pixels = new int[width * height];
+    }
+
+    /**
+     * Create a sprite from an existing spritesheet, where the sprite is the entire size
+     * @param size
+     * @param x
+     * @param y
+     * @param sheet
+     */
     public Sprite(int size, int x, int y, SpriteSheet sheet) {
         this.x = x * size;
         this.y = y * size;
@@ -63,11 +77,22 @@ public class Sprite {
         loadSpriteFromSheet();
     }
 
+    /**
+     * Creates a sprite of given size filled by the given color
+     * @param size
+     * @param color
+     */
     public Sprite(int size, int color) {
         this.height = size;
         this.width = size;
         pixels = new int[size * size];
         setColor(color);
+    }
+
+    public Sprite(int[] pixels, int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.pixels = pixels;
     }
 
     public int getSize() {
@@ -86,7 +111,10 @@ public class Sprite {
         Arrays.fill(pixels, color);
     }
 
-    // goes through the SpriteSheet and loads it into the pixels array
+
+    /**
+     * goes through the SpriteSheet and loads it into the pixels array raw
+     */
     private void loadSpriteFromSheet() {
         for (int y = 0; y < width; y++) {
             for (int x = 0; x < height; x++) {
