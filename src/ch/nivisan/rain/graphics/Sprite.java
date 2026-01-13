@@ -21,16 +21,17 @@ public class Sprite {
     public static Sprite spawn_floor = new Sprite(16, 1, 1, SpriteSheet.spawnLevel);
     // player sprites here:
     // unused since mathematically flipped
-    public static Sprite playerLeft = new Sprite(32, 3, 5, SpriteSheet.tiles);
-    public static Sprite playerBack = new Sprite(32, 0, 5, SpriteSheet.tiles);
-    public static Sprite playerBack1 = new Sprite(32, 0, 6, SpriteSheet.tiles);
-    public static Sprite playerBack2 = new Sprite(32, 0, 7, SpriteSheet.tiles);
-    public static Sprite playerRight = new Sprite(32, 1, 5, SpriteSheet.tiles);
-    public static Sprite playerRight1 = new Sprite(32, 1, 6, SpriteSheet.tiles);
-    public static Sprite playerRight2 = new Sprite(32, 1, 7, SpriteSheet.tiles);
-    public static Sprite playerFront = new Sprite(32, 2, 5, SpriteSheet.tiles);
-    public static Sprite playerFront1 = new Sprite(32, 2, 6, SpriteSheet.tiles);
-    public static Sprite playerFront2 = new Sprite(32, 2, 7, SpriteSheet.tiles);
+    public static Sprite playerLeft = new Sprite(32, 3, 0, SpriteSheet.player);
+    public static Sprite playerFront = new Sprite(32, 0, 0, SpriteSheet.player);
+    public static Sprite playerFront1 = new Sprite(32, 0, 1, SpriteSheet.player);
+    public static Sprite playerFront2 = new Sprite(32, 0, 2, SpriteSheet.player);
+    public static Sprite playerBack = new Sprite(32, 1, 0, SpriteSheet.player);
+    public static Sprite playerBack1 = new Sprite(32, 1, 1, SpriteSheet.player);
+    public static Sprite playerBack2 = new Sprite(32, 1, 2, SpriteSheet.player);
+    public static Sprite playerRight = new Sprite(32, 2, 0, SpriteSheet.player);
+    public static Sprite playerRight1 = new Sprite(32, 2, 1, SpriteSheet.player);
+    public static Sprite playerRight2 = new Sprite(32, 2, 2, SpriteSheet.player);
+
 
     // projectiles
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);

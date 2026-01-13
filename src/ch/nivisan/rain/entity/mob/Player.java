@@ -16,7 +16,7 @@ public class Player extends Mob {
     private boolean walking = false;
     private int anim = 0;
     private double fireRate = 0;
-    private AnimatedSprite test = new AnimatedSprite(SpriteSheet.playerDown,32,32,3);
+  //  private AnimatedSprite test = new AnimatedSprite(SpriteSheet.playerDown,32,32,3);
 
     public Player(Keyboard input, Level level) {
         super(level);
@@ -36,7 +36,7 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        test.update();
+        // test.update();
         if (fireRate > 0) fireRate--;
 
         int xAbsolute = 0, yAbsolute = 0;
@@ -133,7 +133,7 @@ public class Player extends Mob {
         int xCenter = x - 16;
         int yCenter = y - 16;
 
-        sprite = test.getSprite();
+//        sprite = test.getSprite();
         screen.renderPlayer(xCenter, yCenter, sprite, flip);
     }
 }

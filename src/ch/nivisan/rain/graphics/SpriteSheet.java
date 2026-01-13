@@ -15,10 +15,19 @@ public class SpriteSheet {
     public static SpriteSheet wizardProjectiles = new SpriteSheet("../assets/sheets/projectiles/wizard.png", 48);
     public static SpriteSheet stoneSheet = new SpriteSheet("../assets/tiles/WoodFloor.png", 16);
 
-    public static SpriteSheet player = new SpriteSheet("../assets/sheets/Sprites.png", 256);
-    public static SpriteSheet playerDown = new SpriteSheet(player,0,5,1,3,32,32);
+    public static SpriteSheet player = new SpriteSheet("../assets/character.png", 128,96);
+    public static SpriteSheet playerDown = new SpriteSheet(player,0,0,1,3,32,32);
 
     private Sprite[] sprites;
+
+    public SpriteSheet(String path, int size) {
+        this.path = path;
+        this.height = size;
+        this.width = size;
+
+        pixels = new int[size * size];
+        loadImage();
+    }
 
     public SpriteSheet(String path, int width, int height){
         this.path = path;
@@ -91,15 +100,6 @@ public class SpriteSheet {
                 pixels[j + i * spriteWidth] = parentSheet.pixels[xp + yp * parentSheet.getWidth()];
             }
         }
-    }
-
-    public SpriteSheet(String path, int size) {
-        this.path = path;
-        this.height = size;
-        this.width = size;
-
-        pixels = new int[size * size];
-        loadImage();
     }
 
     private void loadImage() {
