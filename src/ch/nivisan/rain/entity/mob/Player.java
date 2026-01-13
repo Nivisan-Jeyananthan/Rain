@@ -16,11 +16,18 @@ public class Player extends Mob {
     private boolean walking = false;
     private int anim = 0;
     private double fireRate = 0;
-  //  private AnimatedSprite test = new AnimatedSprite(SpriteSheet.playerDown,32,32,3);
+    private static AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront,32,32,3);
+    private static AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack,32,32,3);
+    private static AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight,32,32,3);
+    private static AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft,32,32,3);
+
+    private AnimatedSprite animatedSprite = front;
 
     public Player(Keyboard input, Level level) {
         super(level);
         this.input = input;
+        sprite = Sprite.playerFront;
+        animatedSprite = front;
     }
 
     public Player(int x, int y, Keyboard input, Level level) {
@@ -36,7 +43,8 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        // test.update();
+        if(walking) animatedSprite.update();
+        else{ animatedSprite.setFrame(0);}
         if (fireRate > 0) fireRate--;
 
         int xAbsolute = 0, yAbsolute = 0;
@@ -44,15 +52,22 @@ public class Player extends Mob {
         else anim = 0;
 
 
-        if (input.up)
+        if (input.up) {
             yAbsolute--;
-        if (input.down)
+            animatedSprite = back;
+        }
+        else if (input.down) {
             yAbsolute++;
-        if (input.right)
+            animatedSprite = front;
+        }
+        else if (input.right) {
             xAbsolute++;
-        if (input.left)
+            animatedSprite = right;
+        }
+        else if (input.left) {
             xAbsolute--;
-
+            animatedSprite = left;
+        }
 
         if (xAbsolute != 0 || yAbsolute != 0) {
             move(xAbsolute, yAbsolute);
@@ -64,6 +79,7 @@ public class Player extends Mob {
 
         updateShooting();
     }
+
 
     /**
      * projectile calculations
@@ -118,7 +134,7 @@ public class Player extends Mob {
             }
         }
         if (facingDirection == Direction.West) {
-            flip = FlipState.XFlipped;
+            flip = FlipState.None;
             sprite = Sprite.playerRight;
             if (walking) {
                 if (anim % 20 > 10) {
@@ -133,7 +149,7 @@ public class Player extends Mob {
         int xCenter = x - 16;
         int yCenter = y - 16;
 
-//        sprite = test.getSprite();
+        sprite = animatedSprite.getSprite();
         screen.renderPlayer(xCenter, yCenter, sprite, flip);
     }
 }
