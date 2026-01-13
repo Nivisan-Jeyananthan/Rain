@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 // Is a part of a image (16 pixels by 16 pixels)
 public class Sprite {
-    public static Sprite grass = new Sprite(16, 0, 0, SpriteSheet.tiles);
+    public static Sprite grass = new Sprite(16, 11, 1, SpriteSheet.tiles);
     public static Sprite flower = new Sprite(16, 1, 0, SpriteSheet.tiles);
     public static Sprite rock = new Sprite(16, 2, 0, SpriteSheet.tiles);
     public static Sprite walls = new Sprite(16, 0, 1, SpriteSheet.tiles);

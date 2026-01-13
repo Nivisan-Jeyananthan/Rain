@@ -171,7 +171,6 @@ public class Game extends Canvas implements Runnable {
 
         level.render(xScroll, yScroll, screen);
         player.render(screen);
-        screen.renderSheet(40,40, SpriteSheet.playerDown,false);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 

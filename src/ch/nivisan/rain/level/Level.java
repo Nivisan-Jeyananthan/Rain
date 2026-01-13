@@ -122,7 +122,7 @@ public class Level {
         int color = tiles[index];
         switch (color) {
             case Tile.color_spawnGrass -> {
-                return Tile.spawnGrass;
+                return Tile.grass;
             }
             case Tile.color_spawnHedge -> {
                 return Tile.spawnHedge;

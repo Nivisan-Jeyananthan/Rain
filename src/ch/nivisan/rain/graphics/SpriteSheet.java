@@ -16,7 +16,10 @@ public class SpriteSheet {
     public static SpriteSheet stoneSheet = new SpriteSheet("../assets/tiles/WoodFloor.png", 16);
 
     public static SpriteSheet player = new SpriteSheet("../assets/character.png", 128,96);
-    public static SpriteSheet playerDown = new SpriteSheet(player,0,0,1,3,32,32);
+    public static SpriteSheet playerFront = new SpriteSheet(player,0,0,1,3,32,32);
+    public static SpriteSheet playerBack = new SpriteSheet(player,1,0,1,3,32,32);
+    public static SpriteSheet playerRight = new SpriteSheet(player,2,0,1,3,32,32);
+    public static SpriteSheet playerLeft = new SpriteSheet(player,3,0,1,3,32,32);
 
     private Sprite[] sprites;
 
