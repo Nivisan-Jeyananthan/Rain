@@ -6,11 +6,12 @@ import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.level.Level;
 
 public class Chaser extends Mob {
-    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.dummyFront,32,32,3);
-    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack,32,32,3);
-    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight,32,32,3);
-    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft,32,32,3);
+    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.dummyFront, 32, 32, 3);
+    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack, 32, 32, 3);
+    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight, 32, 32, 3);
+    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft, 32, 32, 3);
     private AnimatedSprite animatedSprite = front;
+    private Player targetPlayer;
 
     private int time = 0;
     private int yAbsolute = 0;
@@ -20,30 +21,41 @@ public class Chaser extends Mob {
         super(level);
         this.x = x << 4;
         this.y = y << 4;
+        sprite = animatedSprite.getSprite();
     }
 
     @Override
     public void update() {
-        if(walking) animatedSprite.update();
+        move();
+
+        if (walking) animatedSprite.update();
         else animatedSprite.setFrame(0);
         time++;
 
-
         if (yAbsolute > 0) {
-            yAbsolute = 1;
             animatedSprite = front;
-        }
-        else if (yAbsolute < 0) {
-            yAbsolute = -1;
+        } else if (yAbsolute < 0) {
             animatedSprite = back;
-        }
-        else if (xAbsolute > 0) {
-            xAbsolute = 1;
+        } else if (xAbsolute > 0) {
             animatedSprite = right;
-        }
-        else if (xAbsolute < 0) {
-            xAbsolute = -1;
+        } else if (xAbsolute < 0) {
             animatedSprite = left;
+        }
+    }
+
+    protected void move() {
+        xAbsolute = 0;
+        yAbsolute = 0;
+
+        targetPlayer = level.getClientPlayer();
+        if(x < targetPlayer.getX()){
+            xAbsolute++;
+        }    if(x > targetPlayer.getX()){
+            xAbsolute--;
+        }    if(y < targetPlayer.getY()){
+            yAbsolute++;
+        }    if(y > targetPlayer.getY()){
+            yAbsolute--;
         }
 
         if (xAbsolute != 0 || yAbsolute != 0) {
@@ -56,6 +68,7 @@ public class Chaser extends Mob {
 
     @Override
     public void render(Screen screen) {
-        screen.renderMob(x,y,sprite,FlipState.None);
+        sprite = animatedSprite.getSprite();
+        screen.renderMob(x - 16, y - 16, this);
     }
 }

@@ -6,27 +6,24 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class SpriteSheet {
-    private final int width;
-    private final int height;
-    private String path;
-    public final int[] pixels;
     public static final SpriteSheet tiles = new SpriteSheet("../assets/sheets/Sprites.png", 256);
     public static final SpriteSheet spawnLevel = new SpriteSheet("../assets/sheets/spawn_level.png", 48);
     public static final SpriteSheet wizardProjectiles = new SpriteSheet("../assets/sheets/projectiles/wizard.png", 48);
     public static final SpriteSheet stoneSheet = new SpriteSheet("../assets/tiles/WoodFloor.png", 16);
-
-    public static final  SpriteSheet player = new SpriteSheet("../assets/character.png", 128,96);
-    public static final SpriteSheet playerFront = new SpriteSheet(player,0,0,1,3,32,32);
-    public static final SpriteSheet playerBack = new SpriteSheet(player,1,0,1,3,32,32);
-    public static final SpriteSheet playerRight = new SpriteSheet(player,2,0,1,3,32,32);
-    public static final SpriteSheet playerLeft = new SpriteSheet(player,3,0,1,3,32,32);
-
-    public static final SpriteSheet dummy = new SpriteSheet("../assets/Mob.png",128,96);
-    public static final SpriteSheet dummyFront = new SpriteSheet(dummy,0,0,1,3,32,32);
-    public static final SpriteSheet dummyBack = new SpriteSheet(dummy,1,0,1,3,32,32);
-    public static final SpriteSheet dummyRight = new SpriteSheet(dummy,2,0,1,3,32,32);
-    public static final SpriteSheet dummyLeft = new SpriteSheet(dummy,3,0,1,3,32,32);
-
+    public static final SpriteSheet player = new SpriteSheet("../assets/character.png", 128, 96);
+    public static final SpriteSheet playerFront = new SpriteSheet(player, 0, 0, 1, 3, 32, 32);
+    public static final SpriteSheet playerBack = new SpriteSheet(player, 1, 0, 1, 3, 32, 32);
+    public static final SpriteSheet playerRight = new SpriteSheet(player, 2, 0, 1, 3, 32, 32);
+    public static final SpriteSheet playerLeft = new SpriteSheet(player, 3, 0, 1, 3, 32, 32);
+    public static final SpriteSheet dummy = new SpriteSheet("../assets/Mob.png", 128, 96);
+    public static final SpriteSheet dummyFront = new SpriteSheet(dummy, 0, 0, 1, 3, 32, 32);
+    public static final SpriteSheet dummyBack = new SpriteSheet(dummy, 1, 0, 1, 3, 32, 32);
+    public static final SpriteSheet dummyRight = new SpriteSheet(dummy, 2, 0, 1, 3, 32, 32);
+    public static final SpriteSheet dummyLeft = new SpriteSheet(dummy, 3, 0, 1, 3, 32, 32);
+    public final int[] pixels;
+    private final int width;
+    private final int height;
+    private String path;
     private Sprite[] sprites;
 
     public SpriteSheet(String path, int size) {
@@ -38,7 +35,7 @@ public class SpriteSheet {
         loadImage();
     }
 
-    public SpriteSheet(String path, int width, int height){
+    public SpriteSheet(String path, int width, int height) {
         this.path = path;
         this.width = width;
         this.height = height;
@@ -49,15 +46,16 @@ public class SpriteSheet {
     /**
      * Creates a spritesheet based on parent sprite sheet.
      * A sub sheet to say.
-     * @param parentSheet the parent
-     * @param x at which tile width it begins
-     * @param y at which tile height it begins
-     * @param width how long it should be
-     * @param height how high it should be
-     * @param spriteSizeWidth the width of each individual sprite
+     *
+     * @param parentSheet      the parent
+     * @param x                at which tile width it begins
+     * @param y                at which tile height it begins
+     * @param width            how long it should be
+     * @param height           how high it should be
+     * @param spriteSizeWidth  the width of each individual sprite
      * @param spriteSizeHeight the height of each individual sprite
      */
-    public SpriteSheet(SpriteSheet parentSheet,int x, int y, int width, int height, int spriteSizeWidth, int spriteSizeHeight){
+    public SpriteSheet(SpriteSheet parentSheet, int x, int y, int width, int height, int spriteSizeWidth, int spriteSizeHeight) {
         int pixelXStart = x * spriteSizeWidth;
         int pixelYStart = y * spriteSizeHeight;
         int spriteWidth = width * spriteSizeWidth;
@@ -75,12 +73,13 @@ public class SpriteSheet {
 
     /**
      * Separates the sprites into "tiles" and assigns them to pixels array for render
-     * @param width how many sprites we have in width (1,2,3, ...)
-     * @param height how many sprites we have in height (1,2,3, ...)
+     *
+     * @param width            how many sprites we have in width (1,2,3, ...)
+     * @param height           how many sprites we have in height (1,2,3, ...)
      * @param spriteSizeHeight 16,32 or larger
-     * @param spriteSizeWidth 16,32 or larger
-     * @param spriteHeight how high our sprite is if not square
-     * @param spriteWidth how wide our sprite is if not square
+     * @param spriteSizeWidth  16,32 or larger
+     * @param spriteHeight     how high our sprite is if not square
+     * @param spriteWidth      how wide our sprite is if not square
      */
     private void assignSpritesToPixels(int width, int height, int spriteSizeWidth, int spriteSizeHeight, int spriteHeight, int spriteWidth) {
         int frame = 0;
@@ -123,16 +122,16 @@ public class SpriteSheet {
         }
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 
 
-    public Sprite[] getSprites(){
+    public Sprite[] getSprites() {
         return sprites;
     }
 

@@ -1,10 +1,9 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
-import ch.nivisan.rain.entity.spawner.Spawner;
-import ch.nivisan.rain.entity.spawner.SpawnerType;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -16,6 +15,7 @@ public class Level {
     private final List<Entity> entities = new ArrayList<Entity>();
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
     private final List<Particle> particles = new ArrayList<Particle>();
+    private final List<Player> players = new ArrayList<Player>();
     protected int width;
     protected int height;
     protected int[] tiles;
@@ -34,13 +34,24 @@ public class Level {
         generateLevel();
     }
 
+    public Player getClientPlayer(){
+        return players.getFirst();
+    }
+
+    public Player getPlayer(int index){
+        return players.get(index);
+    }
+
+    public List<Player> getPlayers(){
+        return players;
+    }
+
     public void addEntity(Entity entity) {
-        if (entity instanceof Particle) {
-            particles.add((Particle) entity);
-        } else if (entity instanceof Projectile) {
-            projectiles.add((Projectile) entity);
-        } else {
-            entities.add(entity);
+        switch (entity) {
+            case Particle particle -> particles.add(particle);
+            case Projectile projectile -> projectiles.add(projectile);
+            case Player player -> players.add(player);
+            case null, default -> entities.add(entity);
         }
     }
 
@@ -61,14 +72,14 @@ public class Level {
      * Checks based on offset, useful when having a sprite that is in center or does not fill entire
      * sprite.
      *
-     * @param y position y
-     * @param x position x
-     * @param size the size of the sprite without surroundings (width)
+     * @param y       position y
+     * @param x       position x
+     * @param size    the size of the sprite without surroundings (width)
      * @param xOffset the pixel offset in x direction left to right
      * @param yOffset the pixel offset in y direction from top down
      * @return
      */
-    public boolean tileCollision(int x, int y,  int xOffset, int yOffset,int size) {
+    public boolean tileCollision(int x, int y, int xOffset, int yOffset, int size) {
         boolean solid = false;
         int cornerX = 0, cornerY = 0;
         int vertexAmount = 2;
@@ -84,6 +95,14 @@ public class Level {
     }
 
     public void update() {
+        updateEntities();
+        updateProjectiles();
+        updateParticles();
+        updatePlayers();
+
+    }
+
+    private void updateEntities() {
         for (int i = 0; i < entities.size(); i++) {
             var entity = entities.get(i);
             if (entity.isRemoved()) {
@@ -92,7 +111,9 @@ public class Level {
                 entity.update();
             }
         }
+    }
 
+    private void updateProjectiles() {
         for (int i = 0; i < projectiles.size(); i++) {
             var projectile = projectiles.get(i);
             if (projectile.isRemoved()) {
@@ -101,7 +122,9 @@ public class Level {
                 projectile.update();
             }
         }
+    }
 
+    private void updateParticles() {
         for (int i = 0; i < particles.size(); i++) {
             var particle = particles.get(i);
             if (particle.isRemoved()) {
@@ -110,7 +133,17 @@ public class Level {
                 particle.update();
             }
         }
+    }
 
+    private void updatePlayers() {
+        for (int i = 0; i < players.size(); i++) {
+            var player = players.get(i);
+            if (player.isRemoved()) {
+                players.remove(player);
+            } else {
+                player.update();
+            }
+        }
     }
 
     // convert pixel position data to tile position data
@@ -136,8 +169,7 @@ public class Level {
             case Tile.color_spawnFloor -> {
                 return Tile.woodFloor;
             }
-            case Tile.color_spawnFloor2 ->
-            {
+            case Tile.color_spawnFloor2 -> {
                 return Tile.woodFloorBase;
             }
             case Tile.color_spawnWater -> {
@@ -157,6 +189,7 @@ public class Level {
         renderEntities(screen);
         renderProjectiles(screen);
         renderParticles(screen);
+        renderPlayers(screen);
     }
 
     private void renderTiles(int xScroll, int yScroll, Screen screen) {
@@ -177,6 +210,12 @@ public class Level {
             for (int x = xStart; x < xEnd; x++) {
                 getTile(x, y).render(x, y, screen);
             }
+        }
+    }
+
+    private void renderPlayers(Screen screen){
+        for (Player player : players) {
+            player.render(screen);
         }
     }
 

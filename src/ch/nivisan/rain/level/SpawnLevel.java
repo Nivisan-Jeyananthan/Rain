@@ -1,5 +1,6 @@
 package ch.nivisan.rain.level;
 
+import ch.nivisan.rain.entity.mob.Chaser;
 import ch.nivisan.rain.entity.mob.DummyMob;
 
 import javax.imageio.ImageIO;
@@ -25,8 +26,8 @@ public class SpawnLevel extends Level {
             System.out.println("Could not load level file!");
         }
 
-        for (int i = 0; i < 3; i++) {
-            addEntity(new DummyMob(this,20,55));
+        for (int i = 0; i < 1; i++) {
+            addEntity(new Chaser(this, 20, 55));
         }
     }
 

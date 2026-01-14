@@ -1,7 +1,7 @@
 package ch.nivisan.rain.entity.projectile;
 
-import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.entity.spawner.ParticleSpawner;
+import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
@@ -30,7 +30,7 @@ public class WizardProjectile extends Projectile {
     }
 
     private void removeOnCollision() {
-        if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny),4,4, 8)) {
+        if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny), 4, 4, 8)) {
             level.addEntity(new ParticleSpawner((int) x, (int) y, 500, 1.0f, level));
             remove();
         }
@@ -38,6 +38,7 @@ public class WizardProjectile extends Projectile {
 
     /**
      * Calculates the length of the vector
+     *
      * @return
      */
     private double calculateDistance() {

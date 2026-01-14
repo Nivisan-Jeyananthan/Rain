@@ -18,7 +18,7 @@ public abstract class Mob extends Entity {
         super(level);
     }
 
-    public void move(int xMovement, int yMovement) {
+    protected void move(int xMovement, int yMovement) {
         if (xMovement != 0 && yMovement != 0) {
             move(xMovement, 0);
             move(0, yMovement);
@@ -69,6 +69,9 @@ public abstract class Mob extends Entity {
             if (level.getTile(cornerX, cornerY).solid()) return true;
         }
         return solid;
+    }
 
+    public Sprite getSprite() {
+        return sprite;
     }
 }

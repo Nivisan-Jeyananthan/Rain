@@ -6,12 +6,12 @@ import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
 public class Particle extends Entity {
-    private int lifeTime = 0;
-    private int maxLifeTime = 0;
     private final Sprite sprite;
     protected double xMovement, yMovement, actualX, actualY;
     // z represents here gravity
     protected double z, zMovement;
+    private int lifeTime = 0;
+    private int maxLifeTime = 0;
 
     public Particle(int x, int y, float maxLifeTime, Sprite sprite, Level level) {
         super(level);
@@ -19,7 +19,7 @@ public class Particle extends Entity {
         this.y = y;
         this.actualX = x;
         this.actualY = y;
-        this.maxLifeTime = ((int)(maxLifeTime * 60)) + (random.nextInt(20) - 10);
+        this.maxLifeTime = ((int) (maxLifeTime * 60)) + (random.nextInt(20) - 10);
         this.sprite = Sprite.particleDefault;
 
         this.xMovement = random.nextGaussian();
@@ -72,6 +72,6 @@ public class Particle extends Entity {
 
     @Override
     public void render(Screen screen) {
-        screen.renderSprite((int) actualX , (int) actualY - (int) z -1 , sprite, true);
+        screen.renderSprite((int) actualX, (int) actualY - (int) z - 1, sprite, true);
     }
 }

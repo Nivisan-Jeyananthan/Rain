@@ -2,7 +2,6 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
-import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -54,6 +53,7 @@ public class Game extends Canvas implements Runnable {
         level = Level.spawn;
         playerSpawnLocation = new TileCoordinate(20, 60);
         player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard, level);
+        level.addEntity(player);
     }
 
     public static int getWindowWidth() {
@@ -149,7 +149,6 @@ public class Game extends Canvas implements Runnable {
 
     public void update() {
         keyboard.update();
-        player.update();
         level.update();
     }
 
@@ -166,11 +165,10 @@ public class Game extends Canvas implements Runnable {
         // how many pixels our character moved so we have adjust the map accordingly
         // when our player moved 2 pixels right, map should move 2 pixel left
         // offset essentially
-        int xScroll = player.x - screen.width / 2;
-        int yScroll = player.y - screen.height / 2;
+        int xScroll = player.getX() - screen.width / 2;
+        int yScroll = player.getY() - screen.height / 2;
 
         level.render(xScroll, yScroll, screen);
-        player.render(screen);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
@@ -179,8 +177,8 @@ public class Game extends Canvas implements Runnable {
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
-        graphics.drawString("Player X: " + (player.x >> 4) + " Y: " + (player.y >> 4), 600, 25);
-        graphics.drawString("Pixel X: " + (player.x) + " Y: " + (player.y), 600, 50);
+        graphics.drawString("Player X: " + (player.getX() >> 4) + " Y: " + (player.getY() >> 4), 600, 25);
+        graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
         graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
 
         // release system ressource

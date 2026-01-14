@@ -10,13 +10,12 @@ import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
 
 public class Player extends Mob {
+    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
+    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
+    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
+    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
     private final Keyboard input;
     private double fireRate = 0;
-    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront,32,32,3);
-    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack,32,32,3);
-    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight,32,32,3);
-    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft,32,32,3);
-
     private AnimatedSprite animatedSprite = front;
 
     public Player(Keyboard input, Level level) {
@@ -36,8 +35,10 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        if(walking) animatedSprite.update();
-        else{ animatedSprite.setFrame(0);}
+        if (walking) animatedSprite.update();
+        else {
+            animatedSprite.setFrame(0);
+        }
         if (fireRate > 0) fireRate--;
 
         int xAbsolute = 0, yAbsolute = 0;
@@ -45,16 +46,13 @@ public class Player extends Mob {
         if (input.up) {
             yAbsolute--;
             animatedSprite = back;
-        }
-        else if (input.down) {
+        } else if (input.down) {
             yAbsolute++;
             animatedSprite = front;
-        }
-        else if (input.right) {
+        } else if (input.right) {
             xAbsolute++;
             animatedSprite = right;
-        }
-        else if (input.left) {
+        } else if (input.left) {
             xAbsolute--;
             animatedSprite = left;
         }

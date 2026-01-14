@@ -1,6 +1,8 @@
 package ch.nivisan.rain.graphics;
 
+import ch.nivisan.rain.entity.mob.Chaser;
 import ch.nivisan.rain.entity.mob.FlipState;
+import ch.nivisan.rain.entity.mob.Mob;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -171,6 +173,41 @@ public class Screen {
                 // so instead of the hex color code only, we also add the alpha channel code at the beginning.
                 int transparentColor = 0xffff00ff;
 
+                if (color != transparentColor) {
+                    pixels[absoluteXPosition + absoluteYPosition * width] = color;
+                }
+            }
+        }
+    }
+
+    public void renderMob(int xPosition, int yPosition, Mob mob) {
+        Sprite sprite = mob.getSprite();
+
+        xPosition -= xOffset;
+        yPosition -= yOffset;
+
+        for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
+            int absoluteYPosition = yPosition + yPixel;
+
+            for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
+                int absoluteXPosition = xPosition + xPixel;
+                // so we only render the tiles that are visible on our monitor and nothing else
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                    break;
+                }
+
+                if (absoluteXPosition < 0)
+                    absoluteXPosition = 0;
+
+                int color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
+
+                if ((mob instanceof Chaser) && color == 0xff472BBF) {
+                    color = 0xffBA0015;
+                }
+
+                // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
+                // so instead of the hex color code only, we also add the alpha channel code at the beginning.
+                int transparentColor = 0xffff00ff;
                 if (color != transparentColor) {
                     pixels[absoluteXPosition + absoluteYPosition * width] = color;
                 }

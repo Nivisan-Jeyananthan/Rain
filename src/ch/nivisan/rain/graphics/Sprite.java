@@ -42,8 +42,8 @@ public class Sprite {
     public final int[] pixels;
     private final int width;
     private final int height;
-    private int x, y;
     protected SpriteSheet sheet;
+    private int x, y;
 
     public Sprite(int width, int height, int color) {
         this.width = width;
@@ -52,7 +52,7 @@ public class Sprite {
         setColor(color);
     }
 
-    protected Sprite(SpriteSheet spriteSheet,int width, int height){
+    protected Sprite(SpriteSheet spriteSheet, int width, int height) {
         this.width = width;
         this.height = height;
         this.sheet = spriteSheet;
@@ -61,6 +61,7 @@ public class Sprite {
 
     /**
      * Create a sprite from an existing spritesheet, where the sprite is the entire size
+     *
      * @param size
      * @param x
      * @param y
@@ -80,6 +81,7 @@ public class Sprite {
 
     /**
      * Creates a sprite of given size filled by the given color
+     *
      * @param size
      * @param color
      */
