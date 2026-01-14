@@ -10,16 +10,22 @@ public class SpriteSheet {
     private final int height;
     private String path;
     public final int[] pixels;
-    public static SpriteSheet tiles = new SpriteSheet("../assets/sheets/Sprites.png", 256);
-    public static SpriteSheet spawnLevel = new SpriteSheet("../assets/sheets/spawn_level.png", 48);
-    public static SpriteSheet wizardProjectiles = new SpriteSheet("../assets/sheets/projectiles/wizard.png", 48);
-    public static SpriteSheet stoneSheet = new SpriteSheet("../assets/tiles/WoodFloor.png", 16);
+    public static final SpriteSheet tiles = new SpriteSheet("../assets/sheets/Sprites.png", 256);
+    public static final SpriteSheet spawnLevel = new SpriteSheet("../assets/sheets/spawn_level.png", 48);
+    public static final SpriteSheet wizardProjectiles = new SpriteSheet("../assets/sheets/projectiles/wizard.png", 48);
+    public static final SpriteSheet stoneSheet = new SpriteSheet("../assets/tiles/WoodFloor.png", 16);
 
-    public static SpriteSheet player = new SpriteSheet("../assets/character.png", 128,96);
-    public static SpriteSheet playerFront = new SpriteSheet(player,0,0,1,3,32,32);
-    public static SpriteSheet playerBack = new SpriteSheet(player,1,0,1,3,32,32);
-    public static SpriteSheet playerRight = new SpriteSheet(player,2,0,1,3,32,32);
-    public static SpriteSheet playerLeft = new SpriteSheet(player,3,0,1,3,32,32);
+    public static final  SpriteSheet player = new SpriteSheet("../assets/character.png", 128,96);
+    public static final SpriteSheet playerFront = new SpriteSheet(player,0,0,1,3,32,32);
+    public static final SpriteSheet playerBack = new SpriteSheet(player,1,0,1,3,32,32);
+    public static final SpriteSheet playerRight = new SpriteSheet(player,2,0,1,3,32,32);
+    public static final SpriteSheet playerLeft = new SpriteSheet(player,3,0,1,3,32,32);
+
+    public static final SpriteSheet dummy = new SpriteSheet("../assets/Mob.png",128,96);
+    public static final SpriteSheet dummyFront = new SpriteSheet(dummy,0,0,1,3,32,32);
+    public static final SpriteSheet dummyBack = new SpriteSheet(dummy,1,0,1,3,32,32);
+    public static final SpriteSheet dummyRight = new SpriteSheet(dummy,2,0,1,3,32,32);
+    public static final SpriteSheet dummyLeft = new SpriteSheet(dummy,3,0,1,3,32,32);
 
     private Sprite[] sprites;
 

@@ -3,7 +3,7 @@ package ch.nivisan.rain.graphics;
 public class AnimatedSprite extends Sprite{
     private int frames = 0;
     private int rate = 5;
-    private Sprite sprite;
+    private Sprite currentSprite;
     private int animationLength = -1;
     private int time = 0;
 
@@ -16,7 +16,14 @@ public class AnimatedSprite extends Sprite{
      */
     public AnimatedSprite(SpriteSheet spriteSheet, int width,int height, int animationLength){
         super(spriteSheet, width,height);
-        this.sprite = spriteSheet.getSprites()[0];
+
+        if(spriteSheet.getSprites().length > 0) {
+            this.currentSprite = spriteSheet.getSprites()[0];
+        }
+        else{
+            System.err.println("Provided Spritesheet with length of 0");
+        }
+
         this.animationLength = animationLength;
         if(animationLength > sheet.getSprites().length){
             System.out.println("Error length of animation exceeded!");
@@ -28,13 +35,13 @@ public class AnimatedSprite extends Sprite{
         if((time % rate) == 0) {
             if (frames >= animationLength -1) frames = 0;
             else frames++;
-            sprite = sheet.getSprites()[frames];
+            currentSprite = sheet.getSprites()[frames];
         }
-        System.out.println(sprite + ", frame: " + frames);
+        System.out.println(currentSprite + ", frame: " + frames);
     }
 
     public Sprite getSprite() {
-        return sprite;
+        return currentSprite;
     }
 
     public void setFrameRate(int frameRate){
@@ -42,6 +49,6 @@ public class AnimatedSprite extends Sprite{
     }
 
     public void setFrame(int frameIndex) {
-        sprite = sheet.getSprites()[(frameIndex & sheet.getSprites().length -1)];
+        currentSprite = sheet.getSprites()[(frameIndex & sheet.getSprites().length -1)];
     }
 }

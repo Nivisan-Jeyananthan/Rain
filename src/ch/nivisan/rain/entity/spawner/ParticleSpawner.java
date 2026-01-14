@@ -1,6 +1,7 @@
 package ch.nivisan.rain.entity.spawner;
 
 import ch.nivisan.rain.entity.particle.Particle;
+import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
@@ -13,7 +14,17 @@ public class ParticleSpawner extends Spawner {
         this.lifeTime = lifeTime;
 
         for (int i = 0; i < amount; i++) {
-            level.addEntity(new Particle(x, y, 0.5f, Sprite.particleDefault, level));
+            level.addEntity(new Particle(x, y, lifeTime, Sprite.particleDefault, level));
         }
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void render(Screen screen) {
+
     }
 }

@@ -140,7 +140,7 @@ public class Screen {
         }
     }
 
-    public void renderPlayer(int xPosition, int yPosition, Sprite sprite, FlipState flip) {
+    public void renderMob(int xPosition, int yPosition, Sprite sprite, FlipState flip) {
         xPosition -= xOffset;
         yPosition -= yOffset;
 

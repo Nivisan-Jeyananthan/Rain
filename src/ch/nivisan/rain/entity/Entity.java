@@ -20,11 +20,9 @@ public abstract class Entity {
         this.level = level;
     }
 
-    public void update() {
-    }
+    public abstract void update();
 
-    public void render(Screen screen) {
-    }
+    public abstract void render(Screen screen);
 
     public void remove() {
         removed = true;

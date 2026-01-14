@@ -3,6 +3,7 @@ package ch.nivisan.rain.entity.mob;
 import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
+import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
@@ -11,6 +12,7 @@ public abstract class Mob extends Entity {
     protected Sprite sprite;
     protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
+    protected boolean walking = false;
 
     public Mob(Level level) {
         super(level);
@@ -34,13 +36,9 @@ public abstract class Mob extends Entity {
         }
     }
 
-    public void update() {
+    public abstract void update();
 
-    }
-
-    public void render() {
-
-    }
+    public abstract void render(Screen screen);
 
     protected void shoot(int x, int y, double direction) {
         Projectile p = new WizardProjectile(x, y, direction, level);
