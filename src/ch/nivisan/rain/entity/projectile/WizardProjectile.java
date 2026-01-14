@@ -15,6 +15,7 @@ public class WizardProjectile extends Projectile {
         damage = 20;
         speed = 4;
 
+        // angle and vector length
         nx = speed * Math.cos(angle);
         ny = speed * Math.sin(angle);
     }

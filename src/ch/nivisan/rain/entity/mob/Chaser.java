@@ -47,15 +47,22 @@ public class Chaser extends Mob {
         xAbsolute = 0;
         yAbsolute = 0;
 
-        targetPlayer = level.getClientPlayer();
-        if(x < targetPlayer.getX()){
-            xAbsolute++;
-        }    if(x > targetPlayer.getX()){
-            xAbsolute--;
-        }    if(y < targetPlayer.getY()){
-            yAbsolute++;
-        }    if(y > targetPlayer.getY()){
-            yAbsolute--;
+        var players = level.getPlayers(this,50);
+        if (!players.isEmpty()) {
+            targetPlayer = players.getFirst();
+
+            if (x < targetPlayer.getX()) {
+                xAbsolute++;
+            }
+            if (x > targetPlayer.getX()) {
+                xAbsolute--;
+            }
+            if (y < targetPlayer.getY()) {
+                yAbsolute++;
+            }
+            if (y > targetPlayer.getY()) {
+                yAbsolute--;
+            }
         }
 
         if (xAbsolute != 0 || yAbsolute != 0) {

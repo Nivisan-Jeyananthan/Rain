@@ -1,6 +1,7 @@
 package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
+import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
@@ -8,6 +9,8 @@ import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
+
+import java.util.List;
 
 public class Player extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
@@ -35,6 +38,13 @@ public class Player extends Mob {
 
     @Override
     public void update() {
+        List<Entity> entities = level.getEntities(this,80);
+
+        for(Entity e : entities){
+            System.out.println(e);
+        }
+
+
         if (walking) animatedSprite.update();
         else {
             animatedSprite.setFrame(0);

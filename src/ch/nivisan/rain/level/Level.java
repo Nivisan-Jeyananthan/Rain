@@ -34,6 +34,47 @@ public class Level {
         generateLevel();
     }
 
+    public List<Entity> getEntities(Entity e, int radius){
+        List<Entity> result = new ArrayList<>();
+        int ex = e.getX();
+        int ey = e.getY();
+
+        for (Entity entity : entities) {
+            int x = entity.getX();
+            int y = entity.getY();
+
+            int dx = Math.abs(x - ex);
+            int dy = Math.abs(y - ey);
+            double distance = Math.sqrt((dx * dx) + (dy * dy));
+            if (distance <= radius) {
+                result.add(entity);
+            }
+        }
+
+        return  result;
+    }
+
+    public List<Player> getPlayers(Entity e, int radius){
+        List<Player> result = new ArrayList<>();
+        int ex = e.getX();
+        int ey = e.getY();
+
+        for (Player entity : players) {
+            int x = entity.getX();
+            int y = entity.getY();
+
+            int dx = Math.abs(x - ex);
+            int dy = Math.abs(y - ey);
+            double distance = Math.sqrt((dx * dx) + (dy * dy));
+
+            if (distance <= radius) {
+                result.add(entity);
+            }
+        }
+
+        return  result;
+    }
+
     public Player getClientPlayer(){
         return players.getFirst();
     }
