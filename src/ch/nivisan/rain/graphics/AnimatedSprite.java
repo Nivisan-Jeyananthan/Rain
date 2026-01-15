@@ -1,12 +1,12 @@
 package ch.nivisan.rain.graphics;
 
 public class AnimatedSprite extends Sprite {
+    private final int[] cycle = new int[]{0, 1, 0, 2};
     private int frames = 0;
     private int rate = 5;
     private Sprite currentSprite;
     private int animationLength = -1;
     private int time = 0;
-    private int[] cycle = new int[]{0, 1, 0, 2};
     private int frameIndex = 0;
 
     /**

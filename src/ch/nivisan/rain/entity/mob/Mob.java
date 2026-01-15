@@ -18,7 +18,7 @@ public abstract class Mob extends Entity {
         super(level);
     }
 
-    protected void move(int xMovement, int yMovement) {
+    protected void move(float xMovement, float yMovement) {
         if (xMovement != 0 && yMovement != 0) {
             move(xMovement, 0);
             move(0, yMovement);
@@ -30,17 +30,31 @@ public abstract class Mob extends Entity {
         if (yMovement > 0) facingDirection = Direction.South;
         if (xMovement < 0) facingDirection = Direction.West;
 
-        if (!collision(xMovement, yMovement)) {
-            x += xMovement;
-            y += yMovement;
+        int yMoveAbs = abs(yMovement);
+        for (int y = 0; y < Math.abs(yMovement); y++) {
+            if (!collision(xMovement, yMoveAbs))
+                this.y += yMoveAbs;
         }
+
+        int xMoveAbs = abs(xMovement);
+        for (int x = 0; x < Math.abs(xMovement); x++) {
+            if (!collision(xMoveAbs, yMovement))
+                this.x += xMoveAbs;
+        }
+    }
+
+    private int abs(double movement) {
+        if (movement < 0) return -1;
+        return 1;
     }
 
     public abstract void update();
 
-    public abstract void render(Screen screen);
+    public void render(Screen screen) {
+        screen.renderMob((int) x - 16, (int) y - 16, sprite, FlipState.None);
+    }
 
-    protected void shoot(int x, int y, double direction) {
+    protected void shoot(float x, float y, double direction) {
         Projectile p = new WizardProjectile(x, y, direction, level);
         level.addEntity(p);
     }
@@ -54,19 +68,23 @@ public abstract class Mob extends Entity {
      * @param yMovement
      * @return
      */
-    private boolean collision(int xMovement, int yMovement) {
+    private boolean collision(double xMovement, double yMovement) {
         boolean solid = false;
 
-        int cornerX = 0, cornerY = 0;
+        double cornerX = 0, cornerY = 0;
         int vertexAmount = 2;
-        int collisionWidth = 14;
-        int collisionHeight = 12;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            cornerX = ((xMovement + x) + (cornerIndex % vertexAmount) * collisionWidth - 8) >> 4;
-            cornerY = ((yMovement + y) + (cornerIndex / vertexAmount) * collisionHeight + 3) >> 4;
+            cornerX = ((xMovement + x) - (cornerIndex % vertexAmount) * 16) / 16;
+            cornerY = ((yMovement + y) - (cornerIndex / vertexAmount) * 16) / 16;
 
-            if (level.getTile(cornerX, cornerY).solid()) return true;
+            int ix = (int) Math.ceil(cornerX);
+            int iy = (int) Math.ceil(cornerY);
+
+            if (cornerIndex % 2 == 0) ix = (int) Math.floor(cornerX);
+            if (cornerIndex / 2 == 0) iy = (int) Math.floor(cornerY);
+
+            if (level.getTile(ix, iy).solid()) solid = true;
         }
         return solid;
     }

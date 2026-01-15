@@ -8,16 +8,20 @@ import java.util.Random;
 // Entites do not have sprites, they can be anything from time itself to monsters
 public abstract class Entity {
     protected final Random random = new Random();
-    protected int x, y;
+    protected float x, y;
     protected Level level;
     private boolean removed = false;
 
-    public int getX() { return x; }
-
-    public int getY() { return y; }
-
     public Entity(Level level) {
         this.level = level;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
     }
 
     public void setLevel(Level level) {

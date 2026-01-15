@@ -8,15 +8,14 @@ import java.util.Random;
 
 public abstract class Projectile extends Entity {
     protected static final Random random = new Random();
-    protected final int xOrigin;
-    protected final int yOrigin;
+    protected final float xOrigin;
+    protected final float yOrigin;
     protected final double angle;
     protected final Sprite sprite;
-    protected double nx, ny;
-    protected double speed, range, damage;
-    protected double x, y;
+    protected float nx, ny;
+    protected float speed, range, damage;
 
-    public Projectile(int x, int y, double angle, Sprite sprite, Level level) {
+    public Projectile(float x, float y, double angle, Sprite sprite, Level level) {
         super(level);
         this.angle = angle;
         this.xOrigin = x;

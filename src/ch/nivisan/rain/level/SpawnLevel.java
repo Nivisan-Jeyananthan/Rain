@@ -1,7 +1,6 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.mob.Chaser;
-import ch.nivisan.rain.entity.mob.DummyMob;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

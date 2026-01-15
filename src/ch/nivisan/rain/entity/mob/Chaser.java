@@ -41,13 +41,14 @@ public class Chaser extends Mob {
         } else if (xAbsolute < 0) {
             animatedSprite = left;
         }
+        sprite = animatedSprite.getSprite();
     }
 
     protected void move() {
         xAbsolute = 0;
         yAbsolute = 0;
 
-        var players = level.getPlayers(this,50);
+        var players = level.getPlayers(this, 50);
         if (!players.isEmpty()) {
             targetPlayer = players.getFirst();
 
@@ -71,11 +72,11 @@ public class Chaser extends Mob {
         } else {
             walking = false;
         }
+
     }
 
     @Override
     public void render(Screen screen) {
-        sprite = animatedSprite.getSprite();
-        screen.renderMob(x - 16, y - 16, this);
+        screen.renderMob((int) x - 16, (int) y - 16, this);
     }
 }

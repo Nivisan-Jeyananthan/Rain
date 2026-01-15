@@ -15,6 +15,7 @@ public class DummyMob extends Mob {
     private int time = 0;
     private int yAbsolute = 0;
     private int xAbsolute = 0;
+
     public DummyMob(Level level, int x, int y) {
         super(level);
         this.x = x << 4;
@@ -25,9 +26,8 @@ public class DummyMob extends Mob {
     public void update() {
         if (walking) animatedSprite.update();
         else animatedSprite.setFrame(0);
-        // since in update, divide by 60 is 1 second
-        time++;
 
+        time++;
         if (time % (random.nextInt(50) + 30) == 0) {
             xAbsolute = random.nextInt(3) - 1;
             yAbsolute = random.nextInt(3) - 1;
@@ -60,6 +60,6 @@ public class DummyMob extends Mob {
     @Override
     public void render(Screen screen) {
         sprite = animatedSprite.getSprite();
-        screen.renderMob(x - 16, y - 16, sprite, FlipState.None);
+        screen.renderMob((int) x - 16, (int) y - 16, sprite, FlipState.None);
     }
 }

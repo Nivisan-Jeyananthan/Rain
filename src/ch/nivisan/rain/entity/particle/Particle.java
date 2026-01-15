@@ -7,9 +7,9 @@ import ch.nivisan.rain.level.Level;
 
 public class Particle extends Entity {
     private final Sprite sprite;
-    protected double xMovement, yMovement, actualX, actualY;
+    protected float xMovement, yMovement, actualX, actualY;
     // z represents here gravity
-    protected double z, zMovement;
+    protected float z, zMovement;
     private int lifeTime = 0;
     private int maxLifeTime = 0;
 
@@ -22,9 +22,9 @@ public class Particle extends Entity {
         this.maxLifeTime = ((int) (maxLifeTime * 60)) + (random.nextInt(20) - 10);
         this.sprite = Sprite.particleDefault;
 
-        this.xMovement = random.nextGaussian();
-        this.yMovement = random.nextGaussian();
-        this.z = random.nextFloat() + 2.0;
+        this.xMovement = (float) random.nextGaussian();
+        this.yMovement = (float) random.nextGaussian();
+        this.z = random.nextFloat() + 2.0f;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Particle extends Entity {
         move(actualX + xMovement, (actualY + yMovement) + (z + zMovement));
     }
 
-    private void move(double x, double y) {
+    private void move(float x, float y) {
         if (collision(x, y)) {
             this.xMovement *= -0.5;
             this.yMovement *= -0.5;
@@ -56,11 +56,11 @@ public class Particle extends Entity {
     }
 
 
-    public boolean collision(double x, double y) {
+    public boolean collision(float x, float y) {
         boolean solid = false;
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            double xt = (x - cornerIndex % 2 * 16) / 16;
-            double yt = (y - cornerIndex / 2 * 16) / 16;
+            float xt = (x - cornerIndex % 2 * 16) / 16;
+            float yt = (y - cornerIndex / 2 * 16) / 16;
             int ix = (int) Math.ceil(xt);
             int iy = (int) Math.ceil(yt);
             if (cornerIndex % 2 == 0) ix = (int) Math.floor(xt);

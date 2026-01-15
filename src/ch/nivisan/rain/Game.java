@@ -97,14 +97,14 @@ public class Game extends Canvas implements Runnable {
     public void run() {
         long timer = System.currentTimeMillis();
         long lastTime = System.nanoTime();
-        final double framerate = 60.0;
-        final double nanosecondsInSeconds = 1_000_000_000.0;
+        final float framerate = 60.0f;
+        final float nanosecondsInSeconds = 1_000_000_000.0f;
         // calculate how many nanoseconds it takes to update the game once
         // this is so we can calculate how many it would need for 60 frames per second
         // calculate how much time each frame should take
-        final double nanoFrame = nanosecondsInSeconds / framerate;
+        final float nanoFrame = nanosecondsInSeconds / framerate;
         // delta is used to keep track how much time has passed since last update
-        double delta = 0;
+        float delta = 0;
         int framesPerSecond = 0;
         int updatesPerSecond = 0;
         requestFocus();
@@ -165,8 +165,8 @@ public class Game extends Canvas implements Runnable {
         // how many pixels our character moved so we have adjust the map accordingly
         // when our player moved 2 pixels right, map should move 2 pixel left
         // offset essentially
-        int xScroll = player.getX() - screen.width / 2;
-        int yScroll = player.getY() - screen.height / 2;
+        int xScroll = (int) (player.getX() - (float) screen.width / 2);
+        int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
 
@@ -177,7 +177,7 @@ public class Game extends Canvas implements Runnable {
         graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
-        graphics.drawString("Player X: " + (player.getX() >> 4) + " Y: " + (player.getY() >> 4), 600, 25);
+        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
         graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
         graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
 

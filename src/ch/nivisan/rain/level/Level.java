@@ -34,56 +34,56 @@ public class Level {
         generateLevel();
     }
 
-    public List<Entity> getEntities(Entity e, int radius){
+    public List<Entity> getEntities(Entity e, int radius) {
         List<Entity> result = new ArrayList<>();
-        int ex = e.getX();
-        int ey = e.getY();
+        float ex = e.getX();
+        float ey = e.getY();
 
         for (Entity entity : entities) {
-            int x = entity.getX();
-            int y = entity.getY();
+            float x = entity.getX();
+            float y = entity.getY();
 
-            int dx = Math.abs(x - ex);
-            int dy = Math.abs(y - ey);
-            double distance = Math.sqrt((dx * dx) + (dy * dy));
+            float dx = Math.abs(x - ex);
+            float dy = Math.abs(y - ey);
+            float distance = (float) Math.sqrt((dx * dx) + (dy * dy));
             if (distance <= radius) {
                 result.add(entity);
             }
         }
 
-        return  result;
+        return result;
     }
 
-    public List<Player> getPlayers(Entity e, int radius){
+    public List<Player> getPlayers(Entity e, int radius) {
         List<Player> result = new ArrayList<>();
-        int ex = e.getX();
-        int ey = e.getY();
+        float ex = e.getX();
+        float ey = e.getY();
 
         for (Player entity : players) {
-            int x = entity.getX();
-            int y = entity.getY();
+            float x = entity.getX();
+            float y = entity.getY();
 
-            int dx = Math.abs(x - ex);
-            int dy = Math.abs(y - ey);
-            double distance = Math.sqrt((dx * dx) + (dy * dy));
+            float dx = Math.abs(x - ex);
+            float dy = Math.abs(y - ey);
+            float distance = (float) Math.sqrt((dx * dx) + (dy * dy));
 
             if (distance <= radius) {
                 result.add(entity);
             }
         }
 
-        return  result;
+        return result;
     }
 
-    public Player getClientPlayer(){
+    public Player getClientPlayer() {
         return players.getFirst();
     }
 
-    public Player getPlayer(int index){
+    public Player getPlayer(int index) {
         return players.get(index);
     }
 
-    public List<Player> getPlayers(){
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -254,7 +254,7 @@ public class Level {
         }
     }
 
-    private void renderPlayers(Screen screen){
+    private void renderPlayers(Screen screen) {
         for (Player player : players) {
             player.render(screen);
         }

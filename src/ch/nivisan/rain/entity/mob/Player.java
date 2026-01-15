@@ -17,8 +17,9 @@ public class Player extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
+    private final int walkSpeed = 10;
     private final Keyboard input;
-    private double fireRate = 0;
+    private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
 
     public Player(Keyboard input, Level level) {
@@ -38,11 +39,7 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        List<Entity> entities = level.getEntities(this,80);
-
-        for(Entity e : entities){
-            System.out.println(e);
-        }
+        // List<Entity> entities = level.getEntities(this, 80);
 
 
         if (walking) animatedSprite.update();
@@ -54,16 +51,16 @@ public class Player extends Mob {
         int xAbsolute = 0, yAbsolute = 0;
 
         if (input.up) {
-            yAbsolute--;
+            yAbsolute -= walkSpeed;
             animatedSprite = back;
         } else if (input.down) {
-            yAbsolute++;
+            yAbsolute += walkSpeed;
             animatedSprite = front;
         } else if (input.right) {
-            xAbsolute++;
+            xAbsolute += walkSpeed;
             animatedSprite = right;
         } else if (input.left) {
-            xAbsolute--;
+            xAbsolute -= walkSpeed;
             animatedSprite = left;
         }
 
@@ -86,8 +83,8 @@ public class Player extends Mob {
             int midpointWidth = Game.getWindowWidth() / 2;
             int midpointHeight = Game.getWindowHeight() / 2;
 
-            double dx = (Mouse.getXPosition() - midpointWidth);
-            double dy = (Mouse.getYPosition() - midpointHeight);
+            float dx = (Mouse.getXPosition() - midpointWidth);
+            float dy = (Mouse.getYPosition() - midpointHeight);
             double dir = Math.atan2(dy, dx);
 
             shoot(x, y, dir);
@@ -98,9 +95,9 @@ public class Player extends Mob {
     public void render(Screen screen) {
         FlipState flip = FlipState.None;
 
-        int xCenter = x - 16;
-        int yCenter = y - 16;
+        float xCenter = x - 16;
+        float yCenter = y - 16;
 
-        screen.renderMob(xCenter, yCenter, animatedSprite.getSprite(), flip);
+        screen.renderMob((int) xCenter, (int) yCenter, animatedSprite.getSprite(), flip);
     }
 }
