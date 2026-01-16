@@ -13,6 +13,8 @@ public abstract class Mob extends Entity {
     protected Direction facingDirection = Direction.North;
     protected boolean moving = false;
     protected boolean walking = false;
+    protected float walkSpeed;
+
 
     public Mob(Level level) {
         super(level);
@@ -30,19 +32,40 @@ public abstract class Mob extends Entity {
         if (yMovement > 0) facingDirection = Direction.South;
         if (xMovement < 0) facingDirection = Direction.West;
 
-        int yMoveAbs = abs(yMovement);
-        for (int y = 0; y < Math.abs(yMovement); y++) {
-            if (!collision(xMovement, yMoveAbs))
-                this.y += yMoveAbs;
+        while(xMovement != 0){
+            if((Math.abs(xMovement)) > 1){
+                if (!collision(abs(xMovement), yMovement)) {
+                    this.x += abs(xMovement);
+                }
+                xMovement -= abs(xMovement);
+            } else {
+                if (!collision(abs(xMovement), yMovement)) {
+                    this.x += xMovement;
+                }
+                xMovement = 0;
+            }
         }
 
-        int xMoveAbs = abs(xMovement);
-        for (int x = 0; x < Math.abs(xMovement); x++) {
-            if (!collision(xMoveAbs, yMovement))
-                this.x += xMoveAbs;
+        while(yMovement != 0){
+            if((Math.abs(yMovement)) > 1){
+                if (!collision(xMovement, abs(yMovement))) {
+                    this.y += abs(yMovement);
+                }
+                yMovement -= abs(yMovement);
+            } else {
+                if (!collision(xMovement, abs(yMovement))) {
+                    this.y += yMovement;
+                }
+                yMovement = 0;
+            }
         }
     }
 
+    /**
+     * So we do not move to many pixels at once, only 1 unit movement is allowed at once
+     * @param movement
+     * @return
+     */
     private int abs(double movement) {
         if (movement < 0) return -1;
         return 1;

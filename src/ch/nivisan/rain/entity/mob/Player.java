@@ -17,7 +17,6 @@ public class Player extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
-    private final int walkSpeed = 10;
     private final Keyboard input;
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
@@ -26,6 +25,7 @@ public class Player extends Mob {
         super(level);
         this.input = input;
         animatedSprite = front;
+        walkSpeed = 1.4f;
     }
 
     public Player(int x, int y, Keyboard input, Level level) {
@@ -35,6 +35,7 @@ public class Player extends Mob {
         this.y = y;
         this.input = input;
         this.fireRate = WizardProjectile.fireRate;
+        walkSpeed = 1.4f;
     }
 
     @Override
@@ -48,7 +49,7 @@ public class Player extends Mob {
         }
         if (fireRate > 0) fireRate--;
 
-        int xAbsolute = 0, yAbsolute = 0;
+        float xAbsolute = 0, yAbsolute = 0;
 
         if (input.up) {
             yAbsolute -= walkSpeed;

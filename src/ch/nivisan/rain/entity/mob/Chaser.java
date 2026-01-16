@@ -14,14 +14,15 @@ public class Chaser extends Mob {
     private Player targetPlayer;
 
     private int time = 0;
-    private int yAbsolute = 0;
-    private int xAbsolute = 0;
+    private float yAbsolute = 0;
+    private float xAbsolute = 0;
 
     public Chaser(Level level, int x, int y) {
         super(level);
         this.x = x << 4;
         this.y = y << 4;
         sprite = animatedSprite.getSprite();
+        walkSpeed = 0.8f;
     }
 
     @Override
@@ -52,17 +53,20 @@ public class Chaser extends Mob {
         if (!players.isEmpty()) {
             targetPlayer = players.getFirst();
 
-            if (x < targetPlayer.getX()) {
-                xAbsolute++;
+            if (Math.floor(x) == Math.floor(targetPlayer.getX())) xAbsolute = 0;
+            else if (x < targetPlayer.getX()) {
+                xAbsolute += walkSpeed;
             }
-            if (x > targetPlayer.getX()) {
-                xAbsolute--;
+            else {
+                xAbsolute -= walkSpeed;
             }
-            if (y < targetPlayer.getY()) {
-                yAbsolute++;
+
+            if (Math.floor(y) == Math.floor(targetPlayer.getY())) yAbsolute = 0;
+            else if (y < targetPlayer.getY()) {
+                yAbsolute += walkSpeed;
             }
-            if (y > targetPlayer.getY()) {
-                yAbsolute--;
+            else {
+                yAbsolute -= walkSpeed;
             }
         }
 
