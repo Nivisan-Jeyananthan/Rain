@@ -46,9 +46,9 @@ public class Particle extends Entity {
 
     private void move(float x, float y) {
         if (collision(x, y)) {
-            this.xMovement *= -0.5;
-            this.yMovement *= -0.5;
-            this.zMovement *= -0.5;
+            this.xMovement *= -0.5f;
+            this.yMovement *= -0.5f;
+            this.zMovement *= -0.5f;
         }
         this.actualX += xMovement;
         this.actualY += yMovement;
