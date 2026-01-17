@@ -72,4 +72,12 @@ public class Vector2 {
         this.y = y;
         return this;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Vector2 toCompare) {
+            return this.x == toCompare.x && this.y == toCompare.y;
+        }
+        return false;
+    }
 }

@@ -9,9 +9,7 @@ import ch.nivisan.rain.level.tile.Tile;
 import ch.nivisan.rain.utils.Node;
 import ch.nivisan.rain.utils.Vector2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class Level {
     public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
@@ -22,6 +20,7 @@ public class Level {
     protected int width;
     protected int height;
     protected int[] tiles;
+
 
     public Level(int width, int height) {
         this.width = width;
@@ -40,19 +39,56 @@ public class Level {
     public List<Node> getPath(Vector2 start, Vector2 goal){
         List<Node> openQueue = new ArrayList<>();
         List<Node> closedQueue = new ArrayList<>();
-        Node current = new Node(start,null,0,Vector2.getDistance(start,goal));
-        openQueue.add(current);
+        Node currentNode = new Node(start,null,0,Vector2.getDistance(start,goal));
+        openQueue.add(currentNode);
 
         while(!openQueue.isEmpty()){
-            current = openQueue.getFirst();
-            if(current.tile.equals(goal)){
-                return closedQueue;
+            Collections.sort(openQueue);
+
+            currentNode = openQueue.getFirst();
+            if(currentNode.tile.equals(goal)){
+                List<Node> path = new ArrayList<Node>();
+                while(currentNode.parent != null){
+                    path.add(currentNode);
+                    currentNode = currentNode.parent;
+                }
+                openQueue.clear();
+                closedQueue.clear();
+                return path;
             }
-            openQueue.removeFirst();
-            closedQueue.add(current);
+
+            openQueue.remove(currentNode);
+            closedQueue.add(currentNode);
+            for (int i = 0; i < 9; i++) {
+                if(i == 4) continue;
+                int x = currentNode.tile.getX();
+                int y = currentNode.tile.getY();
+                // ranges from -1,0, 1
+                int xDirection = (i % 3) -1;
+                int yDirection = (i / 3) -1;
+                Tile at = getTile(x + xDirection, y + yDirection);
+                if(at == null || at.solid()) continue;
+                Vector2 atVector = new Vector2(x + xDirection, y + yDirection);
+                // compare immediate distance (from middle (current) to other tiles in "circle")
+                float gCost = currentNode.gCost + currentNode.tile.getDistance(atVector);
+                float hCost = atVector.getDistance(goal);
+                Node node = new Node(atVector,currentNode,gCost,hCost);
+
+                if(isInList(closedQueue,atVector) && gCost >= currentNode.gCost) continue;
+                if(!isInList(openQueue, atVector) || gCost < node.gCost) openQueue.add(node);
+            }
         }
 
-        return closedQueue;
+        closedQueue.clear();
+        return null;
+    }
+
+    private boolean isInList(List<Node> list,Vector2 vector){
+        for (Node node : list) {
+            if (node.tile.equals(vector))
+                return true;
+        }
+        return false;
     }
 
     public List<Entity> getEntities(Entity e, int radius) {

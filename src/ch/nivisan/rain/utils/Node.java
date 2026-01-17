@@ -1,6 +1,6 @@
 package ch.nivisan.rain.utils;
 
-public class Node {
+public class Node implements Comparable<Node> {
     public final Vector2 tile;
     public final Node parent;
     // sum of nodes we have visited since our start
@@ -16,5 +16,16 @@ public class Node {
         this.gCost = gCost;
         this.hCost = hCost;
         this.totalCost = + this.gCost + this.hCost;
+    }
+
+    @Override
+    public int compareTo(Node other) {
+        if(this.totalCost < other.totalCost) {
+            return +1;
+        }
+        else if(this.totalCost > other.totalCost) {
+            return -1;
+        }
+        return 0;
     }
 }
