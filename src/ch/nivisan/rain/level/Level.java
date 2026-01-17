@@ -6,9 +6,12 @@ import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.level.tile.Tile;
+import ch.nivisan.rain.utils.Node;
+import ch.nivisan.rain.utils.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class Level {
     public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
@@ -32,6 +35,24 @@ public class Level {
     public Level(String path) {
         loadLevel(path);
         generateLevel();
+    }
+
+    public List<Node> getPath(Vector2 start, Vector2 goal){
+        List<Node> openQueue = new ArrayList<>();
+        List<Node> closedQueue = new ArrayList<>();
+        Node current = new Node(start,null,0,Vector2.getDistance(start,goal));
+        openQueue.add(current);
+
+        while(!openQueue.isEmpty()){
+            current = openQueue.getFirst();
+            if(current.tile.equals(goal)){
+                return closedQueue;
+            }
+            openQueue.removeFirst();
+            closedQueue.add(current);
+        }
+
+        return closedQueue;
     }
 
     public List<Entity> getEntities(Entity e, int radius) {

@@ -5,7 +5,6 @@ import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-import ch.nivisan.rain.level.TileCoordinate;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +25,6 @@ public class Game extends Canvas implements Runnable {
     private final Keyboard keyboard;
     private final Level level;
     private final Player player;
-    private final TileCoordinate playerSpawnLocation;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -51,8 +49,7 @@ public class Game extends Canvas implements Runnable {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
-        playerSpawnLocation = new TileCoordinate(20, 60);
-        player = new Player(playerSpawnLocation.getX(), playerSpawnLocation.getY(), keyboard, level);
+        player = new Player(20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
     }
 
