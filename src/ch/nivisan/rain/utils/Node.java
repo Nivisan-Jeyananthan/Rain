@@ -1,5 +1,7 @@
 package ch.nivisan.rain.utils;
 
+import java.util.Comparator;
+
 public class Node implements Comparable<Node> {
     public final Vector2 tile;
     public final Node parent;
@@ -19,13 +21,14 @@ public class Node implements Comparable<Node> {
     }
 
     @Override
-    public int compareTo(Node other) {
-        if(this.totalCost < other.totalCost) {
+    public int compareTo(Node otherNode) {
+        if(this.totalCost > otherNode.totalCost) {
             return +1;
         }
-        else if(this.totalCost > other.totalCost) {
+        else if(this.totalCost < otherNode.totalCost) {
             return -1;
         }
+
         return 0;
     }
 }

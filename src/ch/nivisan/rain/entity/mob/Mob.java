@@ -98,8 +98,8 @@ public abstract class Mob extends Entity {
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
-            cornerX = ((xMovement + x) - (cornerIndex % vertexAmount) * 16) / 16;
-            cornerY = ((yMovement + y) - (cornerIndex / vertexAmount) * 16) / 16;
+            cornerX = ((xMovement + x) - (cornerIndex % vertexAmount) * 15) / 16;
+            cornerY = ((yMovement + y) - (cornerIndex / vertexAmount) * 15) / 16;
 
             int ix = (int) Math.ceil(cornerX);
             int iy = (int) Math.ceil(cornerY);

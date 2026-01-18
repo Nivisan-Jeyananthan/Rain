@@ -1,6 +1,8 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.mob.Chaser;
+import ch.nivisan.rain.entity.mob.DummyMob;
+import ch.nivisan.rain.entity.mob.Star;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -28,6 +30,7 @@ public class SpawnLevel extends Level {
         for (int i = 0; i < 1; i++) {
             addEntity(new Chaser(this, 20, 55));
         }
+//        addEntity(new Star(this,20,50));
     }
 
     // Grass = 0x00ff00

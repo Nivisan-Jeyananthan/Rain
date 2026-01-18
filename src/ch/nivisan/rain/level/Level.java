@@ -21,7 +21,6 @@ public class Level {
     protected int height;
     protected int[] tiles;
 
-
     public Level(int width, int height) {
         this.width = width;
         this.height = height;
@@ -37,9 +36,9 @@ public class Level {
     }
 
     public List<Node> getPath(Vector2 start, Vector2 goal){
-        List<Node> openQueue = new ArrayList<>();
-        List<Node> closedQueue = new ArrayList<>();
-        Node currentNode = new Node(start,null,0,Vector2.getDistance(start,goal));
+        List<Node> openQueue = new ArrayList<Node>();
+        List<Node> closedQueue = new ArrayList<Node>();
+        Node currentNode = new Node(start,null,0,start.getDistance(goal));
         openQueue.add(currentNode);
 
         while(!openQueue.isEmpty()){
@@ -70,7 +69,7 @@ public class Level {
                 if(at == null || at.solid()) continue;
                 Vector2 atVector = new Vector2(x + xDirection, y + yDirection);
                 // compare immediate distance (from middle (current) to other tiles in "circle")
-                float gCost = currentNode.gCost + currentNode.tile.getDistance(atVector);
+                float gCost = currentNode.gCost + ((currentNode.tile.getDistance(atVector) == 1 ? 1.0f : 0.95f));
                 float hCost = atVector.getDistance(goal);
                 Node node = new Node(atVector,currentNode,gCost,hCost);
 

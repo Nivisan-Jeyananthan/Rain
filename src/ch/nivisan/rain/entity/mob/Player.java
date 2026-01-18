@@ -40,13 +40,8 @@ public class Player extends Mob {
 
     @Override
     public void update() {
-        // List<Entity> entities = level.getEntities(this, 80);
-
-
         if (walking) animatedSprite.update();
-        else {
-            animatedSprite.setFrame(0);
-        }
+        else { animatedSprite.setFrame(0); }
         if (fireRate > 0) fireRate--;
 
         float xAbsolute = 0, yAbsolute = 0;
@@ -57,7 +52,7 @@ public class Player extends Mob {
         } else if (input.down) {
             yAbsolute += walkSpeed;
             animatedSprite = front;
-        } else if (input.right) {
+        } if (input.right) {
             xAbsolute += walkSpeed;
             animatedSprite = right;
         } else if (input.left) {

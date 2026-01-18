@@ -7,7 +7,7 @@ import ch.nivisan.rain.level.Level;
 
 public class WizardProjectile extends Projectile {
     // refers to the rate of how many per second (60 = 1)
-    public static final float fireRate = 30;
+    public static final float fireRate = 60f;
 
     public WizardProjectile(float xOrigin, float yOrigin, double angle, Level level) {
         super(xOrigin, yOrigin, angle, Sprite.wizardProjectile, level);

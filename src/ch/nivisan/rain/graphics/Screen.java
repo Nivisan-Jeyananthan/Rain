@@ -3,6 +3,7 @@ package ch.nivisan.rain.graphics;
 import ch.nivisan.rain.entity.mob.Chaser;
 import ch.nivisan.rain.entity.mob.FlipState;
 import ch.nivisan.rain.entity.mob.Mob;
+import ch.nivisan.rain.entity.mob.Star;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -203,6 +204,8 @@ public class Screen {
 
                 if ((mob instanceof Chaser) && color == 0xff472BBF) {
                     color = 0xffBA0015;
+                }else if((mob instanceof Star) && color == 0xff472BBF){
+                    color = 0xffE8E83A;
                 }
 
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.

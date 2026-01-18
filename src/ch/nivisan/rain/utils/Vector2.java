@@ -31,9 +31,9 @@ public class Vector2 {
     }
 
     public float getDistance(Vector2 goal){
-        float dx = this.x - goal.x;
-        float dy = this.y - goal.y;
-        return (float) Math.sqrt((dx * dx) + (dy * dy));
+        float x = this.x - goal.x;
+        float y = this.y - goal.y;
+        return (float) Math.sqrt((x * x) + (y * y));
     }
 
 

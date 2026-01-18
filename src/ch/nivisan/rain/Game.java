@@ -5,7 +5,6 @@ import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,7 +16,7 @@ public class Game extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
 
     private static final int scale = 3;
-    private static final int width = 300;
+    private static final int width = 500;
     private static final int height = width / 16 * 9;
     private static final String title = "Rain";
     private final JFrame frame;

@@ -32,13 +32,13 @@ public class Particle extends Entity {
         lifeTime++;
         if (lifeTime >= 7400) lifeTime = 0;
         if (lifeTime > maxLifeTime) remove();
-        zMovement -= 0.1;
+        zMovement -= 0.1f;
 
         if (z < 0) {
             z = 0;
-            zMovement *= -0.55;
-            xMovement *= 0.4;
-            yMovement *= 0.4;
+            zMovement *= -0.55f;
+            xMovement *= 0.4f;
+            yMovement *= 0.4f;
         }
 
         move(actualX + xMovement, (actualY + yMovement) + (z + zMovement));
