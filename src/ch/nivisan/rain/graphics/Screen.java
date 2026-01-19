@@ -1,9 +1,6 @@
 package ch.nivisan.rain.graphics;
 
-import ch.nivisan.rain.entity.mob.Chaser;
-import ch.nivisan.rain.entity.mob.FlipState;
-import ch.nivisan.rain.entity.mob.Mob;
-import ch.nivisan.rain.entity.mob.Star;
+import ch.nivisan.rain.entity.mob.*;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -170,6 +167,7 @@ public class Screen {
                     absoluteXPosition = 0;
 
                 int color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
+
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
                 // so instead of the hex color code only, we also add the alpha channel code at the beginning.
                 int transparentColor = 0xffff00ff;
@@ -201,11 +199,14 @@ public class Screen {
                     absoluteXPosition = 0;
 
                 int color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
+                int bodyColor = 0xff472BBF;
 
-                if ((mob instanceof Chaser) && color == 0xff472BBF) {
+                if ((mob instanceof Chaser) && color == bodyColor) {
                     color = 0xffBA0015;
-                }else if((mob instanceof Star) && color == 0xff472BBF){
+                }else if((mob instanceof Star) && color == bodyColor){
                     color = 0xffE8E83A;
+                }else if((mob instanceof Shooter) && color == bodyColor){
+                    color = 0xff00FF3A;
                 }
 
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.

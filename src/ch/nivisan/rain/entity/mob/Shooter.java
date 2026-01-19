@@ -1,10 +1,16 @@
 package ch.nivisan.rain.entity.mob;
 
+import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
+import ch.nivisan.rain.utils.Vector2;
+
+import java.util.List;
 
 public class Shooter extends DummyMob{
+    private float fireRate = 0;
+
     public Shooter(Level level, int x, int y) {
         super(level,x,y);
         this.x = x << 4;
@@ -16,15 +22,57 @@ public class Shooter extends DummyMob{
     public void update() {
         super.update();
 
-        Player player = level.getClientPlayer();
-        float dx = player.getX() - x;
-        float dy = player.getY() - y;
+        fireRate--;
+
+        shootClosestMob();
+    }
+
+    private void shootRandomMob() {
+        List<Mob> mobs = level.getMobs(this,500);
+        mobs.add(level.getClientPlayer());
+        mobs.remove(this);
+
+        Entity target = null;
+        int index = mobs.size() -1;
+
+        if (target == null) return;
+
+        float dx = target.getX() - x;
+        float dy = target.getY() - y;
         float dir = (float) Math.atan2(dy,dx);
 
-        shoot(x + 8, y+ 13, dir);
+        shoot(x , y, dir);
+    }
+
+    private void shootClosestMob() {
+        List<Mob> mobs = level.getMobs(this,500);
+        mobs.add(level.getClientPlayer());
+        mobs.remove(this);
+
+        float min = 0;
+        Mob closestMob = null;
+        for (int i = 0; i < mobs.size(); i++) {
+            Vector2 vector = new Vector2((int)x,(int)y);
+            Mob target = mobs.get(i);
+            Vector2 targetVector = new Vector2((int)target.getX(),(int)target.getY());
+
+            float distance = vector.getDistance(targetVector);
+            if(i == 0 || distance < min) {
+                min = distance;
+                closestMob = target;
+            }
+        }
+
+        if (closestMob == null) return;
+
+        float dx = closestMob.getX() - x;
+        float dy = closestMob.getY() - y;
+        float dir = (float) Math.atan2(dy,dx);
+
+        shoot(x , y, dir);
     }
 
     public void render(Screen screen) {
-        screen.renderMob((int) x , (int) y , sprite, FlipState.None);
+        screen.renderMob((int) x - 16, (int) y - 16, this);
     }
 }

@@ -8,6 +8,7 @@ import ch.nivisan.rain.entity.mob.Star;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class SpawnLevel extends Level {
 
@@ -29,8 +30,10 @@ public class SpawnLevel extends Level {
         }
 
         for (int i = 0; i < 1; i++) {
-            addEntity(new DummyMob(this, 20, 55));
+            addEntity(new Shooter(this, 20, 55));
         }
+        addEntity(new Shooter(this, 25, 55));
+
     }
 
     // Grass = 0x00ff00

@@ -13,10 +13,10 @@ import ch.nivisan.rain.level.Level;
 import java.util.List;
 
 public class Player extends Mob {
-    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.dummyFront, 32, 32, 3);
-    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack, 32, 32, 3);
-    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight, 32, 32, 3);
-    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft, 32, 32, 3);
+    private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
+    private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
+    private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
+    private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
     private final Keyboard input;
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
@@ -89,8 +89,8 @@ public class Player extends Mob {
     }
 
     public void render(Screen screen) {
-        float xCenter = x - 15;
-        float yCenter = y - 32;
+        float xCenter = x - 16;
+        float yCenter = y - 30;
 
         screen.renderMob((int) xCenter, (int) yCenter, animatedSprite.getSprite(), FlipState.None);
     }

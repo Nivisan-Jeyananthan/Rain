@@ -1,6 +1,7 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.mob.Mob;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
@@ -17,6 +18,8 @@ public class Level {
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
     private final List<Particle> particles = new ArrayList<Particle>();
     private final List<Player> players = new ArrayList<Player>();
+    private final List<Mob> mobs = new ArrayList<>();
+
     protected int width;
     protected int height;
     protected int[] tiles;
@@ -90,6 +93,28 @@ public class Level {
         return false;
     }
 
+    public List<Mob> getMobs(Entity e, int radius) {
+        List<Mob> result = new ArrayList<>();
+        float ex = e.getX();
+        float ey = e.getY();
+
+        for (Entity entity : entities) {
+            if(!(entity instanceof Mob mob)) continue;
+
+            float x = entity.getX();
+            float y = entity.getY();
+
+            float dx = Math.abs(x - ex);
+            float dy = Math.abs(y - ey);
+            float distance = (float) Math.sqrt((dx * dx) + (dy * dy));
+            if (distance <= radius) {
+                result.add(mob);
+            }
+        }
+
+        return result;
+    }
+
     public List<Entity> getEntities(Entity e, int radius) {
         List<Entity> result = new ArrayList<>();
         float ex = e.getX();
@@ -127,7 +152,6 @@ public class Level {
                 result.add(entity);
             }
         }
-
         return result;
     }
 
@@ -148,6 +172,7 @@ public class Level {
             case Particle particle -> particles.add(particle);
             case Projectile projectile -> projectiles.add(projectile);
             case Player player -> players.add(player);
+            case Mob mob -> mobs.add(mob);
             case null, default -> entities.add(entity);
         }
     }
@@ -192,53 +217,20 @@ public class Level {
     }
 
     public void update() {
-        updateEntities();
-        updateProjectiles();
-        updateParticles();
-        updatePlayers();
-
+        updateLists(entities);
+        updateLists(projectiles);
+        updateLists(particles);
+        updateLists(players);
+        updateLists(mobs);
     }
 
-    private void updateEntities() {
-        for (int i = 0; i < entities.size(); i++) {
-            var entity = entities.get(i);
+    private <T extends Entity> void updateLists(List<T> list) {
+        for (int i = 0; i < list.size(); i++) {
+            var entity = list.get(i);
             if (entity.isRemoved()) {
-                entities.remove(entity);
+                list.remove(entity);
             } else {
                 entity.update();
-            }
-        }
-    }
-
-    private void updateProjectiles() {
-        for (int i = 0; i < projectiles.size(); i++) {
-            var projectile = projectiles.get(i);
-            if (projectile.isRemoved()) {
-                projectiles.remove(projectile);
-            } else {
-                projectile.update();
-            }
-        }
-    }
-
-    private void updateParticles() {
-        for (int i = 0; i < particles.size(); i++) {
-            var particle = particles.get(i);
-            if (particle.isRemoved()) {
-                particles.remove(particle);
-            } else {
-                particle.update();
-            }
-        }
-    }
-
-    private void updatePlayers() {
-        for (int i = 0; i < players.size(); i++) {
-            var player = players.get(i);
-            if (player.isRemoved()) {
-                players.remove(player);
-            } else {
-                player.update();
             }
         }
     }
@@ -283,10 +275,12 @@ public class Level {
         screen.setOffsets(xScroll, yScroll);
 
         renderTiles(xScroll, yScroll, screen);
-        renderEntities(screen);
-        renderProjectiles(screen);
-        renderParticles(screen);
-        renderPlayers(screen);
+
+        renderLists(entities, screen);
+        renderLists(projectiles, screen);
+        renderLists(particles, screen);
+        renderLists(players, screen);
+        renderLists(mobs, screen);
     }
 
     private void renderTiles(int xScroll, int yScroll, Screen screen) {
@@ -310,27 +304,9 @@ public class Level {
         }
     }
 
-    private void renderPlayers(Screen screen) {
-        for (Player player : players) {
-            player.render(screen);
-        }
-    }
-
-    private void renderParticles(Screen screen) {
-        for (Particle particle : particles) {
-            particle.render(screen);
-        }
-    }
-
-    private void renderProjectiles(Screen screen) {
-        for (Projectile projectile : projectiles) {
-            projectile.render(screen);
-        }
-    }
-
-    private void renderEntities(Screen screen) {
-        for (Entity entity : entities) {
-            entity.render(screen);
+    private <T extends Entity> void renderLists(List<T> list, Screen screen) {
+        for (T item: list) {
+            item.render(screen);
         }
     }
 }
