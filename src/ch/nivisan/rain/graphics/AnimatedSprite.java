@@ -34,7 +34,7 @@ public class AnimatedSprite extends Sprite {
 
     public void update() {
         time++;
-        if (time % rate == 0) {
+        if ((time & rate) == 0) {
             if (frames >= animationLength - 1) {
                 frames = 0;
             } else {

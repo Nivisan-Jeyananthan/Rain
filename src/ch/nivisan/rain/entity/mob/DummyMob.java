@@ -55,11 +55,11 @@ public class DummyMob extends Mob {
         } else {
             walking = false;
         }
+        sprite = animatedSprite.getSprite();
     }
 
     @Override
     public void render(Screen screen) {
-        sprite = animatedSprite.getSprite();
         screen.renderMob((int) x - 16, (int) y - 16, sprite, FlipState.None);
     }
 }

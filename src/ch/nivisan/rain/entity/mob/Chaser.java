@@ -31,7 +31,6 @@ public class Chaser extends Mob {
 
         if (walking) animatedSprite.update();
         else animatedSprite.setFrame(0);
-        time++;
 
         if (yAbsolute > 0) {
             animatedSprite = front;

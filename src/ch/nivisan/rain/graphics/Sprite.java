@@ -32,6 +32,7 @@ public class Sprite {
     public static Sprite playerRight1 = new Sprite(32, 2, 1, SpriteSheet.player);
     public static Sprite playerRight2 = new Sprite(32, 2, 2, SpriteSheet.player);
 
+    public static Sprite dummy = new Sprite(32, 0, 0, SpriteSheet.dummyFront);
 
     // projectiles
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
