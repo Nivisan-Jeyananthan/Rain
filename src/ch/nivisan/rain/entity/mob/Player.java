@@ -9,6 +9,7 @@ import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
+import ch.nivisan.rain.utils.Debug;
 
 import java.util.List;
 
@@ -92,6 +93,7 @@ public class Player extends Mob {
         float xCenter = x - 16;
         float yCenter = y - 30;
 
+        Debug.drawRectangle(screen, 20 << 4,60 << 4, 100,40,0xff000,true);
         screen.renderMob((int) xCenter, (int) yCenter, animatedSprite.getSprite(), FlipState.None);
     }
 }

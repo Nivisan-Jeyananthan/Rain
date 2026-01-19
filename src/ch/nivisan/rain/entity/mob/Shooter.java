@@ -1,15 +1,14 @@
 package ch.nivisan.rain.entity.mob;
 
-import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Vector2;
-
 import java.util.List;
 
-public class Shooter extends DummyMob{
+public class Shooter extends Walker {
     private float fireRate = 0;
+    Mob target = null;
 
     public Shooter(Level level, int x, int y) {
         super(level,x,y);
@@ -24,18 +23,20 @@ public class Shooter extends DummyMob{
 
         fireRate--;
 
-        shootClosestMob();
+        shootRandomMob();
     }
 
     private void shootRandomMob() {
-        List<Mob> mobs = level.getMobs(this,500);
-        mobs.add(level.getClientPlayer());
-        mobs.remove(this);
+        if((time & (30 + random.nextInt(91))) == 0) {
+            List<Mob> mobs = level.getMobs(this, 500);
+            mobs.add(level.getClientPlayer());
+            mobs.remove(this);
 
-        Entity target = null;
-        int index = mobs.size() -1;
+            int index = random.nextInt(mobs.size());
+            target = mobs.get(index);
+        }
 
-        if (target == null) return;
+        if(target == null) return;
 
         float dx = target.getX() - x;
         float dy = target.getY() - y;

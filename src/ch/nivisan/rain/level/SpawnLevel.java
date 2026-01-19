@@ -1,14 +1,10 @@
 package ch.nivisan.rain.level;
 
-import ch.nivisan.rain.entity.mob.Chaser;
-import ch.nivisan.rain.entity.mob.DummyMob;
 import ch.nivisan.rain.entity.mob.Shooter;
-import ch.nivisan.rain.entity.mob.Star;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class SpawnLevel extends Level {
 

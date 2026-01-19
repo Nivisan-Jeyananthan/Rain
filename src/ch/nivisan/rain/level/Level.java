@@ -98,11 +98,9 @@ public class Level {
         float ex = e.getX();
         float ey = e.getY();
 
-        for (Entity entity : entities) {
-            if(!(entity instanceof Mob mob)) continue;
-
-            float x = entity.getX();
-            float y = entity.getY();
+        for (Mob mob : mobs) {
+            float x = mob.getX();
+            float y = mob.getY();
 
             float dx = Math.abs(x - ex);
             float dy = Math.abs(y - ey);

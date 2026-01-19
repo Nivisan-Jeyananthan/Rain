@@ -5,18 +5,18 @@ import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.level.Level;
 
-public class DummyMob extends Mob {
+public class Walker extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.dummyFront, 32, 32, 3);
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft, 32, 32, 3);
 
     private AnimatedSprite animatedSprite = front;
-    private int time = 0;
+    protected int time = 0;
     private int yAbsolute = 0;
     private int xAbsolute = 0;
 
-    public DummyMob(Level level, int x, int y) {
+    public Walker(Level level, int x, int y) {
         super(level);
         this.x = x << 4;
         this.y = y << 4;

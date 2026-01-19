@@ -219,9 +219,44 @@ public class Screen {
         }
     }
 
+    /**
+     * Renders a rectangle if it can, otherwise parts of it as only bottom part, top, left or right.
+     * Depending on if it will fit on the screen
+     * @param xStart
+     * @param yStart
+     * @param width
+     * @param height
+     * @param color
+     * @param fixed
+     */
+    public void drawRectangle(int xStart, int yStart, int width, int height,int color, boolean fixed) {
+        if (fixed) {
+            xStart -= xOffset;
+            yStart -= yOffset;
+        }
+
+        for (int x = xStart; x <= xStart + width; x++){
+            if(x < 0 || x >= this.width || yStart >= this.height) continue;
+
+            if(yStart > 0)
+                pixels[x + yStart * this.width] = color;
+            if(yStart + height >= this.height || yStart + height < 0) continue;
+            pixels[x + (yStart + height) * this.width] = color;
+        }
+
+        for (int y = yStart; y <= yStart + height; y++){
+            if(xStart >= this.width || y < 0 || y >= this.height) continue;
+
+            if(xStart > 0) pixels[xStart + y * this.width] = color;
+            if(xStart + width >= this.width || xStart + width < 0) continue;
+            pixels[(xStart + width)  + (y * this.width)] = color;
+        }
+    }
+
     public void setOffsets(int xOffset, int yOffset) {
         this.yOffset = yOffset;
         this.xOffset = xOffset;
     }
+
 }
 

@@ -7,7 +7,7 @@ import java.util.Random;
 
 // Entites do not have sprites, they can be anything from time itself to monsters
 public abstract class Entity {
-    protected final Random random = new Random();
+    protected static final Random random = new Random();
     protected float x, y;
     protected Level level;
     private boolean removed = false;

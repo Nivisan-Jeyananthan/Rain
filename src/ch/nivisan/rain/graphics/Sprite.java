@@ -19,18 +19,6 @@ public class Sprite {
     public static Sprite spawn_wall1 = new Sprite(16, 0, 1, SpriteSheet.spawnLevel);
     public static Sprite spawn_wall2 = new Sprite(16, 0, 2, SpriteSheet.spawnLevel);
     public static Sprite spawn_floor = new Sprite(16, 1, 1, SpriteSheet.spawnLevel);
-    // player sprites here:
-    // unused since mathematically flipped
-    public static Sprite playerLeft = new Sprite(32, 3, 0, SpriteSheet.player);
-    public static Sprite playerFront = new Sprite(32, 0, 0, SpriteSheet.player);
-    public static Sprite playerFront1 = new Sprite(32, 0, 1, SpriteSheet.player);
-    public static Sprite playerFront2 = new Sprite(32, 0, 2, SpriteSheet.player);
-    public static Sprite playerBack = new Sprite(32, 1, 0, SpriteSheet.player);
-    public static Sprite playerBack1 = new Sprite(32, 1, 1, SpriteSheet.player);
-    public static Sprite playerBack2 = new Sprite(32, 1, 2, SpriteSheet.player);
-    public static Sprite playerRight = new Sprite(32, 2, 0, SpriteSheet.player);
-    public static Sprite playerRight1 = new Sprite(32, 2, 1, SpriteSheet.player);
-    public static Sprite playerRight2 = new Sprite(32, 2, 2, SpriteSheet.player);
 
     public static Sprite dummy = new Sprite(32, 0, 0, SpriteSheet.dummyFront);
 
