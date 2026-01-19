@@ -217,20 +217,64 @@ public class Level {
     }
 
     public void update() {
-        updateLists(entities);
-        updateLists(projectiles);
-        updateLists(particles);
-        updateLists(players);
-        updateLists(mobs);
+        updateEntities();
+        updateProjectiles();
+        updateParticles();
+        updatePlayers();
+        updateMobs();
     }
 
-    private <T extends Entity> void updateLists(List<T> list) {
-        for (int i = 0; i < list.size(); i++) {
-            var entity = list.get(i);
+    private void updateMobs() {
+        for (int i = 0; i < mobs.size(); i++) {
+            var mob = mobs.get(i);
+            if (mob.isRemoved()) {
+                mobs.remove(mob);
+            } else {
+                mob.update();
+            }
+        }
+    }
+
+    private void updateEntities() {
+        for (int i = 0; i < entities.size(); i++) {
+            var entity = entities.get(i);
             if (entity.isRemoved()) {
-                list.remove(entity);
+                entities.remove(entity);
             } else {
                 entity.update();
+            }
+        }
+    }
+
+    private void updateProjectiles() {
+        for (int i = 0; i < projectiles.size(); i++) {
+            var projectile = projectiles.get(i);
+            if (projectile.isRemoved()) {
+                projectiles.remove(projectile);
+            } else {
+                projectile.update();
+            }
+        }
+    }
+
+    private void updateParticles() {
+        for (int i = 0; i < particles.size(); i++) {
+            var particle = particles.get(i);
+            if (particle.isRemoved()) {
+                particles.remove(particle);
+            } else {
+                particle.update();
+            }
+        }
+    }
+
+    private void updatePlayers() {
+        for (int i = 0; i < players.size(); i++) {
+            var player = players.get(i);
+            if (player.isRemoved()) {
+                players.remove(player);
+            } else {
+                player.update();
             }
         }
     }
@@ -275,12 +319,11 @@ public class Level {
         screen.setOffsets(xScroll, yScroll);
 
         renderTiles(xScroll, yScroll, screen);
-
-        renderLists(entities, screen);
-        renderLists(projectiles, screen);
-        renderLists(particles, screen);
-        renderLists(players, screen);
-        renderLists(mobs, screen);
+        renderEntities(screen);
+        renderProjectiles(screen);
+        renderParticles(screen);
+        renderPlayers(screen);
+        renderMobs(screen);
     }
 
     private void renderTiles(int xScroll, int yScroll, Screen screen) {
@@ -303,10 +346,34 @@ public class Level {
             }
         }
     }
+    private void renderMobs(Screen screen) {
+        for (Mob mob : mobs) {
+            mob.render(screen);
+        }
+    }
 
-    private <T extends Entity> void renderLists(List<T> list, Screen screen) {
-        for (T item: list) {
-            item.render(screen);
+
+    private void renderPlayers(Screen screen) {
+        for (Player player : players) {
+            player.render(screen);
+        }
+    }
+
+    private void renderParticles(Screen screen) {
+        for (Particle particle : particles) {
+            particle.render(screen);
+        }
+    }
+
+    private void renderProjectiles(Screen screen) {
+        for (Projectile projectile : projectiles) {
+            projectile.render(screen);
+        }
+    }
+
+    private void renderEntities(Screen screen) {
+        for (Entity entity : entities) {
+            entity.render(screen);
         }
     }
 }
