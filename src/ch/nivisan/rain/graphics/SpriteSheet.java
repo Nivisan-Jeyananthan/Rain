@@ -20,6 +20,8 @@ public class SpriteSheet {
     public static final SpriteSheet dummyBack = new SpriteSheet(dummy, 1, 0, 1, 3, 32, 32);
     public static final SpriteSheet dummyRight = new SpriteSheet(dummy, 2, 0, 1, 3, 32, 32);
     public static final SpriteSheet dummyLeft = new SpriteSheet(dummy, 3, 0, 1, 3, 32, 32);
+    private final int spriteWidth, spriteHeight;
+
     public final int[] pixels;
     private final int width;
     private final int height;
@@ -28,8 +30,7 @@ public class SpriteSheet {
 
     public SpriteSheet(String path, int size) {
         this.path = path;
-        this.height = size;
-        this.width = size;
+        this.height = this.width = this.spriteHeight = this.spriteWidth = size;
 
         pixels = new int[size * size];
         loadImage();
@@ -37,8 +38,8 @@ public class SpriteSheet {
 
     public SpriteSheet(String path, int width, int height) {
         this.path = path;
-        this.width = width;
-        this.height = height;
+        this.width = this.spriteWidth = width;
+        this.height = this.spriteHeight = height;
         this.pixels = new int[width * height];
         loadImage();
     }
@@ -60,6 +61,8 @@ public class SpriteSheet {
         int pixelYStart = y * spriteSizeHeight;
         int spriteWidth = width * spriteSizeWidth;
         int spriteHeight = height * spriteSizeHeight;
+        this.spriteWidth = spriteSizeWidth;
+        this.spriteHeight = spriteSizeHeight;
         this.width = spriteWidth;
         this.height = spriteHeight;
         this.pixels = new int[spriteHeight * spriteWidth];
@@ -68,7 +71,6 @@ public class SpriteSheet {
         createSubSheetFromSheet(parentSheet, spriteWidth, spriteHeight, pixelYStart, pixelXStart);
 
         assignSpritesToPixels(width, height, spriteSizeWidth, spriteSizeHeight, spriteHeight, spriteWidth);
-
     }
 
     /**
@@ -94,7 +96,7 @@ public class SpriteSheet {
                         spritePixels[x0 + y0 * spriteSizeWidth] = pixels[(x0 + pixelIndexX) + (y0 + pixelIndexY) * spriteWidth];
                     }
                 }
-                Sprite sprite = new Sprite(spritePixels, spriteWidth, spriteHeight);
+                Sprite sprite = new Sprite(spritePixels, this.spriteWidth, this.spriteHeight);
                 sprites[frame++] = sprite;
             }
         }
@@ -105,7 +107,9 @@ public class SpriteSheet {
             int yp = pixelYStart + i;
             for (int j = 0; j < spriteWidth; j++) {
                 int xp = pixelXStart + j;
-                pixels[j + i * spriteWidth] = parentSheet.pixels[xp + yp * parentSheet.getWidth()];
+                int sheetIndex = xp + yp * parentSheet.getWidth();
+                int pixelIndex = j + i * spriteWidth;
+                pixels[pixelIndex] = parentSheet.pixels[sheetIndex];
             }
         }
     }
@@ -118,7 +122,9 @@ public class SpriteSheet {
 
             image.getRGB(0, 0, width, height, pixels, 0, width);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+        }catch (Exception e){
+            System.err.println(SpriteSheet.class.getResource(path) + " failed to load!");
         }
     }
 

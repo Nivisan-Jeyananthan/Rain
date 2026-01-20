@@ -69,6 +69,20 @@ public class Sprite {
     }
 
     /**
+     * goes through the SpriteSheet and loads it into the pixels array raw
+     */
+    private void loadSpriteFromSheet() {
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < height; x++) {
+                int pixelIndex = x + y * width;
+                int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
+
+                pixels[pixelIndex] = sheet.pixels[sheetIndex];
+            }
+        }
+    }
+
+    /**
      * Creates a sprite of given size filled by the given color
      *
      * @param size
@@ -104,19 +118,5 @@ public class Sprite {
     }
 
 
-    /**
-     * goes through the SpriteSheet and loads it into the pixels array raw
-     */
-    private void loadSpriteFromSheet() {
-        for (int y = 0; y < width; y++) {
-            for (int x = 0; x < height; x++) {
-                int pixelIndex = x + y * width;
-                int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
-
-                pixels[pixelIndex] = sheet.pixels[sheetIndex];
-            }
-        }
-
-    }
 
 }

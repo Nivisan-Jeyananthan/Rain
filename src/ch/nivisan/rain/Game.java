@@ -2,6 +2,7 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.SpriteFont;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -24,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     private final Keyboard keyboard;
     private final Level level;
     private final Player player;
+    private SpriteFont font;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -50,6 +52,7 @@ public class Game extends Canvas implements Runnable {
         level = Level.spawn;
         player = new Player(20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
+        font = new SpriteFont();
     }
 
     public static int getWindowWidth() {
@@ -165,6 +168,7 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
+        font.render(screen);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
