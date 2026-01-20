@@ -52,7 +52,7 @@ public class Screen {
 
                 int index = absoluteXPosition + absoluteYPosition * width;
                 int spriteIndex = xPixel + yPixel * spriteSheet.getWidth();
-                pixels[index] = spriteSheet.pixels[spriteIndex];
+                pixels[index] = spriteSheet.getPixels()[spriteIndex];
             }
         }
     }

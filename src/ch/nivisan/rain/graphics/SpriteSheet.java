@@ -22,7 +22,7 @@ public class SpriteSheet {
     public static final SpriteSheet dummyLeft = new SpriteSheet(dummy, 3, 0, 1, 3, 32, 32);
     private final int spriteWidth, spriteHeight;
 
-    public final int[] pixels;
+    private final int[] pixels;
     private final int width;
     private final int height;
     private String path;
@@ -136,6 +136,17 @@ public class SpriteSheet {
         return height;
     }
 
+    public int getSpriteWidth() {
+        return spriteWidth;
+    }
+
+    public int getSpriteHeight() {
+        return spriteHeight;
+    }
+
+    public int[] getPixels(){
+        return pixels;
+    }
 
     public Sprite[] getSprites() {
         return sprites;

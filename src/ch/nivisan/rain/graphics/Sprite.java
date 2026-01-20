@@ -77,7 +77,7 @@ public class Sprite {
                 int pixelIndex = x + y * width;
                 int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
 
-                pixels[pixelIndex] = sheet.pixels[sheetIndex];
+                pixels[pixelIndex] = sheet.getPixels()[sheetIndex];
             }
         }
     }
@@ -99,6 +99,31 @@ public class Sprite {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+    }
+
+    public static Sprite[] split(SpriteSheet sheet, int spriteWidth, int spriteHeight){
+        int amount = (sheet.getWidth() * sheet.getHeight())/(spriteWidth * spriteHeight);
+        Sprite[] sprites = new Sprite[amount];
+
+        int current = 0;
+        for (int spriteY = 0; spriteY < sheet.getHeight() / spriteHeight; spriteY++) {
+            for (int spriteX = 0; spriteX < sheet.getWidth() / spriteWidth; spriteX++) {
+                int[] spritePixels = new int[spriteHeight * spriteWidth];
+
+                for (int y = 0; y < spriteHeight; y++) {
+                    for (int x = 0; x < spriteWidth; x++) {
+                        int originalPixelX = x + spriteX * spriteWidth;
+                        int originalPixelY = y + spriteY * spriteHeight;
+
+                        spritePixels[x + y * spriteWidth] = sheet.getPixels()[originalPixelX + originalPixelY * sheet.getWidth()];
+                    }
+                }
+                sprites[current++] = new Sprite(spritePixels,spriteWidth, spriteHeight);
+            }
+
+        }
+
+        return sprites;
     }
 
     public int getSize() {
