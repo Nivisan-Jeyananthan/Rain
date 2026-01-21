@@ -32,7 +32,7 @@ public class WizardProjectile extends Projectile {
 
     private void removeOnCollision() {
         if (calculateDistance() > range || level.tileCollision((int) (x + nx), (int) (y + ny), 4, 4, 8)) {
-            level.addEntity(new ParticleSpawner((int) x, (int) y, 500, 1.0f, level));
+            level.addEntity(new ParticleSpawner((int) x, (int) y, 20, 1.0f, level));
             remove();
         }
     }

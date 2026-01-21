@@ -74,6 +74,7 @@ public class Shooter extends Walker {
     }
 
     public void render(Screen screen) {
-        screen.renderMob((int) x - 16, (int) y - 16, this);
+        int bodyColorGreen = 0xff00FF3A;
+        screen.renderMob((int) x - 16, (int) y - 16, this, bodyColorGreen);
     }
 }

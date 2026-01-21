@@ -17,6 +17,8 @@ public class Screen {
     public int[] tiles = new int[MapSize * MapSize];
     // offests to keep our player centered as main focus
     private int xOffset, yOffset;
+    private static final int alphaColor = 0xffff00ff;
+
 
 
     public Screen(int width, int height) {
@@ -58,7 +60,7 @@ public class Screen {
     }
 
 
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed) {
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
@@ -75,7 +77,11 @@ public class Screen {
 
                 int index = absoluteXPosition + absoluteYPosition * width;
                 int spriteIndex = xPixel + yPixel * sprite.getWidth();
-                pixels[index] = sprite.pixels[spriteIndex];
+                int color = sprite.pixels[spriteIndex];
+                if (!transparent || color != alphaColor) {
+                    pixels[index] = color;
+                }
+
             }
         }
     }
@@ -83,6 +89,8 @@ public class Screen {
     // when the player moves we need to move our tiles accordingly
     // thats why we have offsets calculated with them
     public void renderTile(int xTilePosition, int yTilePosition, Tile tile) {
+        int pixelIndex;
+        int spriteIndex;
         xTilePosition -= xOffset;
         yTilePosition -= yOffset;
 
@@ -100,15 +108,18 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                int index = absoluteXPosition + absoluteYPosition * width;
-                int spriteIndex = xPixel + yPixel * tile.sprite.getSize();
-                pixels[index] = tile.sprite.pixels[spriteIndex];
+                pixelIndex = absoluteXPosition + absoluteYPosition * width;
+                spriteIndex = xPixel + yPixel * tile.sprite.getSize();
+                pixels[pixelIndex] = tile.sprite.pixels[spriteIndex];
             }
         }
     }
 
 
     public void renderProjectile(int xTilePosition, int yTilePosition, Projectile projectile) {
+        int index;
+        int spriteIndex;
+        int color;
         xTilePosition -= xOffset;
         yTilePosition -= yOffset;
         var sprite = projectile.getSprite();
@@ -128,12 +139,11 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                int index = absoluteXPosition + absoluteYPosition * width;
-                int spriteIndex = xPixel + yPixel * sprite.getSize();
-                var transparentColor = 0xffff00ff;
-                var color = sprite.pixels[spriteIndex];
+                index = absoluteXPosition + absoluteYPosition * width;
+                spriteIndex = xPixel + yPixel * sprite.getSize();
+                color = sprite.pixels[spriteIndex];
 
-                if (color != transparentColor) {
+                if (color != alphaColor) {
                     pixels[index] = color;
                 }
             }
@@ -141,12 +151,15 @@ public class Screen {
     }
 
     public void renderMob(int xPosition, int yPosition, Sprite sprite, FlipState flip) {
+        int color;
+        int absoluteYPosition;
+        int yPixelFlipped;
         xPosition -= xOffset;
         yPosition -= yOffset;
 
         for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
-            int absoluteYPosition = yPosition + yPixel;
-            int yPixelFlipped = yPixel;
+            absoluteYPosition = yPosition + yPixel;
+            yPixelFlipped = yPixel;
 
             if (flip == FlipState.YFlipped || flip == FlipState.XYFlipped) {
                 yPixelFlipped = (sprite.getSize() - 1) - yPixel;
@@ -166,21 +179,22 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                int color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
+                color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
 
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
                 // so instead of the hex color code only, we also add the alpha channel code at the beginning.
-                int transparentColor = 0xffff00ff;
 
-                if (color != transparentColor) {
+                if (color != alphaColor) {
                     pixels[absoluteXPosition + absoluteYPosition * width] = color;
                 }
             }
         }
     }
 
-    public void renderMob(int xPosition, int yPosition, Mob mob) {
+    public void renderMob(int xPosition, int yPosition, Mob mob, int swapColor) {
         Sprite sprite = mob.getSprite();
+        int bodyColor = 0xff472BBF;
+        int color;
 
         xPosition -= xOffset;
         yPosition -= yOffset;
@@ -198,21 +212,14 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                int color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
-                int bodyColor = 0xff472BBF;
+                color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
 
-                if ((mob instanceof Chaser) && color == bodyColor) {
-                    color = 0xffBA0015;
-                }else if((mob instanceof Star) && color == bodyColor){
-                    color = 0xffE8E83A;
-                }else if((mob instanceof Shooter) && color == bodyColor){
-                    color = 0xff00FF3A;
-                }
+                if(swapColor != 0 && color == bodyColor)
+                    color = swapColor;
 
                 // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
                 // so instead of the hex color code only, we also add the alpha channel code at the beginning.
-                int transparentColor = 0xffff00ff;
-                if (color != transparentColor) {
+                if (color != alphaColor) {
                     pixels[absoluteXPosition + absoluteYPosition * width] = color;
                 }
             }

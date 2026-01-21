@@ -79,6 +79,7 @@ public class Chaser extends Mob {
 
     @Override
     public void render(Screen screen) {
-        screen.renderMob((int) x - 16, (int) y - 16, this);
+        int bodyColorRed = 0xffBA0015;
+        screen.renderMob((int) x - 16, (int) y - 16, this, bodyColorRed );
     }
 }

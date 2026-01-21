@@ -168,7 +168,7 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
-        font.render(screen);
+        font.render("game,jam",screen);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
