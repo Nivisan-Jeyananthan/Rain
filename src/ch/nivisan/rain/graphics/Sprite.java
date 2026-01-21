@@ -24,6 +24,8 @@ public class Sprite {
 
     // projectiles
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
+    public static Sprite roachProjectile = new Sprite(16, 1, 0, SpriteSheet.wizardProjectiles);
+    public static Sprite nuclearProjectile = new Sprite(16, 2, 0, SpriteSheet.wizardProjectiles);
 
     // particles
     public static Sprite particleDefault = new Sprite(3, 0xAAAAAAAA);

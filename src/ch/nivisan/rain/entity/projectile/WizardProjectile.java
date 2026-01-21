@@ -10,7 +10,7 @@ public class WizardProjectile extends Projectile {
     public static final float fireRate = 60f;
 
     public WizardProjectile(float xOrigin, float yOrigin, double angle, Level level) {
-        super(xOrigin, yOrigin, angle, Sprite.wizardProjectile, level);
+        super(xOrigin, yOrigin, angle, Sprite.nuclearProjectile, level);
         range = 200;
         damage = 20;
         speed = 4;

@@ -52,7 +52,7 @@ public class Game extends Canvas implements Runnable {
         level = Level.spawn;
         player = new Player(20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
-        font = new SpriteFont();
+        font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
     }
 
     public static int getWindowWidth() {
@@ -151,6 +151,8 @@ public class Game extends Canvas implements Runnable {
         level.update();
     }
 
+    private static final String text = "Hello! the name\nis Nivisan";
+
     public void render() {
         var bs = getBufferStrategy();
         if (bs == null) {
@@ -168,7 +170,7 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
-        font.render("game,jam",screen);
+        font.render(text,screen);
 
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 

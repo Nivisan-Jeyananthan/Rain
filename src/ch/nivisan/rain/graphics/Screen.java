@@ -60,7 +60,7 @@ public class Screen {
     }
 
 
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent) {
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent, int newColor) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
@@ -79,7 +79,7 @@ public class Screen {
                 int spriteIndex = xPixel + yPixel * sprite.getWidth();
                 int color = sprite.pixels[spriteIndex];
                 if (!transparent || color != alphaColor) {
-                    pixels[index] = color;
+                    pixels[index] = newColor;
                 }
 
             }
