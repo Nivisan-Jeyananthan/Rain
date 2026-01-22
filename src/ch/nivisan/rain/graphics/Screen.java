@@ -19,8 +19,6 @@ public class Screen {
     private int xOffset, yOffset;
     private static final int alphaColor = 0xffff00ff;
 
-
-
     public Screen(int width, int height) {
         this.width = width;
         this.height = height;
@@ -48,7 +46,8 @@ public class Screen {
             for (int xPixel = 0; xPixel < spriteSheet.getWidth(); xPixel++) {
                 int absoluteXPosition = xPixel + xTilePosition;
 
-                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     continue;
                 }
 
@@ -59,8 +58,8 @@ public class Screen {
         }
     }
 
-
-    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent, int newColor) {
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent,
+            int newColor) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
@@ -71,7 +70,8 @@ public class Screen {
             for (int xPixel = 0; xPixel < sprite.getWidth(); xPixel++) {
                 int absoluteXPosition = xPixel + xTilePosition;
 
-                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < 0 || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     continue;
                 }
 
@@ -101,7 +101,8 @@ public class Screen {
                 int absoluteXPosition = xTilePosition + xPixel;
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -tile.sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -tile.sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -115,7 +116,6 @@ public class Screen {
         }
     }
 
-
     public void renderProjectile(int xTilePosition, int yTilePosition, Projectile projectile) {
         int index;
         int spriteIndex;
@@ -124,7 +124,6 @@ public class Screen {
         yTilePosition -= yOffset;
         var sprite = projectile.getSprite();
 
-
         // iterate through each pixel in our tile and set it to main pixels
         for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
             int absoluteYPosition = yTilePosition + yPixel;
@@ -132,7 +131,8 @@ public class Screen {
                 int absoluteXPosition = xTilePosition + xPixel;
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -148,6 +148,80 @@ public class Screen {
                 }
             }
         }
+    }
+
+    /**
+     * 
+     * @param xTilePosition
+     * @param yTilePosition
+     * @param projectile
+     * @param angle in radians
+     */
+    public void renderProjectile(int xTilePosition, int yTilePosition, Projectile projectile, float angle) {
+        int index;
+        int spriteIndex;
+        int color;
+        xTilePosition -= xOffset;
+        yTilePosition -= yOffset;
+        var  sprite = projectile.getSprite();
+        int[] rotatedPixels = rotate(sprite.pixels, sprite.getWidth(), sprite.getHeight(), angle);
+
+        // iterate through each pixel in our tile and set it to main pixels
+        for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
+            int absoluteYPosition = yTilePosition + yPixel;
+            for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
+                int absoluteXPosition = xTilePosition + xPixel;
+
+                // so we only render the tiles that are visible on our monitor and nothing else
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
+                    break;
+                }
+
+                if (absoluteXPosition < 0)
+                    absoluteXPosition = 0;
+
+                index = absoluteXPosition + absoluteYPosition * width;
+                spriteIndex = xPixel + yPixel * sprite.getSize();
+                color = sprite.pixels[spriteIndex];
+
+                if (color != alphaColor) {
+                    pixels[index] = color;
+                }
+            }
+        }
+    }
+
+    private int[] rotate(int[] pixels, int width, int height, float angle) {
+        int[] result = new int[width * height];
+
+        return result;
+    }
+
+    /**
+     * @param angle in radians therefor no conversion from degrees needed
+     * @param x
+     * @param y
+     * @return
+     */
+    private float rotationX(float angle, float x, float y){
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        return x * cos + y * -sin;
+    }
+
+    /**
+     * @param angle in radians therefor no conversion from degrees needed
+     * @param x
+     * @param y
+     * @return
+     */
+    private float rotationY(float angle, float x, float y){
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+
+        return x * sin + y * cos;
     }
 
     public void renderMob(int xPosition, int yPosition, Sprite sprite, FlipState flip) {
@@ -172,7 +246,8 @@ public class Screen {
                 }
 
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -181,8 +256,10 @@ public class Screen {
 
                 color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
 
-                // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
-                // so instead of the hex color code only, we also add the alpha channel code at the beginning.
+                // Because we are loading the image using RBA and not RGB we need to add another
+                // ff in the beginning.
+                // so instead of the hex color code only, we also add the alpha channel code at
+                // the beginning.
 
                 if (color != alphaColor) {
                     pixels[absoluteXPosition + absoluteYPosition * width] = color;
@@ -205,7 +282,8 @@ public class Screen {
             for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
                 int absoluteXPosition = xPosition + xPixel;
                 // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0 || absoluteYPosition >= height) {
+                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
+                        || absoluteYPosition >= height) {
                     break;
                 }
 
@@ -214,11 +292,13 @@ public class Screen {
 
                 color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
 
-                if(swapColor != 0 && color == bodyColor)
+                if (swapColor != 0 && color == bodyColor)
                     color = swapColor;
 
-                // Because we are loading the image using RBA and not RGB we need to add another ff in the beginning.
-                // so instead of the hex color code only, we also add the alpha channel code at the beginning.
+                // Because we are loading the image using RBA and not RGB we need to add another
+                // ff in the beginning.
+                // so instead of the hex color code only, we also add the alpha channel code at
+                // the beginning.
                 if (color != alphaColor) {
                     pixels[absoluteXPosition + absoluteYPosition * width] = color;
                 }
@@ -227,8 +307,10 @@ public class Screen {
     }
 
     /**
-     * Renders a rectangle if it can, otherwise parts of it as only bottom part, top, left or right.
+     * Renders a rectangle if it can, otherwise parts of it as only bottom part,
+     * top, left or right.
      * Depending on if it will fit on the screen
+     * 
      * @param xStart
      * @param yStart
      * @param width
@@ -236,27 +318,32 @@ public class Screen {
      * @param color
      * @param fixed
      */
-    public void drawRectangle(int xStart, int yStart, int width, int height,int color, boolean fixed) {
+    public void drawRectangle(int xStart, int yStart, int width, int height, int color, boolean fixed) {
         if (fixed) {
             xStart -= xOffset;
             yStart -= yOffset;
         }
 
-        for (int x = xStart; x <= xStart + width; x++){
-            if(x < 0 || x >= this.width || yStart >= this.height) continue;
+        for (int x = xStart; x <= xStart + width; x++) {
+            if (x < 0 || x >= this.width || yStart >= this.height)
+                continue;
 
-            if(yStart > 0)
+            if (yStart > 0)
                 pixels[x + yStart * this.width] = color;
-            if(yStart + height >= this.height || yStart + height < 0) continue;
+            if (yStart + height >= this.height || yStart + height < 0)
+                continue;
             pixels[x + (yStart + height) * this.width] = color;
         }
 
-        for (int y = yStart; y <= yStart + height; y++){
-            if(xStart >= this.width || y < 0 || y >= this.height) continue;
+        for (int y = yStart; y <= yStart + height; y++) {
+            if (xStart >= this.width || y < 0 || y >= this.height)
+                continue;
 
-            if(xStart > 0) pixels[xStart + y * this.width] = color;
-            if(xStart + width >= this.width || xStart + width < 0) continue;
-            pixels[(xStart + width)  + (y * this.width)] = color;
+            if (xStart > 0)
+                pixels[xStart + y * this.width] = color;
+            if (xStart + width >= this.width || xStart + width < 0)
+                continue;
+            pixels[(xStart + width) + (y * this.width)] = color;
         }
     }
 
@@ -266,4 +353,3 @@ public class Screen {
     }
 
 }
-
