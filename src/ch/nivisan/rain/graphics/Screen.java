@@ -13,7 +13,7 @@ public class Screen {
     private final Random random = new Random();
     public int width, height;
     // which pixels of the screen get rendered
-    public int[] pixels;
+    private int[] pixels;
     public int[] tiles = new int[MapSize * MapSize];
     // offests to keep our player centered as main focus
     private int xOffset, yOffset;
@@ -77,7 +77,7 @@ public class Screen {
 
                 int index = absoluteXPosition + absoluteYPosition * width;
                 int spriteIndex = xPixel + yPixel * sprite.getWidth();
-                int color = sprite.pixels[spriteIndex];
+                int color = sprite.getPixels()[spriteIndex];
                 if (!transparent || color != alphaColor) {
                     pixels[index] = newColor;
                 }
@@ -111,7 +111,7 @@ public class Screen {
 
                 pixelIndex = absoluteXPosition + absoluteYPosition * width;
                 spriteIndex = xPixel + yPixel * tile.sprite.getSize();
-                pixels[pixelIndex] = tile.sprite.pixels[spriteIndex];
+                pixels[pixelIndex] = tile.sprite.getPixels()[spriteIndex];
             }
         }
     }
@@ -141,130 +141,13 @@ public class Screen {
 
                 index = absoluteXPosition + absoluteYPosition * width;
                 spriteIndex = xPixel + yPixel * sprite.getSize();
-                color = sprite.pixels[spriteIndex];
+                color = sprite.getPixels()[spriteIndex];
 
                 if (color != alphaColor) {
                     pixels[index] = color;
                 }
             }
         }
-    }
-
-    /**
-     * 
-     * @param xTilePosition
-     * @param yTilePosition
-     * @param projectile
-     * @param angle in radians
-     */
-    public void renderProjectile(int xTilePosition, int yTilePosition, Projectile projectile, float angle) {
-        int index;
-        int spriteIndex;
-        int color;
-        xTilePosition -= xOffset;
-        yTilePosition -= yOffset;
-        var  sprite = projectile.getSprite();
-        int[] rotatedPixels = rotate(sprite.pixels, sprite.getWidth(), sprite.getHeight(), angle);
-
-        // iterate through each pixel in our tile and set it to main pixels
-        for (int yPixel = 0; yPixel < sprite.getSize(); yPixel++) {
-            int absoluteYPosition = yTilePosition + yPixel;
-            for (int xPixel = 0; xPixel < sprite.getSize(); xPixel++) {
-                int absoluteXPosition = xTilePosition + xPixel;
-
-                // so we only render the tiles that are visible on our monitor and nothing else
-                if (absoluteXPosition < -sprite.getSize() || absoluteXPosition >= width || absoluteYPosition < 0
-                        || absoluteYPosition >= height) {
-                    break;
-                }
-
-                if (absoluteXPosition < 0)
-                    absoluteXPosition = 0;
-
-                index = absoluteXPosition + absoluteYPosition * width;
-                spriteIndex = xPixel + yPixel * sprite.getSize();
-                color = rotatedPixels[spriteIndex];
-
-                if (color != alphaColor) {
-                    pixels[index] = color;
-                }
-            }
-        }
-    }
-
-    /**
-     * Rotation is done clockwise instead of according to unit of circle (counterclockwise).
-     * Therefor units are in negative instead of positive
-     * @param pixels
-     * @param spriteWidth
-     * @param spriteHeight
-     * @param angle
-     * @return
-     */
-    private int[] rotate(int[] pixels, int spriteWidth, int spriteHeight, float angle) {
-        int[] result = new int[spriteWidth * spriteHeight];
-
-        float nx_x = rotationX(-angle,1.0f, 0.0f);
-        float nx_y = rotationY(-angle,1.0f,0.0f);
-
-        float ny_x = rotationX(-angle,0.0f, 1.0f);
-        float ny_y = rotationY(-angle,0.0f,1.0f);
-
-        float initialRotationX = rotationX(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteWidth / 2.0f;
-        float initialRotationY = rotationY(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteHeight / 2.0f;
-
-
-        for (int y = 0; y < spriteHeight; y++) {
-            float x0 = initialRotationX;
-            float y0 = initialRotationY;
-            for (int x = 0; x < spriteWidth; x++) {
-                int x1 = (int) x0;
-                int y1 = (int) y0;
-                int color = 0;
-                if(x1 < 0 || x1 >= spriteWidth || y1 < 0 || y1 >= spriteHeight){
-                    color = alphaColor;
-                }else {
-                     color = pixels[x1 + y1 * spriteWidth];
-                }
-                result[x + y * spriteWidth] = color;
-                x0 += nx_x;
-                y0 += nx_y;
-            }
-
-            initialRotationY += ny_y;
-            initialRotationX += ny_x;
-        }
-
-        return result;
-    }
-
-    /**
-     * Calculates where the new x positions should be.
-     * Negation of sin due to clock wise rotation
-     * @param angle in radians therefor no conversion from degrees needed
-     * @param x if we want to do it in x axis
-     * @param y if we want to do it in y axis
-     * @return
-     */
-    private float rotationX(float angle, float x, float y){
-        float cos = (float) Math.cos(angle - Math.PI / 2);
-        float sin = (float) Math.sin(angle - Math.PI / 2);
-
-        return x * cos + y * -sin;
-    }
-
-    /**
-     * Calculates where the new y positions should be.
-     * @param angle in radians therefor no conversion from degrees needed
-     * @param x
-     * @param y
-     * @return
-     */
-    private float rotationY(float angle, float x, float y){
-        float cos = (float) Math.cos(angle - Math.PI / 2);
-        float sin = (float) Math.sin(angle - Math.PI / 2);
-
-        return x * sin + y * cos;
     }
 
     public void renderMob(int xPosition, int yPosition, Sprite sprite, FlipState flip) {
@@ -297,7 +180,7 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                color = sprite.pixels[xPixelFlipped + yPixelFlipped * sprite.getSize()];
+                color = sprite.getPixels()[xPixelFlipped + yPixelFlipped * sprite.getSize()];
 
                 // Because we are loading the image using RBA and not RGB we need to add another
                 // ff in the beginning.
@@ -333,7 +216,7 @@ public class Screen {
                 if (absoluteXPosition < 0)
                     absoluteXPosition = 0;
 
-                color = sprite.pixels[xPixel + yPixel * sprite.getSize()];
+                color = sprite.getPixels()[xPixel + yPixel * sprite.getSize()];
 
                 if (swapColor != 0 && color == bodyColor)
                     color = swapColor;
@@ -395,4 +278,5 @@ public class Screen {
         this.xOffset = xOffset;
     }
 
+    public int[] getPixels() { return pixels; }
 }

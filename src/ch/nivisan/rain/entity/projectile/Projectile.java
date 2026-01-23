@@ -11,7 +11,7 @@ public abstract class Projectile extends Entity {
     protected final float xOrigin;
     protected final float yOrigin;
     protected final float angle;
-    protected final Sprite sprite;
+    protected Sprite sprite;
     protected float nx, ny;
     protected float speed, range, damage;
 

@@ -15,6 +15,7 @@ import java.io.Serial;
 public class Game extends Canvas implements Runnable {
     @Serial
     private static final long serialVersionUID = 1L;
+    public static final float framerate = 60.0f;
 
     private static final int scale = 3;
     private static final int width = 300;
@@ -96,7 +97,6 @@ public class Game extends Canvas implements Runnable {
     public void run() {
         long timer = System.currentTimeMillis();
         long lastTime = System.nanoTime();
-        final float framerate = 60.0f;
         final float nanosecondsInSeconds = 1_000_000_000.0f;
         // calculate how many nanoseconds it takes to update the game once
         // this is so we can calculate how many it would need for 60 frames per second
@@ -170,9 +170,9 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
-        font.render(text,screen);
+        font.render(text, screen);
 
-        System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
+        System.arraycopy(screen.getPixels(), 0, pixels, 0, pixels.length);
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
@@ -188,4 +188,5 @@ public class Game extends Canvas implements Runnable {
         // changes the buffers which reside in memory
         bs.show();
     }
+
 }

@@ -2,6 +2,7 @@ package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
 import ch.nivisan.rain.entity.Entity;
+import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
@@ -35,7 +36,7 @@ public class Player extends Mob {
         this.x = x;
         this.y = y;
         this.input = input;
-        this.fireRate = WizardProjectile.fireRate;
+        this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
     }
 

@@ -1,16 +1,18 @@
 package ch.nivisan.rain.entity.projectile;
 
+import ch.nivisan.rain.Game;
 import ch.nivisan.rain.entity.spawner.ParticleSpawner;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
 
-public class WizardProjectile extends Projectile {
+public class ShurikenProjectile extends Projectile{
     // refers to the rate of how many per second (60 = 1)
-    public static final float fireRate = 60f;
+    public static final float fireRate = 20.0f;
+    private int time = 0;
 
-    public WizardProjectile(float xOrigin, float yOrigin, float angle, Level level) {
-        super(xOrigin, yOrigin, angle, Sprite.rotateSprite(Sprite.nuclearProjectile, angle), level);
+    public ShurikenProjectile(float xOrigin, float yOrigin, float angle, Level level) {
+        super(xOrigin, yOrigin, angle, Sprite.rotateSprite(Sprite.wizardProjectile, angle), level);
         range = 200;
         damage = 20;
         speed = 1;
@@ -21,6 +23,10 @@ public class WizardProjectile extends Projectile {
     }
 
     public void update() {
+        time++;
+        if(time % (Game.framerate / 10) == 0){
+            sprite = Sprite.rotateSprite(sprite, (float) (Math.PI / 20.0));
+        }
         removeOnCollision();
         move();
     }

@@ -2,6 +2,7 @@ package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.projectile.Projectile;
+import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
@@ -78,7 +79,7 @@ public abstract class Mob extends Entity {
     }
 
     protected void shoot(float x, float y, float direction) {
-        Projectile p = new WizardProjectile(x, y, direction, level);
+        Projectile p = new ShurikenProjectile(x, y, direction, level);
         level.addEntity(p);
     }
 
