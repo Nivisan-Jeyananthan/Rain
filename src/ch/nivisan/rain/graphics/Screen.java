@@ -192,8 +192,17 @@ public class Screen {
         }
     }
 
-    private int[] rotate(int[] pixels, int width, int height, float angle) {
-        int[] result = new int[width * height];
+    /**
+     * Rotation is done clockwise instead of according to unit of circle (counterclockwise).
+     * Therefor units are in negative instead of positive
+     * @param pixels
+     * @param spriteWidth
+     * @param spriteHeight
+     * @param angle
+     * @return
+     */
+    private int[] rotate(int[] pixels, int spriteWidth, int spriteHeight, float angle) {
+        int[] result = new int[spriteWidth * spriteHeight];
 
         float nx_x = rotationX(-angle,1.0f, 0.0f);
         float nx_y = rotationY(-angle,1.0f,0.0f);
@@ -201,23 +210,23 @@ public class Screen {
         float ny_x = rotationX(-angle,0.0f, 1.0f);
         float ny_y = rotationY(-angle,0.0f,1.0f);
 
-        float initialRotationX = rotationX(-angle, -width / 2.0f, -height / 2.0f) + width / 2.0f;
-        float initialRotationY = rotationY(-angle, -width / 2.0f, -height / 2.0f) + height / 2.0f;
+        float initialRotationX = rotationX(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteWidth / 2.0f;
+        float initialRotationY = rotationY(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteHeight / 2.0f;
 
 
-        for (int y = 0; y < height; y++) {
+        for (int y = 0; y < spriteHeight; y++) {
             float x0 = initialRotationX;
             float y0 = initialRotationY;
-            for (int x = 0; x < width; x++) {
+            for (int x = 0; x < spriteWidth; x++) {
                 int x1 = (int) x0;
                 int y1 = (int) y0;
                 int color = 0;
-                if(x1 < 0 || x1 >= width || y1 < 0 || y1 >= height){
-                    color = 0xffff00ff;
+                if(x1 < 0 || x1 >= spriteWidth || y1 < 0 || y1 >= spriteHeight){
+                    color = alphaColor;
                 }else {
-                     color = pixels[x1 + y1 * width];
+                     color = pixels[x1 + y1 * spriteWidth];
                 }
-                result[x + y * width] = color;
+                result[x + y * spriteWidth] = color;
                 x0 += nx_x;
                 y0 += nx_y;
             }
@@ -230,13 +239,14 @@ public class Screen {
     }
 
     /**
+     * Calculates where the new x positions should be.
+     * Negation of sin due to clock wise rotation
      * @param angle in radians therefor no conversion from degrees needed
-     * @param x
-     * @param y
+     * @param x if we want to do it in x axis
+     * @param y if we want to do it in y axis
      * @return
      */
     private float rotationX(float angle, float x, float y){
-
         float cos = (float) Math.cos(angle - Math.PI / 2);
         float sin = (float) Math.sin(angle - Math.PI / 2);
 
@@ -244,6 +254,7 @@ public class Screen {
     }
 
     /**
+     * Calculates where the new y positions should be.
      * @param angle in radians therefor no conversion from degrees needed
      * @param x
      * @param y
