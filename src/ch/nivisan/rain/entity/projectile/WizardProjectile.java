@@ -9,11 +9,11 @@ public class WizardProjectile extends Projectile {
     // refers to the rate of how many per second (60 = 1)
     public static final float fireRate = 60f;
 
-    public WizardProjectile(float xOrigin, float yOrigin, double angle, Level level) {
+    public WizardProjectile(float xOrigin, float yOrigin, float angle, Level level) {
         super(xOrigin, yOrigin, angle, Sprite.nuclearProjectile, level);
         range = 200;
         damage = 20;
-        speed = 4;
+        speed = 1;
 
         // angle and vector length
         nx = (float)(speed * Math.cos(angle));
@@ -49,6 +49,6 @@ public class WizardProjectile extends Projectile {
     }
 
     public void render(Screen screen) {
-        screen.renderProjectile((int) x, (int) (y), this);
+        screen.renderProjectile((int) x, (int) (y), this, angle);
     }
 }

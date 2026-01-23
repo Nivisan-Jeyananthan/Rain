@@ -77,7 +77,7 @@ public abstract class Mob extends Entity {
         screen.renderMob((int) x - 16, (int) y - 32, sprite, FlipState.None);
     }
 
-    protected void shoot(float x, float y, double direction) {
+    protected void shoot(float x, float y, float direction) {
         Projectile p = new WizardProjectile(x, y, direction, level);
         level.addEntity(p);
     }

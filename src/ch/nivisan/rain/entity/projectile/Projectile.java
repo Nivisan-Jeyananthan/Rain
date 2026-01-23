@@ -10,12 +10,12 @@ public abstract class Projectile extends Entity {
     protected static final Random random = new Random();
     protected final float xOrigin;
     protected final float yOrigin;
-    protected final double angle;
+    protected final float angle;
     protected final Sprite sprite;
     protected float nx, ny;
     protected float speed, range, damage;
 
-    public Projectile(float x, float y, double angle, Sprite sprite, Level level) {
+    public Projectile(float x, float y, float angle, Sprite sprite, Level level) {
         super(level);
         this.angle = angle;
         this.xOrigin = x;

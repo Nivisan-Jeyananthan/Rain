@@ -82,7 +82,7 @@ public class Player extends Mob {
 
             float dx = (Mouse.getXPosition() - midpointWidth);
             float dy = (Mouse.getYPosition() - midpointHeight);
-            double dir = Math.atan2(dy, dx);
+            float dir = (float) Math.atan2(dy, dx);
 
             shoot(x, y, dir);
             fireRate = WizardProjectile.fireRate;

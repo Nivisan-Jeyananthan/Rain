@@ -183,7 +183,7 @@ public class Screen {
 
                 index = absoluteXPosition + absoluteYPosition * width;
                 spriteIndex = xPixel + yPixel * sprite.getSize();
-                color = sprite.pixels[spriteIndex];
+                color = rotatedPixels[spriteIndex];
 
                 if (color != alphaColor) {
                     pixels[index] = color;
@@ -195,6 +195,37 @@ public class Screen {
     private int[] rotate(int[] pixels, int width, int height, float angle) {
         int[] result = new int[width * height];
 
+        float nx_x = rotationX(-angle,1.0f, 0.0f);
+        float nx_y = rotationY(-angle,1.0f,0.0f);
+
+        float ny_x = rotationX(-angle,0.0f, 1.0f);
+        float ny_y = rotationY(-angle,0.0f,1.0f);
+
+        float initialRotationX = rotationX(-angle, -width / 2.0f, -height / 2.0f) + width / 2.0f;
+        float initialRotationY = rotationY(-angle, -width / 2.0f, -height / 2.0f) + height / 2.0f;
+
+
+        for (int y = 0; y < height; y++) {
+            float x0 = initialRotationX;
+            float y0 = initialRotationY;
+            for (int x = 0; x < width; x++) {
+                int x1 = (int) x0;
+                int y1 = (int) y0;
+                int color = 0;
+                if(x1 < 0 || x1 >= width || y1 < 0 || y1 >= height){
+                    color = 0xffff00ff;
+                }else {
+                     color = pixels[x1 + y1 * width];
+                }
+                result[x + y * width] = color;
+                x0 += nx_x;
+                y0 += nx_y;
+            }
+
+            initialRotationY += ny_y;
+            initialRotationX += ny_x;
+        }
+
         return result;
     }
 
@@ -205,8 +236,9 @@ public class Screen {
      * @return
      */
     private float rotationX(float angle, float x, float y){
-        float cos = (float) Math.cos(angle);
-        float sin = (float) Math.sin(angle);
+
+        float cos = (float) Math.cos(angle - Math.PI / 2);
+        float sin = (float) Math.sin(angle - Math.PI / 2);
 
         return x * cos + y * -sin;
     }
@@ -218,8 +250,8 @@ public class Screen {
      * @return
      */
     private float rotationY(float angle, float x, float y){
-        float cos = (float) Math.cos(angle);
-        float sin = (float) Math.sin(angle);
+        float cos = (float) Math.cos(angle - Math.PI / 2);
+        float sin = (float) Math.sin(angle - Math.PI / 2);
 
         return x * sin + y * cos;
     }
