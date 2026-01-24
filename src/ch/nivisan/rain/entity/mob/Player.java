@@ -7,10 +7,14 @@ import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteSheet;
+import ch.nivisan.rain.graphics.gui.UILabel;
+import ch.nivisan.rain.graphics.gui.UIManager;
+import ch.nivisan.rain.graphics.gui.UIPanel;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Debug;
+import ch.nivisan.rain.utils.Vector2;
 
 import java.util.List;
 
@@ -19,6 +23,7 @@ public class Player extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
+    private UIManager uiManager;
     private final Keyboard input;
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
@@ -38,6 +43,14 @@ public class Player extends Mob {
         this.input = input;
         this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
+
+
+
+        uiManager = Game.getUiManager();
+        UIPanel panel = new UIPanel(new Vector2(0,0));
+        panel.addComponent(new UILabel(new Vector2(0,0),"hallo") );
+        uiManager.addPanel(panel);
+        uiManager.addPanel(panel);
     }
 
     @Override

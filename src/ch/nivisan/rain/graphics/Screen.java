@@ -58,8 +58,12 @@ public class Screen {
         }
     }
 
+    public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent) {
+        renderSprite(xTilePosition, yTilePosition, sprite, fixed, transparent,0);
+    }
+
     public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent,
-            int newColor) {
+                             int newColor) {
         if (fixed) {
             xTilePosition -= xOffset;
             yTilePosition -= yOffset;
@@ -78,13 +82,15 @@ public class Screen {
                 int index = absoluteXPosition + absoluteYPosition * width;
                 int spriteIndex = xPixel + yPixel * sprite.getWidth();
                 int color = sprite.getPixels()[spriteIndex];
-                if (!transparent || color != alphaColor) {
+                if (newColor != 0 && (!transparent || color != alphaColor)) {
                     pixels[index] = newColor;
+                }else if(!transparent || color != alphaColor){
+                    pixels[index] = color;
                 }
-
             }
         }
     }
+
 
     // when the player moves we need to move our tiles accordingly
     // thats why we have offsets calculated with them

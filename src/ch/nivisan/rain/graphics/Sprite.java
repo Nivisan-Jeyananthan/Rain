@@ -26,6 +26,7 @@ public class Sprite {
     public static Sprite wizardProjectile = new Sprite(16, 0, 0, SpriteSheet.wizardProjectiles);
     public static Sprite roachProjectile = new Sprite(16, 1, 0, SpriteSheet.wizardProjectiles);
     public static Sprite nuclearProjectile = new Sprite(16, 2, 0, SpriteSheet.wizardProjectiles);
+    public static Sprite arrowProjectile = new Sprite(16, 0, 1, SpriteSheet.wizardProjectiles);
 
     // particles
     public static Sprite particleDefault = new Sprite(3, 0xAAAAAAAA);
@@ -136,8 +137,8 @@ public class Sprite {
      * @return
      */
     private static int[] rotate(int[] pixels, int spriteWidth, int spriteHeight, float angle) {
-        int[] result = new int[spriteWidth * spriteHeight];
-        int alphaColor = 0xffff00ff;
+        final int[] result = new int[spriteWidth * spriteHeight];
+        final int alphaColor = 0xffff00ff;
 
         float nx_x = rotationX(-angle,1.0f, 0.0f);
         float nx_y = rotationY(-angle,1.0f,0.0f);

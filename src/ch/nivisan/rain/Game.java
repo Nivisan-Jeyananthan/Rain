@@ -3,10 +3,13 @@ package ch.nivisan.rain;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteFont;
+import ch.nivisan.rain.graphics.gui.UIComponent;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-import javax.swing.*;
+import ch.nivisan.rain.graphics.gui.UIManager;
+
+import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -27,6 +30,7 @@ public class Game extends Canvas implements Runnable {
     private final Level level;
     private final Player player;
     private SpriteFont font;
+    private static UIManager uiManager;
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -51,10 +55,14 @@ public class Game extends Canvas implements Runnable {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
+        uiManager = new UIManager();
         player = new Player(20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
         font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
+        uiManager = new UIManager();
     }
+
+    public static UIManager getUiManager() { return uiManager;}
 
     public static int getWindowWidth() {
         return width * scale;
@@ -149,6 +157,7 @@ public class Game extends Canvas implements Runnable {
     public void update() {
         keyboard.update();
         level.update();
+        uiManager.update();
     }
 
     private static final String text = "Hello! the name\nis Nivisan";
@@ -170,7 +179,8 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
-        font.render(text, screen);
+        uiManager.render(screen);
+       // font.render(text, screen);
 
         System.arraycopy(screen.getPixels(), 0, pixels, 0, pixels.length);
 
