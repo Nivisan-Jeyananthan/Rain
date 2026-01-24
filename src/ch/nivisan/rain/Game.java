@@ -30,7 +30,7 @@ public class Game extends Canvas implements Runnable {
     private final Level level;
     private final Player player;
     private SpriteFont font;
-    private static UIManager uiManager;
+    private static UIManager uiManager = new UIManager();
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -55,11 +55,9 @@ public class Game extends Canvas implements Runnable {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
-        uiManager = new UIManager();
         player = new Player(20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
         font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
-        uiManager = new UIManager();
     }
 
     public static UIManager getUiManager() { return uiManager;}
