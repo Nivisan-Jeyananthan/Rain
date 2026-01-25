@@ -3,7 +3,6 @@ package ch.nivisan.rain;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteFont;
-import ch.nivisan.rain.graphics.gui.UIComponent;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -62,13 +61,15 @@ public class Game extends Canvas implements Runnable {
 
     public static UIManager getUiManager() { return uiManager;}
 
-    public static int getWindowWidth() {
+    public static int getWindowWidth(){ return width; }
+
+    public static int getWindowHeight(){ return height; }
+
+    public static int getScaledWindowWidth() {
         return width * scale;
     }
 
-    public static int getWindowHeight() {
-        return height * scale;
-    }
+    public static int getScaledWindowHeight() { return height * scale; }
 
     static void main(String[] args) {
         var game = new Game();
@@ -190,6 +191,8 @@ public class Game extends Canvas implements Runnable {
         graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
         graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
         graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
+
+        uiManager.render(graphics);
 
         // release system ressource
         graphics.dispose();

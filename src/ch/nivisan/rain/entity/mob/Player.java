@@ -1,7 +1,6 @@
 package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.Game;
-import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.AnimatedSprite;
@@ -16,7 +15,7 @@ import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Debug;
 import ch.nivisan.rain.utils.Vector2;
 
-import java.util.List;
+import java.awt.*;
 
 public class Player extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
@@ -47,10 +46,9 @@ public class Player extends Mob {
 
 
         uiManager = Game.getUiManager();
-        UIPanel panel = new UIPanel(new Vector2(0,0));
-        panel.addComponent(new UILabel(new Vector2(0,0),"hallo") );
+        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3,0),new Vector2((300 - 80) * 3,Game.getScaledWindowHeight()), 0);
         uiManager.addPanel(panel);
-        uiManager.addPanel(panel);
+        panel.addComponent(new UILabel(new Vector2(10,50),"Rain").setColor(0xffff00ff));
     }
 
     @Override
@@ -91,8 +89,8 @@ public class Player extends Mob {
      */
     private void updateShooting() {
         if (Mouse.getButton() == 1 && fireRate <= 0) {
-            int midpointWidth = Game.getWindowWidth() / 2;
-            int midpointHeight = Game.getWindowHeight() / 2;
+            int midpointWidth = Game.getScaledWindowWidth() / 2;
+            int midpointHeight = Game.getScaledWindowHeight() / 2;
 
             float dx = (Mouse.getXPosition() - midpointWidth);
             float dy = (Mouse.getYPosition() - midpointHeight);
