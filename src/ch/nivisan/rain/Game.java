@@ -20,7 +20,7 @@ public class Game extends Canvas implements Runnable {
     public static final float framerate = 60.0f;
 
     private static final int scale = 3;
-    private static final int width = 300;
+    private static final int width = 300 ;
     private static final int height = width / 16 * 9;
     private static final String title = "Rain";
     private final JFrame frame;
@@ -54,7 +54,7 @@ public class Game extends Canvas implements Runnable {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
-        player = new Player(20 << 4,60 << 4, keyboard, level);
+        player = new Player("Mambo",20 << 4,60 << 4, keyboard, level);
         level.addEntity(player);
         font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
     }
@@ -185,12 +185,12 @@ public class Game extends Canvas implements Runnable {
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
-        graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
-        graphics.setColor(Color.WHITE);
-        graphics.setFont(new Font("Verdana", 0, 30));
-        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
-        graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
-        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
+        graphics.drawImage(bufferedImage, 0, 0, getWidth() , getHeight(), null);
+//        graphics.setColor(Color.WHITE);
+//        graphics.setFont(new Font("Verdana", 0, 30));
+//        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
+//        graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
+//        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
 
         uiManager.render(graphics);
 

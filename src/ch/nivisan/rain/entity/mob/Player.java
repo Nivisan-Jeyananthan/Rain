@@ -26,30 +26,36 @@ public class Player extends Mob {
     private final Keyboard input;
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
+    private final String name;
 
-    public Player(Keyboard input, Level level) {
+
+    public Player(String name, Keyboard input, Level level) {
         super(level);
+        this.name = name;
         this.input = input;
         animatedSprite = front;
         walkSpeed = 1.4f;
     }
 
-    public Player(int x, int y, Keyboard input, Level level) {
+    public Player(String name,int x, int y, Keyboard input, Level level) {
         super(level);
-
+        this.name = name;
         this.x = x;
         this.y = y;
         this.input = input;
         this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
 
-
-
         uiManager = Game.getUiManager();
         UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3,0),new Vector2((300 - 80) * 3,Game.getScaledWindowHeight()), 0);
         uiManager.addPanel(panel);
         panel.addComponent(new UILabel(new Vector2(10,50),"Rain").setColor(0xffff00ff));
     }
+
+    public String getName() {
+        return name;
+    }
+
 
     @Override
     public void update() {
