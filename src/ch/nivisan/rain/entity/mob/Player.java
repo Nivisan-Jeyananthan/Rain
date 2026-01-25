@@ -22,7 +22,7 @@ public class Player extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
-    private UIManager uiManager;
+    private UIManager uiManager = UIManager.getInstance();
     private final Keyboard input;
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
@@ -46,10 +46,18 @@ public class Player extends Mob {
         this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
 
-        uiManager = Game.getUiManager();
-        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3,0),new Vector2((300 - 80) * 3,Game.getScaledWindowHeight()), 0);
+        createGUI();
+    }
+
+    private void createGUI(){
+        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3,0),new Vector2((300 - 80) * 3,Game.getScaledWindowHeight()), 0x4f4f4f);
         uiManager.addPanel(panel);
-        panel.addComponent(new UILabel(new Vector2(10,50),"Rain").setColor(0xffff00ff));
+        UILabel nameLabel = new UILabel(new Vector2(40,200),"Nivisan");
+        nameLabel.setColor(0xbbbbbbbb);
+        nameLabel.setFont(new Font("Courier New",Font.BOLD,25));
+        nameLabel.setShadow(true);
+
+        panel.addComponent(nameLabel);
     }
 
     public String getName() {

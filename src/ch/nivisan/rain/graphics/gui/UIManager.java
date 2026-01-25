@@ -8,8 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UIManager implements IRender {
-    private final List<UIPanel> panels = new ArrayList<UIPanel>();
+    private static UIManager instance;
+    private static final List<UIPanel> panels = new ArrayList<UIPanel>();
 
+    private UIManager () {}
+
+    public static UIManager getInstance() {
+        if(instance == null) {
+            instance = new  UIManager();
+        }
+        return instance;
+    }
 
     public void addPanel(UIPanel panel) {
         panels.add(panel);

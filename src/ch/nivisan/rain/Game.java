@@ -29,7 +29,7 @@ public class Game extends Canvas implements Runnable {
     private final Level level;
     private final Player player;
     private SpriteFont font;
-    private static UIManager uiManager = new UIManager();
+    private static UIManager uiManager = UIManager.getInstance();
 
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -58,8 +58,6 @@ public class Game extends Canvas implements Runnable {
         level.addEntity(player);
         font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
     }
-
-    public static UIManager getUiManager() { return uiManager;}
 
     public static int getWindowWidth(){ return width; }
 
@@ -178,7 +176,7 @@ public class Game extends Canvas implements Runnable {
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
         level.render(xScroll, yScroll, screen);
-        uiManager.render(screen);
+
        // font.render(text, screen);
 
         System.arraycopy(screen.getPixels(), 0, pixels, 0, pixels.length);

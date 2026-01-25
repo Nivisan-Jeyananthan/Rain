@@ -9,6 +9,7 @@ import java.awt.*;
 public class UILabel extends UIComponent{
     public final String text;
     private Font textFont;
+    private boolean hasShadow = false;
 
     public UILabel(Vector2 position, String text) {
         super(position);
@@ -22,12 +23,19 @@ public class UILabel extends UIComponent{
         return this;
     }
 
+    public UILabel setShadow(boolean shadow){
+        this.hasShadow = shadow;
+        return this;
+    }
+
     @Override
     public void render(Graphics graphics) {
-//        font.setX(position.getX() + offset.getX())
-//                .setY(position.getY() +  offset.getY())
-//                .render(text,screen);
         graphics.setFont(textFont);
+        if(hasShadow) {
+            graphics.setColor(Color.BLACK);
+            graphics.drawString(text, position.getX() + offset.getX() + 2, position.getY() + offset.getY() + 2);
+        }
+
         graphics.setColor(color);
         graphics.drawString(text,position.getX() + offset.getX(),position.getY() +  offset.getY());
     }
