@@ -123,7 +123,7 @@ public class SpriteSheet {
             image.getRGB(0, 0, width, height, pixels, 0, width);
         } catch (IOException e) {
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println(SpriteSheet.class.getResource(path) + " failed to load!");
         }
     }
@@ -144,7 +144,7 @@ public class SpriteSheet {
         return spriteHeight;
     }
 
-    public int[] getPixels(){
+    public int[] getPixels() {
         return pixels;
     }
 

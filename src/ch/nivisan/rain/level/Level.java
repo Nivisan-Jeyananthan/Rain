@@ -10,7 +10,9 @@ import ch.nivisan.rain.level.tile.Tile;
 import ch.nivisan.rain.utils.Node;
 import ch.nivisan.rain.utils.Vector2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Level {
     public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
@@ -38,19 +40,19 @@ public class Level {
         generateLevel();
     }
 
-    public List<Node> getPath(Vector2 start, Vector2 goal){
+    public List<Node> getPath(Vector2 start, Vector2 goal) {
         List<Node> openQueue = new ArrayList<Node>();
         List<Node> closedQueue = new ArrayList<Node>();
-        Node currentNode = new Node(start,null,0,start.getDistance(goal));
+        Node currentNode = new Node(start, null, 0, start.getDistance(goal));
         openQueue.add(currentNode);
 
-        while(!openQueue.isEmpty()){
+        while (!openQueue.isEmpty()) {
             Collections.sort(openQueue);
 
             currentNode = openQueue.getFirst();
-            if(currentNode.tile.equals(goal)){
+            if (currentNode.tile.equals(goal)) {
                 List<Node> path = new ArrayList<Node>();
-                while(currentNode.parent != null){
+                while (currentNode.parent != null) {
                     path.add(currentNode);
                     currentNode = currentNode.parent;
                 }
@@ -62,22 +64,22 @@ public class Level {
             openQueue.remove(currentNode);
             closedQueue.add(currentNode);
             for (int i = 0; i < 9; i++) {
-                if(i == 4) continue;
+                if (i == 4) continue;
                 int x = currentNode.tile.getX();
                 int y = currentNode.tile.getY();
                 // ranges from -1,0, 1
-                int xDirection = (i % 3) -1;
-                int yDirection = (i / 3) -1;
+                int xDirection = (i % 3) - 1;
+                int yDirection = (i / 3) - 1;
                 Tile at = getTile(x + xDirection, y + yDirection);
-                if(at == null || at.solid()) continue;
+                if (at == null || at.solid()) continue;
                 Vector2 atVector = new Vector2(x + xDirection, y + yDirection);
                 // compare immediate distance (from middle (current) to other tiles in "circle")
                 float gCost = currentNode.gCost + ((currentNode.tile.getDistance(atVector) == 1 ? 1.0f : 0.95f));
                 float hCost = atVector.getDistance(goal);
-                Node node = new Node(atVector,currentNode,gCost,hCost);
+                Node node = new Node(atVector, currentNode, gCost, hCost);
 
-                if(isInList(closedQueue,atVector) && gCost >= currentNode.gCost) continue;
-                if(!isInList(openQueue, atVector) || gCost < node.gCost) openQueue.add(node);
+                if (isInList(closedQueue, atVector) && gCost >= currentNode.gCost) continue;
+                if (!isInList(openQueue, atVector) || gCost < node.gCost) openQueue.add(node);
             }
         }
 
@@ -85,7 +87,7 @@ public class Level {
         return null;
     }
 
-    private boolean isInList(List<Node> list,Vector2 vector){
+    private boolean isInList(List<Node> list, Vector2 vector) {
         for (Node node : list) {
             if (node.tile.equals(vector))
                 return true;
@@ -344,6 +346,7 @@ public class Level {
             }
         }
     }
+
     private void renderMobs(Screen screen) {
         for (Mob mob : mobs) {
             mob.render(screen);

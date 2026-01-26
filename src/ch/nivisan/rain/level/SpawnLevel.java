@@ -32,9 +32,6 @@ public class SpawnLevel extends Level {
 
     }
 
-    // Grass = 0x00ff00
-    // Flower = 0xffff00
-    // Rock = 0x7f7f00
     @Override
     protected void generateLevel() {
         System.out.println("Tile at 0: " + tiles[0]);

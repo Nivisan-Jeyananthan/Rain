@@ -16,8 +16,8 @@ public class WizardProjectile extends Projectile {
         speed = 1;
 
         // angle and vector length
-        nx = (float)(speed * Math.cos(angle));
-        ny = (float)(speed * Math.sin(angle));
+        nx = (float) (speed * Math.cos(angle));
+        ny = (float) (speed * Math.sin(angle));
     }
 
     public void update() {

@@ -1,21 +1,19 @@
 package ch.nivisan.rain.graphics.gui;
 
-import ch.nivisan.rain.Game;
-import ch.nivisan.rain.common.IRender;
+import ch.nivisan.rain.common.IRenderable;
 import ch.nivisan.rain.graphics.Screen;
-import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.utils.Vector2;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIPanel implements IRender {
+public class UIPanel implements IRenderable {
+    private static final Color defaultColor = new Color(0xB3000000, true);
     private final List<UIComponent> components = new ArrayList<UIComponent>();
     private final Vector2 position;
     private final Vector2 size;
-    private Color color;
-    private static final Color defaultColor = new Color(0xB3000000, true);
+    private final Color color;
 
     public UIPanel(Vector2 position, Vector2 size, Color color) {
         this.position = position;

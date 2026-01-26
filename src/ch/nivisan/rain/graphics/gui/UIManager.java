@@ -1,21 +1,22 @@
 package ch.nivisan.rain.graphics.gui;
 
-import ch.nivisan.rain.common.IRender;
+import ch.nivisan.rain.common.IRenderable;
 import ch.nivisan.rain.graphics.Screen;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIManager implements IRender {
-    private static UIManager instance;
+public class UIManager implements IRenderable {
     private static final List<UIPanel> panels = new ArrayList<UIPanel>();
+    private static UIManager instance;
 
-    private UIManager () {}
+    private UIManager() {
+    }
 
     public static UIManager getInstance() {
-        if(instance == null) {
-            instance = new  UIManager();
+        if (instance == null) {
+            instance = new UIManager();
         }
         return instance;
     }

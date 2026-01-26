@@ -1,7 +1,5 @@
 package ch.nivisan.rain.utils;
 
-import java.util.Comparator;
-
 public class Node implements Comparable<Node> {
     public final Vector2 tile;
     public final Node parent;
@@ -11,21 +9,19 @@ public class Node implements Comparable<Node> {
     public final float hCost;
     public final float totalCost;
 
-    public Node(Vector2 tile, Node parent, float gCost, float hCost)
-    {
+    public Node(Vector2 tile, Node parent, float gCost, float hCost) {
         this.tile = tile;
         this.parent = parent;
         this.gCost = gCost;
         this.hCost = hCost;
-        this.totalCost = + this.gCost + this.hCost;
+        this.totalCost = +this.gCost + this.hCost;
     }
 
     @Override
     public int compareTo(Node otherNode) {
-        if(this.totalCost > otherNode.totalCost) {
+        if (this.totalCost > otherNode.totalCost) {
             return +1;
-        }
-        else if(this.totalCost < otherNode.totalCost) {
+        } else if (this.totalCost < otherNode.totalCost) {
             return -1;
         }
 

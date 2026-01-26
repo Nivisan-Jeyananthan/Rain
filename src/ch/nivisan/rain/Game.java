@@ -3,40 +3,39 @@ package ch.nivisan.rain;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteFont;
+import ch.nivisan.rain.graphics.gui.UIManager;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-import ch.nivisan.rain.graphics.gui.UIManager;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.Serial;
 
 public class Game extends Canvas implements Runnable {
+    public static final float framerate = 60.0f;
     @Serial
     private static final long serialVersionUID = 1L;
-    public static final float framerate = 60.0f;
-
     private static final int scale = 3;
-    private static final int width = 300 ;
+    private static final int width = 300;
     private static final int height = width / 16 * 9;
     private static final String title = "Rain";
+    private static final String text = "Hello! the name\nis Nivisan";
+    private static final UIManager uiManager = UIManager.getInstance();
     private final JFrame frame;
     private final Screen screen;
     private final Keyboard keyboard;
     private final Level level;
     private final Player player;
-    private SpriteFont font;
-    private static UIManager uiManager = UIManager.getInstance();
-
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     // allowing to draw to the image or accessing the image
     // area in memory where buffer data is located, not a copy of it.
     // that is why we can manipulate pixels and it changes the buffer data itself.
     private final int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
+    private final SpriteFont font;
     private Thread gameThread;
     private boolean isRunning = false;
 
@@ -54,20 +53,26 @@ public class Game extends Canvas implements Runnable {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
-        player = new Player("Mambo",20 << 4,60 << 4, keyboard, level);
+        player = new Player("Mambo", 20 << 4, 60 << 4, keyboard, level);
         level.addEntity(player);
         font = new SpriteFont().setX(0).setY(0).setSpacing(-8);
     }
 
-    public static int getWindowWidth(){ return width; }
+    public static int getWindowWidth() {
+        return width;
+    }
 
-    public static int getWindowHeight(){ return height; }
+    public static int getWindowHeight() {
+        return height;
+    }
 
     public static int getScaledWindowWidth() {
         return width * scale;
     }
 
-    public static int getScaledWindowHeight() { return height * scale; }
+    public static int getScaledWindowHeight() {
+        return height * scale;
+    }
 
     static void main(String[] args) {
         var game = new Game();
@@ -157,8 +162,6 @@ public class Game extends Canvas implements Runnable {
         uiManager.update();
     }
 
-    private static final String text = "Hello! the name\nis Nivisan";
-
     public void render() {
         var bs = getBufferStrategy();
         if (bs == null) {
@@ -177,13 +180,13 @@ public class Game extends Canvas implements Runnable {
 
         level.render(xScroll, yScroll, screen);
 
-       // font.render(text, screen);
+        // font.render(text, screen);
 
         System.arraycopy(screen.getPixels(), 0, pixels, 0, pixels.length);
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
-        graphics.drawImage(bufferedImage, 0, 0, getWidth() , getHeight(), null);
+        graphics.drawImage(bufferedImage, 0, 0, getWidth(), getHeight(), null);
 //        graphics.setColor(Color.WHITE);
 //        graphics.setFont(new Font("Verdana", 0, 30));
 //        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);

@@ -10,9 +10,8 @@ public class Walker extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft, 32, 32, 3);
-
-    private AnimatedSprite animatedSprite = front;
     protected int time = 0;
+    private AnimatedSprite animatedSprite = front;
     private int yAbsolute = 0;
     private int xAbsolute = 0;
 

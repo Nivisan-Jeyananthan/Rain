@@ -13,7 +13,7 @@ public class Chaser extends Mob {
     private AnimatedSprite animatedSprite = front;
     private Player targetPlayer;
 
-    private int time = 0;
+    private final int time = 0;
     private float yAbsolute = 0;
     private float xAbsolute = 0;
 
@@ -55,16 +55,14 @@ public class Chaser extends Mob {
             if (Math.floor(x) == Math.floor(targetPlayer.getX())) xAbsolute = 0;
             else if (x < targetPlayer.getX()) {
                 xAbsolute += walkSpeed;
-            }
-            else {
+            } else {
                 xAbsolute -= walkSpeed;
             }
 
             if (Math.floor(y) == Math.floor(targetPlayer.getY())) yAbsolute = 0;
             else if (y < targetPlayer.getY()) {
                 yAbsolute += walkSpeed;
-            }
-            else {
+            } else {
                 yAbsolute -= walkSpeed;
             }
         }
@@ -80,6 +78,6 @@ public class Chaser extends Mob {
     @Override
     public void render(Screen screen) {
         int bodyColorRed = 0xffBA0015;
-        screen.renderMob((int) x - 16, (int) y - 16, this, bodyColorRed );
+        screen.renderMob((int) x - 16, (int) y - 16, this, bodyColorRed);
     }
 }

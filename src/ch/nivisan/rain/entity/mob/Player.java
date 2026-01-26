@@ -22,11 +22,11 @@ public class Player extends Mob {
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
-    private UIManager uiManager = UIManager.getInstance();
     private final Keyboard input;
+    private final String name;
+    private final UIManager uiManager = UIManager.getInstance();
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
-    private final String name;
 
 
     public Player(String name, Keyboard input, Level level) {
@@ -37,7 +37,7 @@ public class Player extends Mob {
         walkSpeed = 1.4f;
     }
 
-    public Player(String name,int x, int y, Keyboard input, Level level) {
+    public Player(String name, int x, int y, Keyboard input, Level level) {
         super(level);
         this.name = name;
         this.x = x;
@@ -49,12 +49,12 @@ public class Player extends Mob {
         createGUI();
     }
 
-    private void createGUI(){
-        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3,0),new Vector2((300 - 80) * 3,Game.getScaledWindowHeight()), 0x4f4f4f);
+    private void createGUI() {
+        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3, 0), new Vector2((300 - 80) * 3, Game.getScaledWindowHeight()), 0x4f4f4f);
         uiManager.addPanel(panel);
-        UILabel nameLabel = new UILabel(new Vector2(40,200),"Nivisan");
+        UILabel nameLabel = new UILabel(new Vector2(40, 200), "Nivisan");
         nameLabel.setColor(0xbbbbbbbb);
-        nameLabel.setFont(new Font("Courier New",Font.BOLD,25));
+        nameLabel.setFont(new Font("Courier New", Font.BOLD, 25));
         nameLabel.setShadow(true);
 
         panel.addComponent(nameLabel);
@@ -68,7 +68,9 @@ public class Player extends Mob {
     @Override
     public void update() {
         if (walking) animatedSprite.update();
-        else { animatedSprite.setFrame(0); }
+        else {
+            animatedSprite.setFrame(0);
+        }
         if (fireRate > 0) fireRate--;
 
         float xAbsolute = 0, yAbsolute = 0;
@@ -79,7 +81,8 @@ public class Player extends Mob {
         } else if (input.down) {
             yAbsolute += walkSpeed;
             animatedSprite = front;
-        } if (input.right) {
+        }
+        if (input.right) {
             xAbsolute += walkSpeed;
             animatedSprite = right;
         } else if (input.left) {
@@ -119,7 +122,7 @@ public class Player extends Mob {
         float xCenter = x - 16;
         float yCenter = y - 30;
 
-        Debug.drawRectangle(screen, 20 << 4,60 << 4, 100,40,0xff000,true);
+        Debug.drawRectangle(screen, 20 << 4, 60 << 4, 100, 40, 0xff000, true);
         screen.renderMob((int) xCenter, (int) yCenter, animatedSprite.getSprite(), FlipState.None);
     }
 }

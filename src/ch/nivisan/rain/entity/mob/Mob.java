@@ -3,7 +3,6 @@ package ch.nivisan.rain.entity.mob;
 import ch.nivisan.rain.entity.Entity;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
-import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.Sprite;
 import ch.nivisan.rain.level.Level;
@@ -33,8 +32,8 @@ public abstract class Mob extends Entity {
         if (yMovement > 0) facingDirection = Direction.South;
         if (xMovement < 0) facingDirection = Direction.West;
 
-        while(xMovement != 0){
-            if((Math.abs(xMovement)) > 1){
+        while (xMovement != 0) {
+            if ((Math.abs(xMovement)) > 1) {
                 if (!collision(abs(xMovement), yMovement)) {
                     this.x += abs(xMovement);
                 }
@@ -47,8 +46,8 @@ public abstract class Mob extends Entity {
             }
         }
 
-        while(yMovement != 0){
-            if((Math.abs(yMovement)) > 1){
+        while (yMovement != 0) {
+            if ((Math.abs(yMovement)) > 1) {
                 if (!collision(xMovement, abs(yMovement))) {
                     this.y += abs(yMovement);
                 }
@@ -64,6 +63,7 @@ public abstract class Mob extends Entity {
 
     /**
      * So we do not move to many pixels at once, only 1 unit movement is allowed at once
+     *
      * @param movement
      * @return
      */

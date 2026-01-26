@@ -72,20 +72,6 @@ public class Sprite {
     }
 
     /**
-     * goes through the SpriteSheet and loads it into the pixels array raw
-     */
-    private void loadSpriteFromSheet() {
-        for (int y = 0; y < width; y++) {
-            for (int x = 0; x < height; x++) {
-                int pixelIndex = x + y * width;
-                int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
-
-                pixels[pixelIndex] = sheet.getPixels()[sheetIndex];
-            }
-        }
-    }
-
-    /**
      * Creates a sprite of given size filled by the given color
      *
      * @param size
@@ -123,13 +109,14 @@ public class Sprite {
         return new Sprite(new_pixels, newWidth, newHeight);
     }
 
-    public static Sprite rotateSprite(Sprite sprite, float angle){
+    public static Sprite rotateSprite(Sprite sprite, float angle) {
         return new Sprite(rotate(sprite.pixels, sprite.getWidth(), sprite.getHeight(), angle), sprite.getWidth(), sprite.getHeight());
     }
 
     /**
      * Rotation is done clockwise instead of according to unit of circle (counterclockwise).
      * Therefor units are in negative instead of positive
+     *
      * @param pixels
      * @param spriteWidth
      * @param spriteHeight
@@ -140,11 +127,11 @@ public class Sprite {
         final int[] result = new int[spriteWidth * spriteHeight];
         final int alphaColor = 0xffff00ff;
 
-        float nx_x = rotationX(-angle,1.0f, 0.0f);
-        float nx_y = rotationY(-angle,1.0f,0.0f);
+        float nx_x = rotationX(-angle, 1.0f, 0.0f);
+        float nx_y = rotationY(-angle, 1.0f, 0.0f);
 
-        float ny_x = rotationX(-angle,0.0f, 1.0f);
-        float ny_y = rotationY(-angle,0.0f,1.0f);
+        float ny_x = rotationX(-angle, 0.0f, 1.0f);
+        float ny_y = rotationY(-angle, 0.0f, 1.0f);
 
         float initialRotationX = rotationX(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteWidth / 2.0f;
         float initialRotationY = rotationY(-angle, -spriteWidth / 2.0f, -spriteHeight / 2.0f) + spriteHeight / 2.0f;
@@ -157,9 +144,9 @@ public class Sprite {
                 int x1 = (int) x0;
                 int y1 = (int) y0;
                 int color = 0;
-                if(x1 < 0 || x1 >= spriteWidth || y1 < 0 || y1 >= spriteHeight){
+                if (x1 < 0 || x1 >= spriteWidth || y1 < 0 || y1 >= spriteHeight) {
                     color = alphaColor;
-                }else {
+                } else {
                     color = pixels[x1 + y1 * spriteWidth];
                 }
                 result[x + y * spriteWidth] = color;
@@ -177,12 +164,13 @@ public class Sprite {
     /**
      * Calculates where the new x positions should be.
      * Negation of sin due to clock wise rotation
+     *
      * @param angle in radians therefor no conversion from degrees needed
-     * @param x if we want to do it in x axis
-     * @param y if we want to do it in y axis
+     * @param x     if we want to do it in x axis
+     * @param y     if we want to do it in y axis
      * @return
      */
-    private static float rotationX(float angle, float x, float y){
+    private static float rotationX(float angle, float x, float y) {
         float cos = (float) Math.cos(angle - Math.PI / 2);
         float sin = (float) Math.sin(angle - Math.PI / 2);
 
@@ -191,20 +179,21 @@ public class Sprite {
 
     /**
      * Calculates where the new y positions should be.
+     *
      * @param angle in radians therefor no conversion from degrees needed
      * @param x
      * @param y
      * @return
      */
-    private static float rotationY(float angle, float x, float y){
+    private static float rotationY(float angle, float x, float y) {
         float cos = (float) Math.cos(angle - Math.PI / 2);
         float sin = (float) Math.sin(angle - Math.PI / 2);
 
         return x * sin + y * cos;
     }
 
-    public static Sprite[] split(SpriteSheet sheet, int spriteWidth, int spriteHeight){
-        int amount = (sheet.getWidth() * sheet.getHeight())/(spriteWidth * spriteHeight);
+    public static Sprite[] split(SpriteSheet sheet, int spriteWidth, int spriteHeight) {
+        int amount = (sheet.getWidth() * sheet.getHeight()) / (spriteWidth * spriteHeight);
         Sprite[] sprites = new Sprite[amount];
 
         int current = 0;
@@ -220,12 +209,26 @@ public class Sprite {
                         spritePixels[x + y * spriteWidth] = sheet.getPixels()[originalPixelX + originalPixelY * sheet.getWidth()];
                     }
                 }
-                sprites[current++] = new Sprite(spritePixels,spriteWidth, spriteHeight);
+                sprites[current++] = new Sprite(spritePixels, spriteWidth, spriteHeight);
             }
 
         }
 
         return sprites;
+    }
+
+    /**
+     * goes through the SpriteSheet and loads it into the pixels array raw
+     */
+    private void loadSpriteFromSheet() {
+        for (int y = 0; y < width; y++) {
+            for (int x = 0; x < height; x++) {
+                int pixelIndex = x + y * width;
+                int sheetIndex = (x + this.x) + (y + this.y) * sheet.getWidth();
+
+                pixels[pixelIndex] = sheet.getPixels()[sheetIndex];
+            }
+        }
     }
 
     public int getSize() {
@@ -240,12 +243,13 @@ public class Sprite {
         return height;
     }
 
-    public int[] getPixels() { return pixels; }
+    public int[] getPixels() {
+        return pixels;
+    }
 
     private void setColor(int color) {
         Arrays.fill(pixels, color);
     }
-
 
 
 }

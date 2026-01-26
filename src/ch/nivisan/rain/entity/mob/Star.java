@@ -9,7 +9,7 @@ import ch.nivisan.rain.utils.Vector2;
 
 import java.util.List;
 
-public class Star extends Mob{
+public class Star extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.dummyFront, 32, 32, 3);
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.dummyBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.dummyRight, 32, 32, 3);
@@ -55,7 +55,7 @@ public class Star extends Mob{
         yAbsolute = 0;
         int px = (int) level.getPlayer(0).getX();
         int py = (int) level.getPlayer(0).getY();
-        Vector2 start = new Vector2((int)x >> 4, (int)y >> 4);
+        Vector2 start = new Vector2((int) x >> 4, (int) y >> 4);
         Vector2 destination = new Vector2(px >> 4, py >> 4);
         if (time % 60 == 0) path = level.getPath(start, destination);
         if (path != null) {

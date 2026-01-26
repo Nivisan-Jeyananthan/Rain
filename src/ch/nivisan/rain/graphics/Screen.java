@@ -1,6 +1,7 @@
 package ch.nivisan.rain.graphics;
 
-import ch.nivisan.rain.entity.mob.*;
+import ch.nivisan.rain.entity.mob.FlipState;
+import ch.nivisan.rain.entity.mob.Mob;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.level.tile.Tile;
 
@@ -8,16 +9,16 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Screen {
+    private static final int alphaColor = 0xffff00ff;
     public final int MapSize = 8;
     public final int MapSizeMask = MapSize - 1;
     private final Random random = new Random();
     public int width, height;
-    // which pixels of the screen get rendered
-    private int[] pixels;
     public int[] tiles = new int[MapSize * MapSize];
+    // which pixels of the screen get rendered
+    private final int[] pixels;
     // offests to keep our player centered as main focus
     private int xOffset, yOffset;
-    private static final int alphaColor = 0xffff00ff;
 
     public Screen(int width, int height) {
         this.width = width;
@@ -59,7 +60,7 @@ public class Screen {
     }
 
     public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent) {
-        renderSprite(xTilePosition, yTilePosition, sprite, fixed, transparent,0);
+        renderSprite(xTilePosition, yTilePosition, sprite, fixed, transparent, 0);
     }
 
     public void renderSprite(int xTilePosition, int yTilePosition, Sprite sprite, boolean fixed, boolean transparent,
@@ -84,7 +85,7 @@ public class Screen {
                 int color = sprite.getPixels()[spriteIndex];
                 if (newColor != 0 && (!transparent || color != alphaColor)) {
                     pixels[index] = newColor;
-                }else if(!transparent || color != alphaColor){
+                } else if (!transparent || color != alphaColor) {
                     pixels[index] = color;
                 }
             }
@@ -242,7 +243,7 @@ public class Screen {
      * Renders a rectangle if it can, otherwise parts of it as only bottom part,
      * top, left or right.
      * Depending on if it will fit on the screen
-     * 
+     *
      * @param xStart
      * @param yStart
      * @param width
@@ -284,5 +285,7 @@ public class Screen {
         this.xOffset = xOffset;
     }
 
-    public int[] getPixels() { return pixels; }
+    public int[] getPixels() {
+        return pixels;
+    }
 }
