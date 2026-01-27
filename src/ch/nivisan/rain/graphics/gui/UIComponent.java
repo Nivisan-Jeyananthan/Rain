@@ -7,12 +7,21 @@ import ch.nivisan.rain.utils.Vector2;
 import java.awt.*;
 
 public class UIComponent implements IRenderable {
-    public Vector2 position;
+    protected Vector2 position;
+    protected Vector2 size;
     protected Vector2 offset;
     protected Color color =  Color.WHITE;
+    protected boolean active = true;
 
     UIComponent(Vector2 position) {
         this.position = position;
+        offset = new Vector2();
+    }
+
+    UIComponent(Vector2 position,  Vector2 size) {
+        this.position = position;
+        this.size = size;
+        offset = new Vector2();
     }
 
     public UIComponent setColor(int color) {
@@ -20,7 +29,13 @@ public class UIComponent implements IRenderable {
         return this;
     }
 
+    public UIComponent setColor(Color color) {
+        this.color = color;
+        return this;
+    }
+
     public void render(Graphics graphics) {
+        if(!active) return;
     }
 
     @Override
@@ -29,6 +44,7 @@ public class UIComponent implements IRenderable {
 
     @Override
     public void update() {
+        if (!active) return;
     }
 
     void setOffset(Vector2 offset) {

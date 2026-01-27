@@ -2,10 +2,7 @@ package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
-import ch.nivisan.rain.graphics.AnimatedSprite;
-import ch.nivisan.rain.graphics.Screen;
-import ch.nivisan.rain.graphics.SpriteSheet;
-import ch.nivisan.rain.graphics.WindowManager;
+import ch.nivisan.rain.graphics.*;
 import ch.nivisan.rain.graphics.gui.*;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
@@ -25,6 +22,8 @@ public class Player extends Mob {
     private final UIManager uiManager = UIManager.getInstance();
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
+    // todo: refactor creation of ui to playerUI
+    private static PlayerUI playerUI;
     private UILabeledProgressbar uiHealthBar;
 
     public Player(String name, int x, int y, Keyboard input, Level level) {
@@ -64,8 +63,14 @@ public class Player extends Mob {
         uiHealthBar.setFont(new Font("Courier New", Font.BOLD, 20));
         uiHealthBar.setShadow(true);
 
+        var pos =  new Vector2(componentPositionX * 25 ,height + (offsetHeight * 2));
+        UIButton button = new UIButton(pos,new Vector2(barSize.getX() / 2, barSize.getY() + 20),"Test");
+        button.setColor(new Color(0x64A108));
+        button.setTextColor(Color.BLACK);
+
         panel.addComponent(nameLabel);
         panel.addComponent(uiHealthBar);
+        panel.addComponent(button);
     }
 
     public String getName() {

@@ -6,9 +6,9 @@ import ch.nivisan.rain.utils.Vector2;
 import java.awt.*;
 
 public class UILabel extends UIComponent {
-    private final String text;
-    private Font textFont = UIDefaults.font;
-    private boolean hasShadow = false;
+    protected final String text;
+    protected Font textFont = UIDefaults.font;
+    protected boolean hasShadow = false;
 
     public UILabel(Vector2 position, String text) {
         super(position);
@@ -28,6 +28,8 @@ public class UILabel extends UIComponent {
 
     @Override
     public void render(Graphics graphics) {
+        super.render(graphics);
+
         graphics.setFont(textFont);
         if (hasShadow) {
             graphics.setColor(Color.BLACK);
