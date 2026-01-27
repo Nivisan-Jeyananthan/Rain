@@ -18,6 +18,12 @@ public class Vector2 {
         this.y = vector.y;
     }
 
+    public static Vector2 add(Vector2 start,int value) {
+        start.x += value;
+        start.y += value;
+        return start;
+    }
+
     public static Vector2 addVector(Vector2 start, Vector2 goal) {
         start.x += goal.x;
         start.y += goal.y;

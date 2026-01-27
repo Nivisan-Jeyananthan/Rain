@@ -6,15 +6,14 @@ import ch.nivisan.rain.utils.Vector2;
 import java.awt.*;
 
 public class UILabel extends UIComponent {
-    public final String text;
-    private Font textFont;
+    private final String text;
+    private Font textFont = UIDefaults.font;
     private boolean hasShadow = false;
 
     public UILabel(Vector2 position, String text) {
         super(position);
-        textFont = new Font("Arial", Font.BOLD, 32);
         this.text = text;
-        color = new Color(0x71FF00FF, true);
+        color = UIDefaults.color;
     }
 
     public UILabel setFont(Font font) {

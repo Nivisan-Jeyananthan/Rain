@@ -14,7 +14,8 @@ public abstract class Mob extends Entity {
     protected boolean moving = false;
     protected boolean walking = false;
     protected float walkSpeed;
-
+    protected float health;
+    protected float maxHealth;
 
     public Mob(Level level) {
         super(level);

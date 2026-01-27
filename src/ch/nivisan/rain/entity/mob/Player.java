@@ -6,10 +6,7 @@ import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteSheet;
 import ch.nivisan.rain.graphics.WindowManager;
-import ch.nivisan.rain.graphics.gui.UILabel;
-import ch.nivisan.rain.graphics.gui.UIManager;
-import ch.nivisan.rain.graphics.gui.UIPanel;
-import ch.nivisan.rain.graphics.gui.UIProgressbar;
+import ch.nivisan.rain.graphics.gui.*;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -28,16 +25,7 @@ public class Player extends Mob {
     private final UIManager uiManager = UIManager.getInstance();
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
-    private UIProgressbar uiHealthBar;
-
-
-    public Player(String name, Keyboard input, Level level) {
-        super(level);
-        this.name = name;
-        this.input = input;
-        animatedSprite = front;
-        walkSpeed = 1.4f;
-    }
+    private UILabeledProgressbar uiHealthBar;
 
     public Player(String name, int x, int y, Keyboard input, Level level) {
         super(level);
@@ -47,6 +35,8 @@ public class Player extends Mob {
         this.input = input;
         this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
+        health = 100;
+        maxHealth = 100;
 
         createGUI();
     }
@@ -67,8 +57,12 @@ public class Player extends Mob {
         nameLabel.setFont(new Font("Courier New", Font.BOLD, 25));
         nameLabel.setShadow(true);
 
-         uiHealthBar = new UIProgressbar(new Vector2(componentPositionX ,height + offsetHeight),new Vector2(maxComponentWidth - widthOffset,20),new Color(0xee3030));
-         uiHealthBar.setColor(0x6a6a6a);
+        Vector2 startPosition = new Vector2(componentPositionX ,height + offsetHeight);
+        Vector2 barSize = new Vector2(maxComponentWidth - widthOffset,20);
+        uiHealthBar = new UILabeledProgressbar(startPosition,barSize, 0xee3030,0xffffffff,"HP");
+        uiHealthBar.setColor(0x6a6a6a);
+        uiHealthBar.setFont(new Font("Courier New", Font.BOLD, 20));
+        uiHealthBar.setShadow(true);
 
         panel.addComponent(nameLabel);
         panel.addComponent(uiHealthBar);
@@ -78,11 +72,10 @@ public class Player extends Mob {
         return name;
     }
 
-    int time = 0;
 
     @Override
     public void update() {
-        uiHealthBar.setProgress((time++ % 100) / 100.0f);
+        uiHealthBar.setProgress(health / maxHealth);
         if (walking) animatedSprite.update();
         else {
             animatedSprite.setFrame(0);
