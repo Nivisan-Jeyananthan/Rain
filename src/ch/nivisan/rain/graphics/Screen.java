@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Screen {
+    // color which is converted to transparent layer
     private static final int alphaColor = 0xffff00ff;
-    public final int MapSize = 8;
-    public final int MapSizeMask = MapSize - 1;
-    private final Random random = new Random();
-    public int width, height;
-    public int[] tiles = new int[MapSize * MapSize];
+    private static final int MapSize = 8;
+    private static final int MapSizeMask = MapSize - 1;
+    private static final Random random = new Random();
+    public final int width, height;
     // which pixels of the screen get rendered
     private final int[] pixels;
     // offests to keep our player centered as main focus
@@ -25,11 +25,6 @@ public class Screen {
         this.height = height;
 
         pixels = new int[width * height];
-
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i] = random.nextInt(0xffffff);
-            tiles[0] = 0;
-        }
     }
 
     public void clear() {

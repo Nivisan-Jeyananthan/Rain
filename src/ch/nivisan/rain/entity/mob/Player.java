@@ -1,14 +1,15 @@
 package ch.nivisan.rain.entity.mob;
 
-import ch.nivisan.rain.Game;
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.AnimatedSprite;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.SpriteSheet;
+import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.UILabel;
 import ch.nivisan.rain.graphics.gui.UIManager;
 import ch.nivisan.rain.graphics.gui.UIPanel;
+import ch.nivisan.rain.graphics.gui.UIProgressbar;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -27,6 +28,7 @@ public class Player extends Mob {
     private final UIManager uiManager = UIManager.getInstance();
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
+    private UIProgressbar uiHealthBar;
 
 
     public Player(String name, Keyboard input, Level level) {
@@ -50,23 +52,37 @@ public class Player extends Mob {
     }
 
     private void createGUI() {
-        UIPanel panel = new UIPanel(new Vector2((300 - 80) * 3, 0), new Vector2((300 - 80) * 3, Game.getScaledWindowHeight()), 0x4f4f4f);
+        final int panelStart = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
+        final int divisor = 100;
+        final int componentPositionX = (WindowManager.getScaledGUIWidth() / divisor);
+        final int maxComponentWidth = (WindowManager.getScaledGUIWidth() / divisor) * (divisor -1);
+        final int widthOffset =  (maxComponentWidth / divisor);
+        final int height = (WindowManager.getScaledWindowHeight()  / 5)  * 2;
+        final int offsetHeight = (height / 10);
+
+        UIPanel panel = new UIPanel(new Vector2(panelStart, 0), new Vector2(WindowManager.getScaledGUIWidth(), WindowManager.getScaledWindowHeight()), 0x4f4f4f);
         uiManager.addPanel(panel);
-        UILabel nameLabel = new UILabel(new Vector2(40, 200), "Nivisan");
+        UILabel nameLabel = new UILabel(new Vector2(componentPositionX, height), "Nivisan");
         nameLabel.setColor(0xbbbbbbbb);
         nameLabel.setFont(new Font("Courier New", Font.BOLD, 25));
         nameLabel.setShadow(true);
 
+         uiHealthBar = new UIProgressbar(new Vector2(componentPositionX ,height + offsetHeight),new Vector2(maxComponentWidth - widthOffset,20),new Color(0xee3030));
+         uiHealthBar.setColor(0x6a6a6a);
+
         panel.addComponent(nameLabel);
+        panel.addComponent(uiHealthBar);
     }
 
     public String getName() {
         return name;
     }
 
+    int time = 0;
 
     @Override
     public void update() {
+        uiHealthBar.setProgress((time++ % 100) / 100.0f);
         if (walking) animatedSprite.update();
         else {
             animatedSprite.setFrame(0);
@@ -106,8 +122,8 @@ public class Player extends Mob {
      */
     private void updateShooting() {
         if (Mouse.getButton() == 1 && fireRate <= 0) {
-            int midpointWidth = Game.getScaledWindowWidth() / 2;
-            int midpointHeight = Game.getScaledWindowHeight() / 2;
+            int midpointWidth = WindowManager.getScaledGameWidth() / 2;
+            int midpointHeight = WindowManager.getScaledWindowHeight() / 2;
 
             float dx = (Mouse.getXPosition() - midpointWidth);
             float dy = (Mouse.getYPosition() - midpointHeight);

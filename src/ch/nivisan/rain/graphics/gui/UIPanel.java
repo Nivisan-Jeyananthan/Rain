@@ -27,7 +27,6 @@ public class UIPanel implements IRenderable {
         this.size = size;
     }
 
-
     public void addComponent(UIComponent component) {
         components.add(component);
     }

@@ -6,24 +6,24 @@ import java.awt.*;
 
 public class UIProgressbar extends UIComponent {
     private Vector2 size;
-    private int progress;
-    private Color foregroundColor;
+    private float progress = 0;
+    private final Color foregroundColor;
 
-    UIProgressbar(Vector2 position, Vector2 size, Color foregroundColor) {
+    public UIProgressbar(Vector2 position, Vector2 size, Color foregroundColor) {
         super(position);
         this.size = size;
         this.foregroundColor = foregroundColor;
     }
 
-    public void setProgress(int progress) {
-        if (progress < 0 || progress > 100) {
-            throw new IllegalArgumentException("Progress must be between 0 and 100");
+    public void setProgress(float progress) {
+        if (progress < 0.0f || progress > 1.0f) {
+            throw new IllegalArgumentException("Progress must be between 0.1 and 1");
         }
 
         this.progress = progress;
     }
 
-    public int getProgress() {
+    public float getProgress() {
         return progress;
     }
 
@@ -35,6 +35,9 @@ public class UIProgressbar extends UIComponent {
     public void render(Graphics graphics)
     {
         graphics.setColor(color);
-        graphics.fillRect(position.getX(), position.getY(), size.getX(), size.getY());
+        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
+
+        graphics.setColor(foregroundColor);
+        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), (int)(progress * size.getX()) , size.getY());
     }
 }

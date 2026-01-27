@@ -9,8 +9,7 @@ import java.awt.*;
 public class UIComponent implements IRenderable {
     public Vector2 position;
     protected Vector2 offset;
-    protected Color color;
-
+    protected Color color =  Color.WHITE;
 
     UIComponent(Vector2 position) {
         this.position = position;
