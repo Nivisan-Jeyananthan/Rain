@@ -34,6 +34,10 @@ public class UIComponent implements IRenderable {
         return this;
     }
 
+    public Vector2 getAbsolutePosition() {
+        return Vector2.addVector(position, offset);
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }

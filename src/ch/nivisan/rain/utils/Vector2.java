@@ -25,6 +25,13 @@ public class Vector2 {
     }
 
     public static Vector2 addVector(Vector2 start, Vector2 goal) {
+        Vector2 vector = new Vector2(start);
+        vector.x += goal.x;
+        vector.y += goal.y;
+        return vector;
+    }
+
+    public static Vector2 addToVector(Vector2 start, Vector2 goal) {
         start.x += goal.x;
         start.y += goal.y;
         return start;
