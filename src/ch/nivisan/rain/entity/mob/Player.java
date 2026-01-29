@@ -64,9 +64,10 @@ public class Player extends Mob {
         uiHealthBar.setShadow(true);
 
         var pos =  new Vector2(componentPositionX * 25 ,height + (offsetHeight * 2));
-        UIButton button = new UIButton(pos,new Vector2(barSize.getX() / 2, barSize.getY() + 20),"Test");
+        UIButton button = new UIButton(pos,new Vector2(barSize.getX() / 2, barSize.getY() + 20),"Button text");
         button.setColor(new Color(0x64A108));
         button.setTextColor(Color.BLACK);
+
 
         panel.addComponent(nameLabel);
         panel.addComponent(uiHealthBar);

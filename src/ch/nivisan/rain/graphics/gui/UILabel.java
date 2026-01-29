@@ -12,6 +12,9 @@ public class UILabel extends UIComponent {
 
     public UILabel(Vector2 position, String text) {
         super(position);
+        if(text.isBlank()){
+            active = false;
+        }
         this.text = text;
         color = UIDefaults.color;
     }
@@ -28,6 +31,8 @@ public class UILabel extends UIComponent {
 
     @Override
     public void render(Graphics graphics) {
+        if(!active){ return; }
+        
         super.render(graphics);
 
         graphics.setFont(textFont);

@@ -28,6 +28,8 @@ public class UIProgressbar extends UIComponent {
 
     public void render(Graphics graphics)
     {
+        if(!active){ return; }
+
         super.render(graphics);
 
         graphics.setColor(color);

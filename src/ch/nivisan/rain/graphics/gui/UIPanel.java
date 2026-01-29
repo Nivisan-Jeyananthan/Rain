@@ -8,26 +8,28 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UIPanel implements IRenderable {
-    private static final Color defaultColor = new Color(0xB3000000, true);
+public class UIPanel extends UIComponent {
     private final List<UIComponent> components = new ArrayList<UIComponent>();
     private final Vector2 position;
     private final Vector2 size;
     private final Color color;
 
     public UIPanel(Vector2 position, Vector2 size, Color color) {
+        super(position, size);
         this.position = position;
-        this.color = color.getRGB() != 0xfff ? color : defaultColor;
+        this.color = color != null ? color : UIDefaults.defaultColorPanel;
         this.size = size;
     }
 
     public UIPanel(Vector2 position, Vector2 size, int color) {
+        super(position, size);
         this.position = position;
-        this.color = color != 0 ? new Color(color) : defaultColor;
+        this.color = color != 0 ? new Color(color) : UIDefaults.defaultColorPanel;
         this.size = size;
     }
 
     public void addComponent(UIComponent component) {
+        component.setOffset(position);
         components.add(component);
     }
 
@@ -42,6 +44,8 @@ public class UIPanel implements IRenderable {
 
     @Override
     public void render(Screen screen) {
+        if(!active){ return; }
+
         for (int i = 0; i < components.size(); i++) {
             components.get(i).render(screen);
         }
@@ -49,8 +53,9 @@ public class UIPanel implements IRenderable {
 
     @Override
     public void update() {
+        if(!active){ return; }
+
         for (int i = 0; i < components.size(); i++) {
-            components.get(i).setOffset(position);
             components.get(i).update();
         }
     }

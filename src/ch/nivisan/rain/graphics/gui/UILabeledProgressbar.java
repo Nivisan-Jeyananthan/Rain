@@ -4,7 +4,7 @@ import ch.nivisan.rain.utils.Vector2;
 
 import java.awt.*;
 
-public class UILabeledProgressbar extends UIProgressbar{
+public class UILabeledProgressbar extends UIProgressbar {
     private final UILabel label;
 
     public UILabeledProgressbar(Vector2 position, Vector2 size, Color foregroundColor, Color fontColor, String text) {
@@ -30,17 +30,24 @@ public class UILabeledProgressbar extends UIProgressbar{
     }
 
     @Override
-    public void update() {
-       super.update();
+    void setOffset(Vector2 offset) {
+        super.setOffset(offset);
+        label.setOffset(new Vector2(offset.getX() + 2,offset.getY() + 15));
+    }
 
-       label.setOffset(new Vector2(offset.getX() + 2,offset.getY() + 15));
-       label.update();
+    @Override
+    public void update() {
+        if(!active){ return; }
+
+       super.update();
+        label.update();
     }
 
     @Override
     public void render(Graphics graphics) {
-        super.render(graphics);
+        if(!active){ return; }
 
+        super.render(graphics);
         label.render(graphics);
     }
 }

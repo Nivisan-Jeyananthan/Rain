@@ -34,18 +34,21 @@ public class UIComponent implements IRenderable {
         return this;
     }
 
-    public void render(Graphics graphics) {
-        if(!active) return;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    @Override
-    public void render(Screen screen) {
+    public boolean isActive() {
+        return active;
     }
 
+    public void render(Graphics graphics) {}
+
     @Override
-    public void update() {
-        if (!active) return;
-    }
+    public void render(Screen screen) {}
+
+    @Override
+    public void update() {}
 
     void setOffset(Vector2 offset) {
         this.offset = offset;

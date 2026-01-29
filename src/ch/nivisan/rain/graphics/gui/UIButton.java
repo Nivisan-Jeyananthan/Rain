@@ -6,11 +6,10 @@ import java.awt.*;
 
 public class UIButton extends UIComponent{
     private IUIButtonListener buttonListener;
-    private UILabel label;
+    private final UILabel label;
 
     public UIButton(Vector2 position, Vector2 size, String text) {
-        super(position);
-        this.size = size;
+        super(position, size);
         label = new UILabel(position, text);
     }
 
@@ -28,22 +27,30 @@ public class UIButton extends UIComponent{
     }
 
     @Override
-    public void update() {
-        super.update();
-
+    void setOffset(Vector2 offset) {
+        super.setOffset(offset);
         label.setOffset(new Vector2(offset.getX() + 40,offset.getY() + 30));
+    }
+
+    @Override
+    public void update() {
+        if(!active){ return; }
+
+        super.update();
         label.update();
     }
+
 
     @Override
     public void render(Graphics graphics)
     {
-        super.render(graphics);
+       if(!active){ return; }
+       super.render(graphics);
 
-        graphics.setColor(color);
-        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
 
-        if(label.active)
-            label.render(graphics);
+       graphics.setColor(color);
+       graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
+
+       label.render(graphics);
     }
 }
