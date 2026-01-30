@@ -13,12 +13,12 @@ public class UIComponent implements IRenderable {
     protected Color color =  Color.WHITE;
     protected boolean active = true;
 
-    UIComponent(Vector2 position) {
+    protected UIComponent(Vector2 position) {
         this.position = position;
         offset = new Vector2();
     }
 
-    UIComponent(Vector2 position,  Vector2 size) {
+    protected UIComponent(Vector2 position, Vector2 size) {
         this.position = position;
         this.size = size;
         offset = new Vector2();
@@ -54,7 +54,7 @@ public class UIComponent implements IRenderable {
     @Override
     public void update() {}
 
-    void setOffset(Vector2 offset) {
+    public void setOffset(Vector2 offset) {
         this.offset = offset;
     }
 }

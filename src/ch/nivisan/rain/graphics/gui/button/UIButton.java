@@ -1,17 +1,20 @@
-package ch.nivisan.rain.graphics.gui;
+package ch.nivisan.rain.graphics.gui.button;
 
-import ch.nivisan.rain.input.Mouse;
+import ch.nivisan.rain.graphics.gui.UIComponent;
+import ch.nivisan.rain.graphics.gui.UILabel;
 import ch.nivisan.rain.utils.Vector2;
 
 import java.awt.*;
 
-public class UIButton extends UIComponent{
+public class UIButton extends UIComponent {
     private final UILabel label;
 
     private boolean insideBounds = false;
     private Rectangle buttonBounds;
+    private boolean pressed = false;
+    private boolean blocked = false;
     private Vector2 absolutePosition = getAbsolutePosition();
-    private final UIButtonListener buttonListener = new UIButtonListener();
+    private final UIButtonListener buttonListener = new UIButtonListener(this);
     private IUIActionListener actionListener;
 
     public UIButton(Vector2 position, Vector2 size, String text, IUIActionListener actionListener) {
@@ -35,7 +38,7 @@ public class UIButton extends UIComponent{
     }
 
     @Override
-    void setOffset(Vector2 offset) {
+    public void setOffset(Vector2 offset) {
         super.setOffset(offset);
         label.setOffset(new Vector2(offset.getX() + 40,offset.getY() + 30));
         absolutePosition = getAbsolutePosition();
@@ -46,24 +49,10 @@ public class UIButton extends UIComponent{
         if(!active){ return; }
 
         super.update();
-        label.update();
+        if(label != null) label.update();
 
-        setButtonStyleOnAction();
-    }
-
-    private void setButtonStyleOnAction() {
         buttonBounds = new Rectangle(absolutePosition.getX(), absolutePosition.getY(), size.getX(), size.getY());
-        if(buttonBounds.contains(new Point(Mouse.getXPosition(), Mouse.getYPosition()))){
-            if(insideBounds) return;
-
-            buttonListener.hovered(this);
-            insideBounds = true;
-        }else{
-            if(insideBounds == false) return;
-
-            buttonListener.exited(this);
-            insideBounds = false;
-        }
+        buttonListener.listen(buttonBounds,actionListener,this);
     }
 
 
@@ -77,6 +66,6 @@ public class UIButton extends UIComponent{
        graphics.setColor(color);
        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
 
-       label.render(graphics);
+        if(label != null) label.render(graphics);
     }
 }

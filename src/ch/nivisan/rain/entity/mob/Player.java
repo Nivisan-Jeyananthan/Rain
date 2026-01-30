@@ -4,6 +4,9 @@ import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.*;
 import ch.nivisan.rain.graphics.gui.*;
+import ch.nivisan.rain.graphics.gui.button.IUIActionListener;
+import ch.nivisan.rain.graphics.gui.button.UIButton;
+import ch.nivisan.rain.graphics.gui.button.UIButtonActionListener;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
@@ -64,12 +67,7 @@ public class Player extends Mob {
         uiHealthBar.setShadow(true);
 
         var pos =  new Vector2(componentPositionX * 25 ,height + (offsetHeight * 2));
-        UIButton button = new UIButton(pos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text", new IUIActionListener() {
-            @Override
-            public void performAction() {
-                System.out.println("Button pressed");
-            }
-        });
+        UIButton button = new UIButton(pos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text", new UIButtonActionListener());
         button.setColor(new Color(0x64A108));
         button.setTextColor(Color.BLACK);
 

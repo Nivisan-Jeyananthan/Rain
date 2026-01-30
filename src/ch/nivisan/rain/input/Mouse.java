@@ -7,7 +7,8 @@ import java.awt.event.MouseMotionListener;
 public class Mouse implements MouseListener, MouseMotionListener {
     private static int mouseX = -1;
     private static int mouseY = -1;
-    private static int mouseButton = -1;
+    private static int mouseButton;
+    private static final MouseButton[] mouseButtons = MouseButton.values();
 
     public static int getXPosition() {
         return mouseX;
@@ -21,8 +22,8 @@ public class Mouse implements MouseListener, MouseMotionListener {
         return mouseButton;
     }
 
-    public static MouseButtonState getButtonState() {
-        return MouseButtonState.values()[mouseButton];
+    public static MouseButton getButtonState() {
+        return mouseButtons[mouseButton];
     }
 
     @Override
@@ -36,7 +37,7 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        mouseButton = -1;
+        mouseButton = MouseButton.None.getNumValue();
     }
 
     @Override

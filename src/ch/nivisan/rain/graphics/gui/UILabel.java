@@ -16,7 +16,7 @@ public class UILabel extends UIComponent {
             active = false;
         }
         this.text = text;
-        color = UIDefaults.color;
+        color = UIDefaults.defaultFontColor;
     }
 
     public UILabel setFont(Font font) {

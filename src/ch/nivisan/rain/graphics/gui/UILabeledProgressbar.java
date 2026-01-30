@@ -30,7 +30,7 @@ public class UILabeledProgressbar extends UIProgressbar {
     }
 
     @Override
-    void setOffset(Vector2 offset) {
+    public void setOffset(Vector2 offset) {
         super.setOffset(offset);
         label.setOffset(new Vector2(offset.getX() + 2,offset.getY() + 15));
     }
