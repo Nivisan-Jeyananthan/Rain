@@ -43,20 +43,20 @@ public class UIPanel extends UIComponent {
     }
 
     @Override
-    public void render(Screen screen) {
-        if(!active){ return; }
-
-        for (int i = 0; i < components.size(); i++) {
-            components.get(i).render(screen);
-        }
-    }
-
-    @Override
     public void update() {
         if(!active){ return; }
 
         for (int i = 0; i < components.size(); i++) {
             components.get(i).update();
+        }
+    }
+
+    @Override
+    public void render(Screen screen) {
+        if(!active){ return; }
+
+        for (int i = 0; i < components.size(); i++) {
+            components.get(i).render(screen);
         }
     }
 }

@@ -19,15 +19,15 @@ public class Star extends Mob {
     private List<Node> path = null;
 
     private int time = 0;
-    private float yAbsolute = 0;
-    private float xAbsolute = 0;
+    private float yAbsolute = 0f;
+    private float xAbsolute = 0f;
 
     public Star(Level level, int x, int y) {
         super(level);
         this.x = x << 4;
         this.y = y << 4;
         sprite = animatedSprite.getSprite();
-        walkSpeed = 0.5f;
+        walkSpeed = 1.5f;
     }
 
     @Override
@@ -58,14 +58,13 @@ public class Star extends Mob {
         Vector2 start = new Vector2((int) x >> 4, (int) y >> 4);
         Vector2 destination = new Vector2(px >> 4, py >> 4);
         if (time % 60 == 0) path = level.getPath(start, destination);
-        if (path != null) {
-            if (!path.isEmpty()) {
-                Vector2 vec = path.getLast().tile;
-                if (x < vec.getX() << 4) xAbsolute++;
-                if (x > vec.getX() << 4) xAbsolute--;
-                if (y < vec.getY() << 4) yAbsolute++;
-                if (y > vec.getY() << 4) yAbsolute--;
-            }
+
+        if (path != null && !path.isEmpty()) {
+            Vector2 vec = path.getLast().tile;
+            if (x < vec.getX() << 4) xAbsolute++;
+            else if (x > vec.getX() << 4) xAbsolute--;
+            if (y < vec.getY() << 4) yAbsolute++;
+            else if (y > vec.getY() << 4) yAbsolute--;
         }
         if (xAbsolute != 0 || yAbsolute != 0) {
             move(xAbsolute, yAbsolute);

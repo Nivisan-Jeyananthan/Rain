@@ -11,9 +11,9 @@ public class UIButtonListener {
     private boolean insideBounds = false;
     private boolean pressed = false;
     private boolean pressedWhileOut = false;
-    private final Color buttonDefaultColor = new Color(UIDefaults.buttonDefaultColor);
-    private  final Color buttonDefaultHoveredColor = new Color(UIDefaults.buttonDefaultHoveredColor);
-    private  final Color buttonDefaultPressedColor = new Color(UIDefaults.buttonDefaultPressedColor);
+    public Color buttonDefaultColor = new Color(UIDefaults.buttonDefaultColor);
+    public Color buttonDefaultHoveredColor = new Color(UIDefaults.buttonDefaultHoveredColor);
+    public Color buttonDefaultPressedColor = new Color(UIDefaults.buttonDefaultPressedColor);
 
     public UIButtonListener(UIButton button) {
         this.button = button;

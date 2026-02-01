@@ -13,7 +13,12 @@ import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Debug;
 import ch.nivisan.rain.utils.Vector2;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.io.IOException;
 
 public class Player extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
@@ -74,6 +79,41 @@ public class Player extends Mob {
         panel.addComponent(nameLabel);
         panel.addComponent(uiHealthBar);
         panel.addComponent(button);
+
+        String imagePath = "../../assets/gui/Home.png";
+        BufferedImage image = null, hoverImage = null;
+        Vector2 size = new Vector2(maxComponentWidth,maxComponentWidth);
+        try {
+            image = ImageIO.read(Player.class.getResource(imagePath));
+            size = new Vector2(image.getWidth(null),image.getHeight(null));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        int[] imagePixels = ((DataBufferInt)(image.getRaster().getDataBuffer())).getData();
+        hoverImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        int[] hoverdPixels =  ((DataBufferInt)(hoverImage.getRaster().getDataBuffer())).getData();
+        for (int pixelY = 0; pixelY < image.getHeight(); pixelY++) {
+            for (int pixelX = 0; pixelX < image.getWidth(); pixelX++) {
+                int color = imagePixels[pixelY * image.getWidth() + pixelX];
+                int red = (color & 0xff0000) << 16;
+                int green = (color & 0xff00) << 8;
+                int blue = (color & 0xff);
+
+                red += 50;
+                green += 50;
+                blue += 50;
+                hoverdPixels[pixelX + pixelY * image.getWidth()] = (color & 0xff000000) << 24 | (red & 0xff0000) << 16 | (green & 0xff0000) << 16 | (blue & 0xff) << 16;
+            }
+        }
+
+        UIButton imageButton = new UIButton(new Vector2(10,360),size, image,new UIButtonActionListener(){
+            @Override
+            public void performAction() {
+                System.exit(0);
+            }
+        });
+        panel.addComponent(imageButton);
     }
 
     public String getName() {

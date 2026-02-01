@@ -25,7 +25,14 @@ public class UIManager implements IRenderable {
         panels.add(panel);
     }
 
+    @Override
+    public void update() {
+        for (UIPanel panel : panels) {
+            panel.update();
+        }
+    }
 
+    @Override
     public void render(Graphics graphics) {
         for (UIPanel panel : panels) {
             panel.render(graphics);
@@ -36,13 +43,6 @@ public class UIManager implements IRenderable {
     public void render(Screen screen) {
         for (UIPanel panel : panels) {
             panel.render(screen);
-        }
-    }
-
-    @Override
-    public void update() {
-        for (UIPanel panel : panels) {
-            panel.update();
         }
     }
 }

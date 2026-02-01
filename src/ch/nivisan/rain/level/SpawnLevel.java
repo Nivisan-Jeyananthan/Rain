@@ -1,6 +1,7 @@
 package ch.nivisan.rain.level;
 
 import ch.nivisan.rain.entity.mob.Shooter;
+import ch.nivisan.rain.entity.mob.Star;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,9 +27,8 @@ public class SpawnLevel extends Level {
         }
 
         for (int i = 0; i < 1; i++) {
-            addEntity(new Shooter(this, 20, 55));
+            addEntity(new Star(this, 20, 55));
         }
-        addEntity(new Shooter(this, 25, 55));
 
     }
 
