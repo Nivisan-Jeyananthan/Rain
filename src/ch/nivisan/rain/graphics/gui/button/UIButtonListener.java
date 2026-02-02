@@ -7,9 +7,9 @@ import ch.nivisan.rain.input.MouseButton;
 import java.awt.*;
 
 public class UIButtonListener {
-    private final UIButton button;
+    protected final UIButton button;
     private boolean insideBounds = false;
-    private boolean pressed = false;
+    protected boolean pressed = false;
     private boolean pressedWhileOut = false;
     public Color buttonDefaultColor = new Color(UIDefaults.buttonDefaultColor);
     public Color buttonDefaultHoveredColor = new Color(UIDefaults.buttonDefaultHoveredColor);

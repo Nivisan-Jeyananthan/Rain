@@ -27,11 +27,10 @@ public class Player extends Mob {
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
     private final Keyboard input;
     private final String name;
-    private final UIManager uiManager = UIManager.getInstance();
     private float fireRate = 0;
     private AnimatedSprite animatedSprite = front;
     // todo: refactor creation of ui to playerUI
-    private static PlayerUI playerUI;
+    private final PlayerUI playerUI;
     private UILabeledProgressbar uiHealthBar;
 
     public Player(String name, int x, int y, Keyboard input, Level level) {
@@ -42,88 +41,28 @@ public class Player extends Mob {
         this.input = input;
         this.fireRate = ShurikenProjectile.fireRate;
         walkSpeed = 1.4f;
-        health = 100;
+        health = 0;
         maxHealth = 100;
 
-        createGUI();
-    }
-
-    private void createGUI() {
-        final int panelStart = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
-        final int divisor = 100;
-        final int componentPositionX = (WindowManager.getScaledGUIWidth() / divisor);
-        final int maxComponentWidth = (WindowManager.getScaledGUIWidth() / divisor) * (divisor -1);
-        final int widthOffset =  (maxComponentWidth / divisor);
-        final int height = (WindowManager.getScaledWindowHeight()  / 5)  * 2;
-        final int offsetHeight = (height / 10);
-
-        UIPanel panel = new UIPanel(new Vector2(panelStart, 0), new Vector2(WindowManager.getScaledGUIWidth(), WindowManager.getScaledWindowHeight()), 0x4f4f4f);
-        uiManager.addPanel(panel);
-        UILabel nameLabel = new UILabel(new Vector2(componentPositionX, height), "Nivisan");
-        nameLabel.setColor(0xbbbbbbbb);
-        nameLabel.setFont(new Font("Courier New", Font.BOLD, 25));
-        nameLabel.setShadow(true);
-
-        Vector2 startPosition = new Vector2(componentPositionX ,height + offsetHeight);
-        Vector2 barSize = new Vector2(maxComponentWidth - widthOffset,20);
-        uiHealthBar = new UILabeledProgressbar(startPosition,barSize, 0xee3030,0xffffffff,"HP");
-        uiHealthBar.setColor(0x6a6a6a);
-        uiHealthBar.setFont(new Font("Courier New", Font.BOLD, 20));
-        uiHealthBar.setShadow(true);
-
-        var pos =  new Vector2(componentPositionX * 25 ,height + (offsetHeight * 2));
-        UIButton button = new UIButton(pos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text", new UIButtonActionListener());
-        button.setColor(new Color(0x64A108));
-        button.setTextColor(Color.BLACK);
-
-        panel.addComponent(nameLabel);
-        panel.addComponent(uiHealthBar);
-        panel.addComponent(button);
-
-        String imagePath = "../../assets/gui/Home.png";
-        BufferedImage image = null, hoverImage = null;
-        Vector2 size = new Vector2(maxComponentWidth,maxComponentWidth);
-        try {
-            image = ImageIO.read(Player.class.getResource(imagePath));
-            size = new Vector2(image.getWidth(null),image.getHeight(null));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        int[] imagePixels = ((DataBufferInt)(image.getRaster().getDataBuffer())).getData();
-        hoverImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        int[] hoverdPixels =  ((DataBufferInt)(hoverImage.getRaster().getDataBuffer())).getData();
-        for (int pixelY = 0; pixelY < image.getHeight(); pixelY++) {
-            for (int pixelX = 0; pixelX < image.getWidth(); pixelX++) {
-                int color = imagePixels[pixelY * image.getWidth() + pixelX];
-                int red = (color & 0xff0000) << 16;
-                int green = (color & 0xff00) << 8;
-                int blue = (color & 0xff);
-
-                red += 50;
-                green += 50;
-                blue += 50;
-                hoverdPixels[pixelX + pixelY * image.getWidth()] = (color & 0xff000000) << 24 | (red & 0xff0000) << 16 | (green & 0xff0000) << 16 | (blue & 0xff) << 16;
-            }
-        }
-
-        UIButton imageButton = new UIButton(new Vector2(10,360),size, image,new UIButtonActionListener(){
-            @Override
-            public void performAction() {
-                System.exit(0);
-            }
-        });
-        panel.addComponent(imageButton);
+        playerUI = new PlayerUI(this);
     }
 
     public String getName() {
         return name;
     }
 
+    int time = 0;
 
     @Override
     public void update() {
-        uiHealthBar.setProgress(health / maxHealth);
+        playerUI.update();
+
+        time++;
+        if (time % 20 == 0) {
+            health++;
+            time = 0;
+        }
+
         if (walking) animatedSprite.update();
         else {
             animatedSprite.setFrame(0);

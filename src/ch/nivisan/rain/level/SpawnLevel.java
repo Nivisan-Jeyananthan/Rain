@@ -27,7 +27,7 @@ public class SpawnLevel extends Level {
         }
 
         for (int i = 0; i < 1; i++) {
-            addEntity(new Star(this, 20, 55));
+           // addEntity(new Star(this, 20, 55));
         }
 
     }

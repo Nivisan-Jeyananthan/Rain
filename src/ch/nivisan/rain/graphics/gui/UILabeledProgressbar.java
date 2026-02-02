@@ -11,12 +11,14 @@ public class UILabeledProgressbar extends UIProgressbar {
         super(position, size, foregroundColor);
         label = new UILabel(position, text);
         label.setColor(fontColor);
+        label.setFont(new Font("Courier New", Font.BOLD, 20));
     }
 
     public UILabeledProgressbar(Vector2 position, Vector2 size, int foregroundColor, int fontColor, String text) {
         super(position, size, new Color(foregroundColor));
         label = new UILabel(position, text);
         label.setColor(fontColor);
+        label.setFont(new Font("Courier New", Font.BOLD, 20));
     }
 
     public UILabeledProgressbar setFont(Font font) {
@@ -39,7 +41,7 @@ public class UILabeledProgressbar extends UIProgressbar {
     public void update() {
         if(!active){ return; }
 
-       super.update();
+        super.update();
         label.update();
     }
 

@@ -73,12 +73,6 @@ public abstract class Mob extends Entity {
         return 1;
     }
 
-    public abstract void update();
-
-    public void render(Screen screen) {
-        screen.renderMob((int) x - 16, (int) y - 32, sprite, FlipState.None);
-    }
-
     protected void shoot(float x, float y, float direction) {
         Projectile p = new ShurikenProjectile(x, y, direction, level);
         level.addEntity(p);
@@ -114,7 +108,29 @@ public abstract class Mob extends Entity {
         return solid;
     }
 
+
+    public void setHealth(float health) {
+        this.health = health;
+    }
+
+    public void setMaxHealth(float maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public float  getHealth() {
+        return health;
+    }
+
+    public float  getMaxHealth() {
+        return maxHealth;
+    }
     public Sprite getSprite() {
         return sprite;
+    }
+
+    public abstract void update();
+
+    public void render(Screen screen) {
+        screen.renderMob((int) x - 16, (int) y - 32, sprite, FlipState.None);
     }
 }

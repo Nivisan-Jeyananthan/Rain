@@ -9,13 +9,9 @@ import java.awt.*;
 public class UIButton extends UIComponent {
     private final UIComponent childComponent;
     private Image backgroundImage;
-
-    private boolean insideBounds = false;
     private Rectangle buttonBounds;
-    private boolean pressed = false;
-    private boolean blocked = false;
     private Vector2 absolutePosition = getAbsolutePosition();
-    private final UIButtonListener buttonListener = new UIButtonListener(this);
+    private UIButtonListener buttonListener = new UIButtonListener(this);
     private final IUIActionListener actionListener;
 
     public UIButton(Vector2 position, Vector2 size, String text, IUIActionListener actionListener) {
@@ -38,6 +34,9 @@ public class UIButton extends UIComponent {
         this.backgroundImage = image;
     }
 
+    public void setButtonListener(UIButtonListener buttonListener) {
+        this.buttonListener = buttonListener;
+    }
 
     public void setTextColor(int color) {
         childComponent.setColor(color);
