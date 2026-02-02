@@ -9,6 +9,7 @@ import ch.nivisan.rain.graphics.gui.UIPanel;
 import ch.nivisan.rain.graphics.gui.button.UIButton;
 import ch.nivisan.rain.graphics.gui.button.UIButtonActionListener;
 import ch.nivisan.rain.graphics.gui.button.UIImageButtonListener;
+import ch.nivisan.rain.utils.ImageUtils;
 import ch.nivisan.rain.utils.Vector2;
 
 import javax.imageio.ImageIO;
@@ -73,28 +74,6 @@ public class PlayerUI {
             throw new RuntimeException(e);
         }
 
-        // depending on image which was provided the casting can fail
-        int[] imagePixels = new int[image.getWidth() * image.getHeight()];
-        image.getRGB(0, 0, image.getWidth(), image.getHeight(), imagePixels, 0, image.getWidth());
-        hoverImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        int[] hoverdPixels = ((DataBufferInt) hoverImage.getRaster().getDataBuffer()).getData();
-
-
-        for (int pixelY = 0; pixelY < image.getHeight(); pixelY++) {
-            for (int pixelX = 0; pixelX < image.getWidth(); pixelX++) {
-                int color = imagePixels[pixelY * image.getWidth() + pixelX];
-                int red = (color & 0xff0000) >> 16;
-                int green = (color & 0xff00) >> 8;
-                int blue = (color & 0xff);
-
-                red = (red + 50) & 255;
-                green = (green + 50) & 255;
-                blue = (blue + 50) & 255;
-                color &= 0xff000000;
-                int brightenedColor = (color & 0xff000000)  | red << 16 | green << 8 | blue;
-                hoverdPixels[pixelX + pixelY * image.getWidth()] = brightenedColor;
-            }
-        }
 
         UIButton imageButton = new UIButton(new Vector2(10, 360), size, image, new UIButtonActionListener() {
             @Override
@@ -102,7 +81,8 @@ public class PlayerUI {
                 System.exit(0);
             }
         });
-        imageButton.setButtonListener(new UIImageButtonListener(imageButton, hoverImage));
+
+        imageButton.setButtonListener(new UIImageButtonListener(imageButton));
         mainPanel.addComponent(imageButton);
     }
 
@@ -110,7 +90,5 @@ public class PlayerUI {
         uiHealthBar.setProgress(player.getHealth() / player.getMaxHealth());
     }
 
-    public void render() {
-
-    }
+    public void render() {}
 }

@@ -47,7 +47,8 @@ public class Player extends Mob {
 
         time++;
         if (time % 20 == 0) {
-            health++;
+            if(health < maxHealth)
+                health++;
             time = 0;
         }
 

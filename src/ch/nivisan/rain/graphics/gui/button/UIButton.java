@@ -5,6 +5,7 @@ import ch.nivisan.rain.graphics.gui.UILabel;
 import ch.nivisan.rain.utils.Vector2;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class UIButton extends UIComponent {
     private final UIComponent childComponent;
