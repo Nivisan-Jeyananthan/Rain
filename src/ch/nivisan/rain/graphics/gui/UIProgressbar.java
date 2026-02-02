@@ -5,13 +5,17 @@ import ch.nivisan.rain.utils.Vector2;
 import java.awt.*;
 
 public class UIProgressbar extends UIComponent {
-    protected float progress = 0;
     protected final Color foregroundColor;
+    protected float progress = 0;
 
     public UIProgressbar(Vector2 position, Vector2 size, Color foregroundColor) {
         super(position);
         this.size = size;
         this.foregroundColor = foregroundColor;
+    }
+
+    public float getProgress() {
+        return progress;
     }
 
     public void setProgress(float progress) {
@@ -22,13 +26,10 @@ public class UIProgressbar extends UIComponent {
         this.progress = progress;
     }
 
-    public float getProgress() {
-        return progress;
-    }
-
-    public void render(Graphics graphics)
-    {
-        if(!active){ return; }
+    public void render(Graphics graphics) {
+        if (!active) {
+            return;
+        }
 
         super.render(graphics);
 
@@ -36,6 +37,6 @@ public class UIProgressbar extends UIComponent {
         graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
 
         graphics.setColor(foregroundColor);
-        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), (int)(progress * size.getX()) , size.getY());
+        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), (int) (progress * size.getX()), size.getY());
     }
 }

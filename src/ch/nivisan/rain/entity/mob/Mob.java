@@ -108,22 +108,22 @@ public abstract class Mob extends Entity {
         return solid;
     }
 
+    public float getHealth() {
+        return health;
+    }
 
     public void setHealth(float health) {
         this.health = health;
+    }
+
+    public float getMaxHealth() {
+        return maxHealth;
     }
 
     public void setMaxHealth(float maxHealth) {
         this.maxHealth = maxHealth;
     }
 
-    public float  getHealth() {
-        return health;
-    }
-
-    public float  getMaxHealth() {
-        return maxHealth;
-    }
     public Sprite getSprite() {
         return sprite;
     }

@@ -34,12 +34,14 @@ public class UILabeledProgressbar extends UIProgressbar {
     @Override
     public void setOffset(Vector2 offset) {
         super.setOffset(offset);
-        label.setOffset(new Vector2(offset.getX() + 2,offset.getY() + 15));
+        label.setOffset(new Vector2(offset.getX() + 2, offset.getY() + 15));
     }
 
     @Override
     public void update() {
-        if(!active){ return; }
+        if (!active) {
+            return;
+        }
 
         super.update();
         label.update();
@@ -47,7 +49,9 @@ public class UILabeledProgressbar extends UIProgressbar {
 
     @Override
     public void render(Graphics graphics) {
-        if(!active){ return; }
+        if (!active) {
+            return;
+        }
 
         super.render(graphics);
         label.render(graphics);

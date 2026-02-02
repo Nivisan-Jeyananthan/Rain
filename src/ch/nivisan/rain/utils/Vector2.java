@@ -18,7 +18,7 @@ public class Vector2 {
         this.y = vector.y;
     }
 
-    public static Vector2 add(Vector2 start,int value) {
+    public static Vector2 add(Vector2 start, int value) {
         start.x += value;
         start.y += value;
         return start;

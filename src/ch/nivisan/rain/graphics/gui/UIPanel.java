@@ -1,6 +1,5 @@
 package ch.nivisan.rain.graphics.gui;
 
-import ch.nivisan.rain.common.IRenderable;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.utils.Vector2;
 
@@ -44,7 +43,9 @@ public class UIPanel extends UIComponent {
 
     @Override
     public void update() {
-        if(!active){ return; }
+        if (!active) {
+            return;
+        }
 
         for (int i = 0; i < components.size(); i++) {
             components.get(i).update();
@@ -53,7 +54,9 @@ public class UIPanel extends UIComponent {
 
     @Override
     public void render(Screen screen) {
-        if(!active){ return; }
+        if (!active) {
+            return;
+        }
 
         for (int i = 0; i < components.size(); i++) {
             components.get(i).render(screen);

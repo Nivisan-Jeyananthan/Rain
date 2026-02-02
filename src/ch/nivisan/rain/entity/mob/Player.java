@@ -3,22 +3,11 @@ package ch.nivisan.rain.entity.mob;
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.*;
-import ch.nivisan.rain.graphics.gui.*;
-import ch.nivisan.rain.graphics.gui.button.IUIActionListener;
-import ch.nivisan.rain.graphics.gui.button.UIButton;
-import ch.nivisan.rain.graphics.gui.button.UIButtonActionListener;
+import ch.nivisan.rain.graphics.gui.UILabeledProgressbar;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Debug;
-import ch.nivisan.rain.utils.Vector2;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.IOException;
 
 public class Player extends Mob {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
@@ -27,10 +16,11 @@ public class Player extends Mob {
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
     private final Keyboard input;
     private final String name;
-    private float fireRate = 0;
-    private AnimatedSprite animatedSprite = front;
     // todo: refactor creation of ui to playerUI
     private final PlayerUI playerUI;
+    int time = 0;
+    private float fireRate = 0;
+    private AnimatedSprite animatedSprite = front;
     private UILabeledProgressbar uiHealthBar;
 
     public Player(String name, int x, int y, Keyboard input, Level level) {
@@ -50,8 +40,6 @@ public class Player extends Mob {
     public String getName() {
         return name;
     }
-
-    int time = 0;
 
     @Override
     public void update() {

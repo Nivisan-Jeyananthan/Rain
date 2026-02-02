@@ -10,7 +10,7 @@ public class UIComponent implements IRenderable {
     protected Vector2 position;
     protected Vector2 size;
     protected Vector2 offset;
-    protected Color color =  Color.WHITE;
+    protected Color color = Color.WHITE;
     protected boolean active = true;
 
     protected UIComponent(Vector2 position) {
@@ -38,21 +38,24 @@ public class UIComponent implements IRenderable {
         return Vector2.addVector(position, offset);
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public boolean isActive() {
         return active;
     }
 
-    public void render(Graphics graphics) {}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void render(Graphics graphics) {
+    }
 
     @Override
-    public void render(Screen screen) {}
+    public void render(Screen screen) {
+    }
 
     @Override
-    public void update() {}
+    public void update() {
+    }
 
     public void setOffset(Vector2 offset) {
         this.offset = offset;

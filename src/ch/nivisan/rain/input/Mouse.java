@@ -5,10 +5,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class Mouse implements MouseListener, MouseMotionListener {
+    private static final MouseButton[] mouseButtons = MouseButton.values();
     private static int mouseX = -1;
     private static int mouseY = -1;
     private static int mouseButton;
-    private static final MouseButton[] mouseButtons = MouseButton.values();
 
     public static int getXPosition() {
         return mouseX;

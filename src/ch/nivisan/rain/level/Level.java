@@ -42,8 +42,9 @@ public class Level {
 
     /**
      * Gets path to target using A* algorithm
+     *
      * @param start from where we start from.
-     * @param goal where the target is located at
+     * @param goal  where the target is located at
      * @return
      */
     public List<Node> getPath(Vector2 start, Vector2 goal) {
