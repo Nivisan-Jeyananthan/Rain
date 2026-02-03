@@ -1,4 +1,7 @@
-package ch.nivisan.rain.utils.events;
+package ch.nivisan.rain.graphics.layers;
+
+import ch.nivisan.rain.utils.events.Event;
+import ch.nivisan.rain.utils.events.IEventListener;
 
 import java.awt.*;
 

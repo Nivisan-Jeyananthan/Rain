@@ -1,5 +1,8 @@
-package ch.nivisan.rain.utils.events;
+package ch.nivisan.rain.graphics.layers;
 
+import ch.nivisan.rain.utils.events.Event;
+import ch.nivisan.rain.utils.events.EventDispatcher;
+import ch.nivisan.rain.utils.events.EventType;
 import ch.nivisan.rain.utils.events.types.MouseMovedEvent;
 import ch.nivisan.rain.utils.events.types.MousePressedEvent;
 import ch.nivisan.rain.utils.events.types.MouseReleasedEvent;
@@ -26,10 +29,10 @@ public class ExampleLayer extends Layer{
         box = new Rectangle(random.nextInt(300) + 100, random.nextInt(200) + 80,80,50);
     }
 
-    public void onEvent(Event event){
+    public void onEvent(ch.nivisan.rain.utils.events.Event event){
         EventDispatcher dispatcher = new EventDispatcher(event);
-        dispatcher.dispatch(EventType.MOUSE_PRESSED,(Event e) -> (onMousePressed((MousePressedEvent) e)));
-        dispatcher.dispatch(EventType.MOUSE_RELEASED,(Event e) -> (onMouseReleased((MouseReleasedEvent) e)));
+        dispatcher.dispatch(EventType.MOUSE_PRESSED,(ch.nivisan.rain.utils.events.Event e) -> (onMousePressed((MousePressedEvent) e)));
+        dispatcher.dispatch(EventType.MOUSE_RELEASED,(ch.nivisan.rain.utils.events.Event e) -> (onMouseReleased((MouseReleasedEvent) e)));
         dispatcher.dispatch(EventType.MOUSE_MOVED,(Event e) -> (onMouseMoved((MouseMovedEvent) e)));
     }
 

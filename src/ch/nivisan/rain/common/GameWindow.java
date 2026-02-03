@@ -1,6 +1,6 @@
 package ch.nivisan.rain.common;
 
-import ch.nivisan.rain.utils.events.Layer;
+import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.utils.events.types.MouseMovedEvent;
 import ch.nivisan.rain.utils.events.types.MousePressedEvent;
 import ch.nivisan.rain.utils.events.types.MouseReleasedEvent;
@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GameWindow extends JFrame {
     private final WindowScreen windowScreen;
