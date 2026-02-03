@@ -1,5 +1,6 @@
 package ch.nivisan.rain;
 
+import ch.nivisan.rain.common.GameWindow;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.WindowManager;
@@ -7,6 +8,7 @@ import ch.nivisan.rain.graphics.gui.UIManager;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
+import ch.nivisan.rain.utils.events.ExampleLayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +55,13 @@ public class Game extends Canvas implements Runnable {
     }
 
     static void main(String[] args) {
+
+        GameWindow gw = new GameWindow("Eventing", 640, 360);
+        gw.addLayer(new ExampleLayer("Bottom", new Color(0x2233CC)));
+        gw.addLayer(new ExampleLayer("Top", new Color(0xCC2233)));
+
+
+        /**
         var game = new Game();
 
         game.frame.setResizable(false);
@@ -64,6 +73,8 @@ public class Game extends Canvas implements Runnable {
         game.frame.setVisible(true);
 
         game.start();
+
+         **/
     }
 
     public synchronized void start() {
