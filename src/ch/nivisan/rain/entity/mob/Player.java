@@ -3,6 +3,7 @@ package ch.nivisan.rain.entity.mob;
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
 import ch.nivisan.rain.graphics.*;
+import ch.nivisan.rain.graphics.gui.PlayerUI;
 import ch.nivisan.rain.graphics.gui.UILabeledProgressbar;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
@@ -82,7 +83,11 @@ public class Player extends Mob {
             walking = false;
         }
 
-        updateShooting();
+        int panelStartX = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
+        if(Mouse.getXPosition() < panelStartX) {
+            updateShooting();
+        }
+
     }
 
 

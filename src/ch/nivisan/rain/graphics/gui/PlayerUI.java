@@ -1,28 +1,21 @@
-package ch.nivisan.rain.graphics;
+package ch.nivisan.rain.graphics.gui;
 
 
 import ch.nivisan.rain.entity.mob.Player;
-import ch.nivisan.rain.graphics.gui.UILabel;
-import ch.nivisan.rain.graphics.gui.UILabeledProgressbar;
-import ch.nivisan.rain.graphics.gui.UIManager;
-import ch.nivisan.rain.graphics.gui.UIPanel;
+import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.button.UIButton;
 import ch.nivisan.rain.graphics.gui.button.UIButtonActionListener;
 import ch.nivisan.rain.graphics.gui.button.UIImageButtonListener;
-import ch.nivisan.rain.utils.ImageUtils;
 import ch.nivisan.rain.utils.Vector2;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 
 public class PlayerUI {
     private static final UIManager uiManager = UIManager.getInstance();
-    private static final String imagePath = "../assets/gui/Home.png";
+    private static final String imagePath = "../../assets/gui/Home.png";
     private final int panelStartX = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
     private final UIPanel mainPanel = new UIPanel(new Vector2(panelStartX, 0), new Vector2(WindowManager.getScaledGUIWidth(), WindowManager.getScaledWindowHeight()), 0x4f4f4f);
     private final Player player;

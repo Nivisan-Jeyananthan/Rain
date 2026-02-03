@@ -1,14 +1,9 @@
 package ch.nivisan.rain.utils;
 
-import ch.nivisan.rain.graphics.PlayerUI;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
-import java.io.IOException;
-import java.nio.Buffer;
 
 import static ch.nivisan.rain.utils.MathUtils.*;
 
