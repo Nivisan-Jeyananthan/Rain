@@ -1,9 +1,10 @@
-package ch.nivisan.rain.utils.events.types;
+package ch.nivisan.rain.events.types;
 
 import ch.nivisan.rain.utils.events.Event;
 import ch.nivisan.rain.utils.events.EventType;
 
 public class MouseMovedEvent extends Event {
+
     private final int x;
     private final int y;
     private final boolean dragged;
@@ -22,7 +23,6 @@ public class MouseMovedEvent extends Event {
     public int getY() {
         return y;
     }
-
 
     public boolean isDragged() {
         return dragged;

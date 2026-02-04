@@ -1,19 +1,28 @@
 package ch.nivisan.rain.common;
 
+import ch.nivisan.rain.input.Keyboard;
+import ch.nivisan.rain.input.Mouse;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class WindowScreen extends Canvas {
+    private final Keyboard keyboard;
+    private final Mouse mouse;
     private BufferStrategy bufferStrategy;
     private Graphics graphics;
 
     public WindowScreen(int width, int height){
         setPreferredSize(new Dimension(width, height));
+        keyboard = new Keyboard();
+        addKeyListener(keyboard);
+        mouse = new Mouse();
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
     }
 
     public void init(){
         createBufferStrategy(3);
-
     }
 
     public void beginRendering(){

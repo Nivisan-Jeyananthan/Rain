@@ -1,7 +1,7 @@
-package ch.nivisan.rain.utils.events;
+package ch.nivisan.rain.events;
 
 public enum EventType {
     MOUSE_PRESSED,
     MOUSE_RELEASED,
-    MOUSE_MOVED
+    MOUSE_MOVED,
 }

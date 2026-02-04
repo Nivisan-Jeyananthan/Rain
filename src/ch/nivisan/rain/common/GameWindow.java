@@ -21,6 +21,7 @@ public class GameWindow extends JFrame {
         windowScreen = new WindowScreen(width,height);
 
         setTitle(name);
+        setResizable(false);
         add(windowScreen);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

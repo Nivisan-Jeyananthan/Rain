@@ -5,21 +5,23 @@ import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.UIManager;
+import ch.nivisan.rain.graphics.layers.ExampleLayer;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-import ch.nivisan.rain.graphics.layers.ExampleLayer;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.Serial;
+import javax.swing.*;
 
 public class Game extends Canvas implements Runnable {
+
     public static final float framerate = 60.0f;
+
     @Serial
     private static final long serialVersionUID = 1L;
+
     private static final String title = "Rain";
     private static final UIManager uiManager = UIManager.getInstance();
     private final JFrame frame;
@@ -28,19 +30,31 @@ public class Game extends Canvas implements Runnable {
     private final Level level;
     private final Player player;
     // creating an image
-    private final BufferedImage bufferedImage = new BufferedImage(WindowManager.getGameWidth(), WindowManager.getWindowHeight(), BufferedImage.TYPE_INT_RGB);
+    private final BufferedImage bufferedImage = new BufferedImage(
+        WindowManager.getGameWidth(),
+        WindowManager.getWindowHeight(),
+        BufferedImage.TYPE_INT_RGB
+    );
     // allowing to draw to the image or accessing the image
     // area in memory where buffer data is located, not a copy of it.
     // that is why we can manipulate pixels and it changes the buffer data itself.
-    private final int[] pixels = ((DataBufferInt) bufferedImage.getRaster().getDataBuffer()).getData();
+    private final int[] pixels = (
+        (DataBufferInt) bufferedImage.getRaster().getDataBuffer()
+    ).getData();
     private Thread gameThread;
     private boolean isRunning = false;
 
     public Game() {
-        var size = new Dimension(WindowManager.getScaledWindowWidth(), WindowManager.getScaledWindowHeight());
+        var size = new Dimension(
+            WindowManager.getScaledWindowWidth(),
+            WindowManager.getScaledWindowHeight()
+        );
         setPreferredSize(size);
 
-        screen = new Screen(WindowManager.getGameWidth(), WindowManager.getWindowHeight());
+        screen = new Screen(
+            WindowManager.getGameWidth(),
+            WindowManager.getWindowHeight()
+        );
         frame = new JFrame();
 
         keyboard = new Keyboard();
@@ -54,13 +68,12 @@ public class Game extends Canvas implements Runnable {
         level.addEntity(player);
     }
 
-    static void main(String[] args) {
-/*
+    public static void main(String[] args) {
+        /*
         GameWindow gw = new GameWindow("Eventing", 640, 360);
         gw.addLayer(new ExampleLayer("Bottom", new Color(0x2233CC)));
         gw.addLayer(new ExampleLayer("Top", new Color(0xCC2233)));
 */
-
 
         var game = new Game();
 
@@ -105,9 +118,7 @@ public class Game extends Canvas implements Runnable {
         int updatesPerSecond = 0;
         requestFocus();
 
-
         while (isRunning) {
-
             long now = System.nanoTime();
 
             // calculates how much time has passed since the last loop
@@ -135,7 +146,14 @@ public class Game extends Canvas implements Runnable {
 
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                frame.setTitle(title + " | " + updatesPerSecond + " ups, " + framesPerSecond + "fps ");
+                frame.setTitle(
+                    title +
+                        " | " +
+                        updatesPerSecond +
+                        " ups, " +
+                        framesPerSecond +
+                        "fps "
+                );
                 framesPerSecond = 0;
                 updatesPerSecond = 0;
             }
@@ -173,12 +191,19 @@ public class Game extends Canvas implements Runnable {
 
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
-        graphics.drawImage(bufferedImage, 0, 0, WindowManager.getScaledGameWidth(), WindowManager.getScaledWindowHeight(), null);
-//        graphics.setColor(Color.WHITE);
-//        graphics.setFont(new Font("Verdana", 0, 30));
-//        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
-//        graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
-//        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
+        graphics.drawImage(
+            bufferedImage,
+            0,
+            0,
+            WindowManager.getScaledGameWidth(),
+            WindowManager.getScaledWindowHeight(),
+            null
+        );
+        //        graphics.setColor(Color.WHITE);
+        //        graphics.setFont(new Font("Verdana", 0, 30));
+        //        graphics.drawString("Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4), 600, 25);
+        //        graphics.drawString("Pixel X: " + (player.getX()) + " Y: " + (player.getY()), 600, 50);
+        //        graphics.drawString("Mouse X: " + (Mouse.getXPosition()) + " Y: " + (Mouse.getYPosition()), 600, 75);
 
         uiManager.render(graphics);
 
@@ -187,5 +212,4 @@ public class Game extends Canvas implements Runnable {
         // changes the buffers which reside in memory
         bs.show();
     }
-
 }
