@@ -1,7 +1,7 @@
 package ch.nivisan.rain.events.types;
 
-import ch.nivisan.rain.utils.events.Event;
-import ch.nivisan.rain.utils.events.EventType;
+import ch.nivisan.rain.events.Event;
+import ch.nivisan.rain.events.EventType;
 
 public class MouseButtonEvent extends Event {
 

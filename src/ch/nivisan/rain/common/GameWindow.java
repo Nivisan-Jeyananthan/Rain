@@ -1,15 +1,16 @@
 package ch.nivisan.rain.common;
 
+import ch.nivisan.rain.events.Event;
 import ch.nivisan.rain.graphics.layers.Layer;
-import ch.nivisan.rain.utils.events.types.MouseMovedEvent;
-import ch.nivisan.rain.utils.events.types.MousePressedEvent;
-import ch.nivisan.rain.utils.events.types.MouseReleasedEvent;
+import ch.nivisan.rain.events.types.MouseMovedEvent;
+import ch.nivisan.rain.events.types.MousePressedEvent;
+import ch.nivisan.rain.events.types.MouseReleasedEvent;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class GameWindow extends JFrame {
      * From top to bottom layer
      * @param event
      */
-    public void onEvent(ch.nivisan.rain.utils.events.Event event){
+    public void onEvent(Event event){
         for (int i = layers.size() - 1; i >= 0; i--) {
             layers.get(i).onEvent(event);
         }

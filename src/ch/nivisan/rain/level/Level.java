@@ -6,15 +6,16 @@ import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
 import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.level.tile.Tile;
 import ch.nivisan.rain.utils.Node;
 import ch.nivisan.rain.utils.Vector2;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Level {
+public class Level extends Layer {
+
     public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
     private final List<Entity> entities = new ArrayList<Entity>();
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
@@ -81,12 +82,21 @@ public class Level {
                 if (at == null || at.solid()) continue;
                 Vector2 atVector = new Vector2(x + xDirection, y + yDirection);
                 // compare immediate distance (from middle (current) to other tiles in "circle")
-                float gCost = currentNode.gCost + ((currentNode.tile.getDistance(atVector) == 1 ? 1.0f : 0.95f));
+                float gCost =
+                    currentNode.gCost +
+                    ((currentNode.tile.getDistance(atVector) == 1
+                            ? 1.0f
+                            : 0.95f));
                 float hCost = atVector.getDistance(goal);
                 Node node = new Node(atVector, currentNode, gCost, hCost);
 
-                if (isInList(closedQueue, atVector) && gCost >= currentNode.gCost) continue;
-                if (!isInList(openQueue, atVector) || gCost < node.gCost) openQueue.add(node);
+                if (
+                    isInList(closedQueue, atVector) &&
+                    gCost >= currentNode.gCost
+                ) continue;
+                if (
+                    !isInList(openQueue, atVector) || gCost < node.gCost
+                ) openQueue.add(node);
             }
         }
 
@@ -96,8 +106,7 @@ public class Level {
 
     private boolean isInList(List<Node> list, Vector2 vector) {
         for (Node node : list) {
-            if (node.tile.equals(vector))
-                return true;
+            if (node.tile.equals(vector)) return true;
         }
         return false;
     }
@@ -184,14 +193,11 @@ public class Level {
         }
     }
 
-    protected void generateLevel() {
-    }
+    protected void generateLevel() {}
 
-    protected void loadLevel(String path) {
-    }
+    protected void loadLevel(String path) {}
 
-    private void time() {
-    }
+    private void time() {}
 
     /**
      * Checks if any of the upcoming 4 tiles overlaps with our player which would
@@ -208,17 +214,23 @@ public class Level {
      * @param yOffset the pixel offset in y direction from top down
      * @return
      */
-    public boolean tileCollision(int x, int y, int xOffset, int yOffset, int size) {
+    public boolean tileCollision(
+        int x,
+        int y,
+        int xOffset,
+        int yOffset,
+        int size
+    ) {
         boolean solid = false;
-        int cornerX = 0, cornerY = 0;
+        int cornerX = 0,
+            cornerY = 0;
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
             cornerX = (x - (cornerIndex % vertexAmount) * size + xOffset) >> 4;
             cornerY = (y - (cornerIndex / vertexAmount) * size + yOffset) >> 4;
 
-            if (getTile(cornerX, cornerY).solid())
-                return true;
+            if (getTile(cornerX, cornerY).solid()) return true;
         }
         return solid;
     }
@@ -288,8 +300,7 @@ public class Level {
 
     // convert pixel position data to tile position data
     public Tile getTile(int x, int y) {
-        if (x < 0 || y < 0 || x >= width || y >= height)
-            return Tile.empty;
+        if (x < 0 || y < 0 || x >= width || y >= height) return Tile.empty;
 
         int index = x + (y * width);
         int color = tiles[index];
@@ -322,7 +333,6 @@ public class Level {
     }
 
     public void render(int xScroll, int yScroll, Screen screen) {
-
         screen.setOffsets(xScroll, yScroll);
 
         renderTiles(xScroll, yScroll, screen);
@@ -359,7 +369,6 @@ public class Level {
             mob.render(screen);
         }
     }
-
 
     private void renderPlayers(Screen screen) {
         for (Player player : players) {

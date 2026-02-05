@@ -1,9 +1,9 @@
 package ch.nivisan.rain.graphics.layers;
 
-import ch.nivisan.rain.utils.events.Event;
-import ch.nivisan.rain.utils.events.IEventListener;
 
-import java.awt.*;
+import ch.nivisan.rain.events.Event;
+import ch.nivisan.rain.events.IEventListener;
+import java.awt.Graphics;
 
 public abstract class Layer implements IEventListener {
     @Override
