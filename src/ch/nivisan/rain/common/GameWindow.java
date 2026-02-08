@@ -14,6 +14,9 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Test game window for layers
+ */
 public class GameWindow extends JFrame {
     private final WindowScreen windowScreen;
     private final List<Layer> layers = new ArrayList<Layer>();
