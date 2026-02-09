@@ -1,5 +1,8 @@
 package ch.nivisan.rain.input;
 
+import ch.nivisan.rain.events.IEventHandler;
+import ch.nivisan.rain.events.IEventListener;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -9,6 +12,11 @@ public class Mouse implements MouseListener, MouseMotionListener {
     private static int mouseX = -1;
     private static int mouseY = -1;
     private static int mouseButton;
+    private final IEventListener eventListener;
+
+    public Mouse(IEventListener listener) {
+        this.eventListener = listener;
+    }
 
     public static int getXPosition() {
         return mouseX;

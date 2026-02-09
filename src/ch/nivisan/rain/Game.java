@@ -2,25 +2,34 @@ package ch.nivisan.rain;
 
 import ch.nivisan.rain.common.GameWindow;
 import ch.nivisan.rain.entity.mob.Player;
+import ch.nivisan.rain.events.Event;
+import ch.nivisan.rain.events.IEventListener;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.UIManager;
 import ch.nivisan.rain.graphics.layers.ExampleLayer;
+import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.List;
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Color;
 import java.io.Serial;
+import java.util.ArrayList;
 import javax.swing.*;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends Canvas implements Runnable, IEventListener {
 
     public static final float framerate = 60.0f;
 
     @Serial
     private static final long serialVersionUID = 1L;
+    private List<Layer> layers = new ArrayList<Layer>();
 
     private static final String title = "Rain";
     private static final UIManager uiManager = UIManager.getInstance();
@@ -59,7 +68,7 @@ public class Game extends Canvas implements Runnable {
 
         keyboard = new Keyboard();
         addKeyListener(keyboard);
-        Mouse mouse = new Mouse();
+        Mouse mouse = new Mouse(this);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
 
@@ -68,11 +77,11 @@ public class Game extends Canvas implements Runnable {
         level.addEntity(player);
     }
 
-    public static void main(String[] args) {
-        GameWindow gw = new GameWindow("Eventing", 640, 360);
-        gw.addLayer(new ExampleLayer("Bottom", new Color(0x2233CC)));
-        gw.addLayer(new ExampleLayer("Top", new Color(0xCC2233)));
+    public void addLayer(Layer layer){
+        layers.add(layer);
+    }
 
+    public static void main(String[] args) {
         var game = new Game();
 
         game.frame.setResizable(false);
@@ -181,7 +190,8 @@ public class Game extends Canvas implements Runnable {
         int xScroll = (int) (player.getX() - (float) screen.width / 2);
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
-        level.render(xScroll, yScroll, screen);
+        level.setScrolls(xScroll,yScroll);
+        level.render(screen);
 
         // font.render(text, screen);
 
@@ -224,5 +234,10 @@ public class Game extends Canvas implements Runnable {
         graphics.dispose();
         // changes the buffers which reside in memory
         bs.show();
+    }
+
+    @Override
+    public void onEvent(Event event) {
+
     }
 }

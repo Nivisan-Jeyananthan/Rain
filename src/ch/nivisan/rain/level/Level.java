@@ -26,6 +26,8 @@ public class Level extends Layer {
     protected int width;
     protected int height;
     protected int[] tiles;
+    private int xScroll;
+    private int yScroll;
 
     public Level(int width, int height) {
         this.width = width;
@@ -332,10 +334,15 @@ public class Level extends Layer {
         }
     }
 
-    public void render(int xScroll, int yScroll, Screen screen) {
+    public void setScrolls(int xScroll, int yScroll) {
+        this.xScroll = xScroll;
+        this.yScroll = yScroll;
+    }
+
+    public void render(Screen screen) {
         screen.setOffsets(xScroll, yScroll);
 
-        renderTiles(xScroll, yScroll, screen);
+        renderTiles(screen);
         renderEntities(screen);
         renderProjectiles(screen);
         renderParticles(screen);
@@ -343,7 +350,7 @@ public class Level extends Layer {
         renderMobs(screen);
     }
 
-    private void renderTiles(int xScroll, int yScroll, Screen screen) {
+    private void renderTiles(Screen screen) {
         int tileSize = 16;
         // defines render region of the current visible window region:
 

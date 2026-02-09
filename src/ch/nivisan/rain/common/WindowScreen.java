@@ -1,12 +1,14 @@
 package ch.nivisan.rain.common;
 
+import ch.nivisan.rain.events.Event;
+import ch.nivisan.rain.events.IEventListener;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
-public class WindowScreen extends Canvas {
+public class WindowScreen extends Canvas implements IEventListener {
     private final Keyboard keyboard;
     private final Mouse mouse;
     private BufferStrategy bufferStrategy;
@@ -16,7 +18,7 @@ public class WindowScreen extends Canvas {
         setPreferredSize(new Dimension(width, height));
         keyboard = new Keyboard();
         addKeyListener(keyboard);
-        mouse = new Mouse();
+        mouse = new Mouse(this);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
     }
@@ -43,5 +45,10 @@ public class WindowScreen extends Canvas {
     public void endRendering(){
         graphics.dispose();
         bufferStrategy.show();
+    }
+
+    @Override
+    public void onEvent(Event event) {
+
     }
 }
