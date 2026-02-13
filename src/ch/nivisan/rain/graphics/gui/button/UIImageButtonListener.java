@@ -30,8 +30,12 @@ public class UIImageButtonListener extends UIButtonListener {
     }
 
     @Override
-    protected void onExit(){ button.setBackgroundImage(defaultImage); }
+    protected void onExit() {
+        button.setBackgroundImage(defaultImage);
+    }
 
     @Override
-    protected void onClick() { button.setBackgroundImage(pressedImage); }
+    protected void onClick() {
+        button.setBackgroundImage(pressedImage);
+    }
 }

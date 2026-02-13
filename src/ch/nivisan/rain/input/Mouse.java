@@ -1,7 +1,9 @@
 package ch.nivisan.rain.input;
 
-import ch.nivisan.rain.events.IEventHandler;
 import ch.nivisan.rain.events.IEventListener;
+import ch.nivisan.rain.events.types.MouseMovedEvent;
+import ch.nivisan.rain.events.types.MousePressedEvent;
+import ch.nivisan.rain.events.types.MouseReleasedEvent;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -41,11 +43,17 @@ public class Mouse implements MouseListener, MouseMotionListener {
     @Override
     public void mousePressed(MouseEvent e) {
         mouseButton = e.getButton();
+
+        MousePressedEvent event = new MousePressedEvent(mouseX,mouseY,mouseButton);
+        eventListener.onEvent(event);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        mouseButton = MouseButton.None.getNumValue();
+        mouseButton = e.getButton();
+
+        MouseReleasedEvent event = new MouseReleasedEvent(mouseX,mouseY,mouseButton);
+        eventListener.onEvent(event);
     }
 
     @Override
@@ -55,18 +63,23 @@ public class Mouse implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
+
+        MouseMovedEvent event = new MouseMovedEvent(mouseX,mouseY,true);
+        eventListener.onEvent(event);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
+
+        MouseMovedEvent event = new MouseMovedEvent(mouseX,mouseY,false);
+        eventListener.onEvent(event);
     }
 }

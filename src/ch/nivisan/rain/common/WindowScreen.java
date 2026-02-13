@@ -14,7 +14,7 @@ public class WindowScreen extends Canvas implements IEventListener {
     private BufferStrategy bufferStrategy;
     private Graphics graphics;
 
-    public WindowScreen(int width, int height){
+    public WindowScreen(int width, int height) {
         setPreferredSize(new Dimension(width, height));
         keyboard = new Keyboard();
         addKeyListener(keyboard);
@@ -23,18 +23,18 @@ public class WindowScreen extends Canvas implements IEventListener {
         addMouseMotionListener(mouse);
     }
 
-    public void init(){
+    public void init() {
         createBufferStrategy(3);
     }
 
-    public void beginRendering(){
+    public void beginRendering() {
         bufferStrategy = getBufferStrategy();
         graphics = bufferStrategy.getDrawGraphics();
     }
 
-    public void clear(){
+    public void clear() {
         graphics.setColor(Color.white);
-        graphics.fillRect(0,0,getWidth(),getHeight());
+        graphics.fillRect(0, 0, getWidth(), getHeight());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WindowScreen extends Canvas implements IEventListener {
         return graphics;
     }
 
-    public void endRendering(){
+    public void endRendering() {
         graphics.dispose();
         bufferStrategy.show();
     }

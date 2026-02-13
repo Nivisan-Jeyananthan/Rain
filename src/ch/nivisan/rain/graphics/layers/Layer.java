@@ -5,16 +5,19 @@ import ch.nivisan.rain.events.Event;
 import ch.nivisan.rain.events.IEventListener;
 import ch.nivisan.rain.graphics.Screen;
 
-import java.awt.Graphics;
+import java.awt.*;
 
 public abstract class Layer implements IEventListener {
     @Override
     public void onEvent(Event event) {
     }
 
-    public void update(){}
+    public void update() {
+    }
 
-    public void onRender(Graphics graphics){}
+    public void onRender(Graphics graphics) {
+    }
 
-    public void render(Screen screen){}
+    public void render(Screen screen) {
+    }
 }

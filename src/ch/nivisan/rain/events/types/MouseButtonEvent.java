@@ -5,9 +5,9 @@ import ch.nivisan.rain.events.EventType;
 
 public class MouseButtonEvent extends Event {
 
-    protected int button;
     protected final int x;
     protected final int y;
+    protected int button;
 
     protected MouseButtonEvent(int x, int y, int button, EventType eventType) {
         super(eventType);

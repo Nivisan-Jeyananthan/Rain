@@ -7,6 +7,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Responsible for handling UI-Components and how they are drawn onto the screen
+ */
 public class UIManager implements IRenderable {
     private static final List<UIPanel> panels = new ArrayList<UIPanel>();
     private static UIManager instance;

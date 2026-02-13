@@ -5,11 +5,13 @@ import ch.nivisan.rain.entity.mob.Mob;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.entity.particle.Particle;
 import ch.nivisan.rain.entity.projectile.Projectile;
+import ch.nivisan.rain.events.Event;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.level.tile.Tile;
 import ch.nivisan.rain.utils.Node;
 import ch.nivisan.rain.utils.Vector2;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,6 @@ public class Level extends Layer {
      *
      * @param start from where we start from.
      * @param goal  where the target is located at
-     * @return
      */
     public List<Node> getPath(Vector2 start, Vector2 goal) {
         List<Node> openQueue = new ArrayList<Node>();
@@ -85,19 +86,19 @@ public class Level extends Layer {
                 Vector2 atVector = new Vector2(x + xDirection, y + yDirection);
                 // compare immediate distance (from middle (current) to other tiles in "circle")
                 float gCost =
-                    currentNode.gCost +
-                    ((currentNode.tile.getDistance(atVector) == 1
-                            ? 1.0f
-                            : 0.95f));
+                        currentNode.gCost +
+                                ((currentNode.tile.getDistance(atVector) == 1
+                                        ? 1.0f
+                                        : 0.95f));
                 float hCost = atVector.getDistance(goal);
                 Node node = new Node(atVector, currentNode, gCost, hCost);
 
                 if (
-                    isInList(closedQueue, atVector) &&
-                    gCost >= currentNode.gCost
+                        isInList(closedQueue, atVector) &&
+                                gCost >= currentNode.gCost
                 ) continue;
                 if (
-                    !isInList(openQueue, atVector) || gCost < node.gCost
+                        !isInList(openQueue, atVector) || gCost < node.gCost
                 ) openQueue.add(node);
             }
         }
@@ -195,11 +196,16 @@ public class Level extends Layer {
         }
     }
 
-    protected void generateLevel() {}
+    protected void generateLevel() {
+    }
 
-    protected void loadLevel(String path) {}
+    protected void loadLevel(String path) {
+    }
 
-    private void time() {}
+    @Override
+    public void onEvent(Event event) {
+        getClientPlayer().onEvent(event);
+    }
 
     /**
      * Checks if any of the upcoming 4 tiles overlaps with our player which would
@@ -217,15 +223,15 @@ public class Level extends Layer {
      * @return
      */
     public boolean tileCollision(
-        int x,
-        int y,
-        int xOffset,
-        int yOffset,
-        int size
+            int x,
+            int y,
+            int xOffset,
+            int yOffset,
+            int size
     ) {
         boolean solid = false;
         int cornerX = 0,
-            cornerY = 0;
+                cornerY = 0;
         int vertexAmount = 2;
 
         for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {

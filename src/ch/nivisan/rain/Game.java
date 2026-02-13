@@ -1,27 +1,23 @@
 package ch.nivisan.rain;
 
-import ch.nivisan.rain.common.GameWindow;
 import ch.nivisan.rain.entity.mob.Player;
 import ch.nivisan.rain.events.Event;
 import ch.nivisan.rain.events.IEventListener;
 import ch.nivisan.rain.graphics.Screen;
 import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.UIManager;
-import ch.nivisan.rain.graphics.layers.ExampleLayer;
 import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.List;
-import java.awt.Canvas;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Color;
 import java.io.Serial;
 import java.util.ArrayList;
-import javax.swing.*;
+import java.util.List;
 
 public class Game extends Canvas implements Runnable, IEventListener {
 
@@ -29,8 +25,6 @@ public class Game extends Canvas implements Runnable, IEventListener {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private List<Layer> layers = new ArrayList<Layer>();
-
     private static final String title = "Rain";
     private static final UIManager uiManager = UIManager.getInstance();
     private final JFrame frame;
@@ -40,29 +34,30 @@ public class Game extends Canvas implements Runnable, IEventListener {
     private final Player player;
     // creating an image
     private final BufferedImage bufferedImage = new BufferedImage(
-        WindowManager.getGameWidth(),
-        WindowManager.getWindowHeight(),
-        BufferedImage.TYPE_INT_RGB
+            WindowManager.getGameWidth(),
+            WindowManager.getWindowHeight(),
+            BufferedImage.TYPE_INT_RGB
     );
     // allowing to draw to the image or accessing the image
     // area in memory where buffer data is located, not a copy of it.
     // that is why we can manipulate pixels and it changes the buffer data itself.
     private final int[] pixels = (
-        (DataBufferInt) bufferedImage.getRaster().getDataBuffer()
+            (DataBufferInt) bufferedImage.getRaster().getDataBuffer()
     ).getData();
+    private List<Layer> layers = new ArrayList<Layer>();
     private Thread gameThread;
     private boolean isRunning = false;
 
     public Game() {
         var size = new Dimension(
-            WindowManager.getScaledWindowWidth(),
-            WindowManager.getScaledWindowHeight()
+                WindowManager.getScaledWindowWidth(),
+                WindowManager.getScaledWindowHeight()
         );
         setPreferredSize(size);
 
         screen = new Screen(
-            WindowManager.getGameWidth(),
-            WindowManager.getWindowHeight()
+                WindowManager.getGameWidth(),
+                WindowManager.getWindowHeight()
         );
         frame = new JFrame();
 
@@ -73,12 +68,16 @@ public class Game extends Canvas implements Runnable, IEventListener {
         addMouseMotionListener(mouse);
 
         level = Level.spawn;
+        addLayer(level);
         player = new Player("Mambo", 20 << 4, 60 << 4, keyboard, level);
         level.addEntity(player);
     }
 
-    public void addLayer(Layer layer){
-        layers.add(layer);
+    @Override
+    public void onEvent(Event event) {
+        for (int i = layers.size() - 1  ; i >= 0; i--) {
+            layers.get(i).onEvent(event);
+        }
     }
 
     public static void main(String[] args) {
@@ -93,6 +92,10 @@ public class Game extends Canvas implements Runnable, IEventListener {
         game.frame.setVisible(true);
 
         game.start();
+    }
+
+    public void addLayer(Layer layer) {
+        layers.add(layer);
     }
 
     public synchronized void start() {
@@ -154,12 +157,12 @@ public class Game extends Canvas implements Runnable, IEventListener {
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
                 frame.setTitle(
-                    title +
-                        " | " +
-                        updatesPerSecond +
-                        " ups, " +
-                        framesPerSecond +
-                        "fps "
+                        title +
+                                " | " +
+                                updatesPerSecond +
+                                " ups, " +
+                                framesPerSecond +
+                                "fps "
                 );
                 framesPerSecond = 0;
                 updatesPerSecond = 0;
@@ -170,7 +173,12 @@ public class Game extends Canvas implements Runnable, IEventListener {
 
     public void update() {
         keyboard.update();
-        level.update();
+
+        // rendering layers
+        for (int i = 0; i < layers.size(); i++) {
+            layers.get(i).update();
+        }
+
         uiManager.update();
     }
 
@@ -190,8 +198,12 @@ public class Game extends Canvas implements Runnable, IEventListener {
         int xScroll = (int) (player.getX() - (float) screen.width / 2);
         int yScroll = (int) (player.getY() - (float) screen.height / 2);
 
-        level.setScrolls(xScroll,yScroll);
-        level.render(screen);
+        level.setScrolls(xScroll, yScroll);
+
+        // rendering layers
+        for (int i = 0; i < layers.size(); i++) {
+            layers.get(i).render(screen);
+        }
 
         // font.render(text, screen);
 
@@ -200,32 +212,32 @@ public class Game extends Canvas implements Runnable, IEventListener {
         // links the graphics (where on is able to draw on the screen) with the buffer.
         var graphics = bs.getDrawGraphics();
         graphics.drawImage(
-            bufferedImage,
-            0,
-            0,
-            WindowManager.getScaledGameWidth(),
-            WindowManager.getScaledWindowHeight(),
-            null
+                bufferedImage,
+                0,
+                0,
+                WindowManager.getScaledGameWidth(),
+                WindowManager.getScaledWindowHeight(),
+                null
         );
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Verdana", 0, 30));
         graphics.drawString(
-            "Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4),
-            600,
-            25
+                "Player X: " + (player.getX() / 4) + " Y: " + (player.getY() / 4),
+                600,
+                25
         );
         graphics.drawString(
-            "Pixel X: " + (player.getX()) + " Y: " + (player.getY()),
-            600,
-            50
+                "Pixel X: " + (player.getX()) + " Y: " + (player.getY()),
+                600,
+                50
         );
         graphics.drawString(
-            "Mouse X: " +
-                (Mouse.getXPosition()) +
-                " Y: " +
-                (Mouse.getYPosition()),
-            600,
-            75
+                "Mouse X: " +
+                        (Mouse.getXPosition()) +
+                        " Y: " +
+                        (Mouse.getYPosition()),
+                600,
+                75
         );
 
         uiManager.render(graphics);
@@ -234,10 +246,5 @@ public class Game extends Canvas implements Runnable, IEventListener {
         graphics.dispose();
         // changes the buffers which reside in memory
         bs.show();
-    }
-
-    @Override
-    public void onEvent(Event event) {
-
     }
 }

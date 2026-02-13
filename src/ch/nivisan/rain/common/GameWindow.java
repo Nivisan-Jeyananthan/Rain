@@ -1,16 +1,16 @@
 package ch.nivisan.rain.common;
 
 import ch.nivisan.rain.events.Event;
-import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.events.types.MouseMovedEvent;
 import ch.nivisan.rain.events.types.MousePressedEvent;
 import ch.nivisan.rain.events.types.MouseReleasedEvent;
+import ch.nivisan.rain.graphics.layers.Layer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +21,8 @@ public class GameWindow extends JFrame {
     private final WindowScreen windowScreen;
     private final List<Layer> layers = new ArrayList<Layer>();
 
-    public GameWindow(String name, int width, int height){
-        windowScreen = new WindowScreen(width,height);
+    public GameWindow(String name, int width, int height) {
+        windowScreen = new WindowScreen(width, height);
 
         setTitle(name);
         setResizable(false);
@@ -41,14 +41,14 @@ public class GameWindow extends JFrame {
     private void setupListeners() {
         windowScreen.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e){
-                MouseReleasedEvent event = new MouseReleasedEvent(e.getX(), e.getY(),e.getButton());
+            public void mouseReleased(MouseEvent e) {
+                MouseReleasedEvent event = new MouseReleasedEvent(e.getX(), e.getY(), e.getButton());
                 onEvent(event);
             }
 
             @Override
-            public void mousePressed(MouseEvent e){
-                MousePressedEvent event = new MousePressedEvent(e.getX(), e.getY(),e.getButton());
+            public void mousePressed(MouseEvent e) {
+                MousePressedEvent event = new MousePressedEvent(e.getX(), e.getY(), e.getButton());
                 onEvent(event);
             }
         });
@@ -57,20 +57,20 @@ public class GameWindow extends JFrame {
         windowScreen.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                MouseMovedEvent event = new MouseMovedEvent(e.getX(), e.getY(),true);
+                MouseMovedEvent event = new MouseMovedEvent(e.getX(), e.getY(), true);
                 onEvent(event);
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                MouseMovedEvent event = new MouseMovedEvent(e.getX(), e.getY(),false);
+                MouseMovedEvent event = new MouseMovedEvent(e.getX(), e.getY(), false);
                 onEvent(event);
             }
         });
     }
 
 
-    private void run(){
+    private void run() {
         windowScreen.beginRendering();
         windowScreen.clear();
         onRender(windowScreen.getGraphics());
@@ -86,9 +86,10 @@ public class GameWindow extends JFrame {
 
     /**
      * From top to bottom layer
+     *
      * @param event
      */
-    public void onEvent(Event event){
+    public void onEvent(Event event) {
         for (int i = layers.size() - 1; i >= 0; i--) {
             layers.get(i).onEvent(event);
         }
@@ -96,6 +97,7 @@ public class GameWindow extends JFrame {
 
     /**
      * from bottom to top layer
+     *
      * @param graphics
      */
     private void onRender(Graphics graphics) {
@@ -104,7 +106,7 @@ public class GameWindow extends JFrame {
         });
     }
 
-    public void addLayer(Layer layer){
+    public void addLayer(Layer layer) {
         layers.add(layer);
     }
 }

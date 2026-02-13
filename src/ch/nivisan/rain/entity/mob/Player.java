@@ -2,27 +2,38 @@ package ch.nivisan.rain.entity.mob;
 
 import ch.nivisan.rain.entity.projectile.ShurikenProjectile;
 import ch.nivisan.rain.entity.projectile.WizardProjectile;
-import ch.nivisan.rain.graphics.*;
+import ch.nivisan.rain.events.Event;
+import ch.nivisan.rain.events.EventDispatcher;
+import ch.nivisan.rain.events.EventType;
+import ch.nivisan.rain.events.IEventListener;
+import ch.nivisan.rain.events.types.MousePressedEvent;
+import ch.nivisan.rain.events.types.MouseReleasedEvent;
+import ch.nivisan.rain.graphics.AnimatedSprite;
+import ch.nivisan.rain.graphics.Screen;
+import ch.nivisan.rain.graphics.SpriteSheet;
+import ch.nivisan.rain.graphics.WindowManager;
 import ch.nivisan.rain.graphics.gui.PlayerUI;
 import ch.nivisan.rain.graphics.gui.UILabeledProgressbar;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
+import ch.nivisan.rain.input.MouseButton;
 import ch.nivisan.rain.level.Level;
 import ch.nivisan.rain.utils.Debug;
 
-public class Player extends Mob {
+import java.awt.event.MouseEvent;
+
+public class Player extends Mob implements IEventListener {
     private static final AnimatedSprite front = new AnimatedSprite(SpriteSheet.playerFront, 32, 32, 3);
     private static final AnimatedSprite back = new AnimatedSprite(SpriteSheet.playerBack, 32, 32, 3);
     private static final AnimatedSprite right = new AnimatedSprite(SpriteSheet.playerRight, 32, 32, 3);
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.playerLeft, 32, 32, 3);
     private final Keyboard input;
     private final String name;
-    // todo: refactor creation of ui to playerUI
     private final PlayerUI playerUI;
     int time = 0;
     private float fireRate = 0;
+    private boolean shooting = false;
     private AnimatedSprite animatedSprite = front;
-    private UILabeledProgressbar uiHealthBar;
 
     public Player(String name, int x, int y, Keyboard input, Level level) {
         super(level);
@@ -43,12 +54,19 @@ public class Player extends Mob {
     }
 
     @Override
+    public void onEvent(Event event) {
+        EventDispatcher dispatcher = new EventDispatcher(event);
+        dispatcher.dispatch(EventType.MOUSE_PRESSED,(e) -> onMousePressed((MousePressedEvent) e));
+        dispatcher.dispatch(EventType.MOUSE_RELEASED,(e) -> onMouseReleased((MouseReleasedEvent) e));
+    }
+
+    @Override
     public void update() {
         playerUI.update();
 
         time++;
         if (time % 20 == 0) {
-            if(health < maxHealth)
+            if (health < maxHealth)
                 health++;
             time = 0;
         }
@@ -83,29 +101,44 @@ public class Player extends Mob {
             walking = false;
         }
 
-        int panelStartX = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
-        if(Mouse.getXPosition() < panelStartX) {
+        if (shooting) {
             updateShooting();
         }
 
     }
 
+    public boolean onMousePressed(MousePressedEvent e) {
+        if(e.getX() > (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth()) || e.getY() > WindowManager.getScaledWindowHeight() || e.getY() < 0 || e.getX() < 0)
+            return false;
+
+        if (e.getButton() == MouseButton.Left.getNumValue() && fireRate <= 0) {
+            shooting = true;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean onMouseReleased(MouseReleasedEvent e) {
+        if(e.getButton() == MouseButton.Left.getNumValue() && fireRate <= 0) {
+            shooting = false;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * projectile calculations
      */
     private void updateShooting() {
-        if (Mouse.getButton() == 1 && fireRate <= 0) {
-            int midpointWidth = WindowManager.getScaledGameWidth() / 2;
-            int midpointHeight = WindowManager.getScaledWindowHeight() / 2;
+        int midpointWidth = WindowManager.getScaledGameWidth() / 2;
+        int midpointHeight = WindowManager.getScaledWindowHeight() / 2;
 
-            float dx = (Mouse.getXPosition() - midpointWidth);
-            float dy = (Mouse.getYPosition() - midpointHeight);
-            float dir = (float) Math.atan2(dy, dx);
+        float dx = (Mouse.getXPosition() - midpointWidth);
+        float dy = (Mouse.getYPosition() - midpointHeight);
+        float dir = (float) Math.atan2(dy, dx);
 
-            shoot(x, y, dir);
-            fireRate = WizardProjectile.fireRate;
-        }
+        shoot(x, y, dir);
+        fireRate = WizardProjectile.fireRate;
     }
 
     public void render(Screen screen) {

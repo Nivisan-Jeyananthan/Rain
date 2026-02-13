@@ -5,16 +5,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 
-import static ch.nivisan.rain.utils.MathUtils.*;
+import static ch.nivisan.rain.utils.MathUtils.clamp;
 
 public class ImageUtils {
-    private ImageUtils(){}
+    private ImageUtils() {
+    }
 
 
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
+    public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
 
@@ -30,22 +29,23 @@ public class ImageUtils {
         return bimage;
     }
 
-    public static BufferedImage changeBrightness(int amount,Image original){
-        return changeBrightness(toBufferedImage(original),amount);
+    public static BufferedImage changeBrightness(int amount, Image original) {
+        return changeBrightness(toBufferedImage(original), amount);
     }
 
     /**
      * Changes brightness of a given image and returns a new one.
      * Runs stable in terms of fps.
+     *
      * @param original the original image as bufferedImage
-     * @param amount the amount of points by which the image gets increased/decreased overall
+     * @param amount   the amount of points by which the image gets increased/decreased overall
      * @return new image with given change in brightness
      */
     public static BufferedImage changeBrightness(BufferedImage original, int amount) {
         BufferedImage result = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
         int[] pixels = new int[original.getWidth() * original.getHeight()];
         int[] resultPixels = ((DataBufferInt) result.getRaster().getDataBuffer()).getData();
-        original.getRGB(0,0, original.getWidth(), original.getHeight(),pixels,0,original.getWidth());
+        original.getRGB(0, 0, original.getWidth(), original.getHeight(), pixels, 0, original.getWidth());
 
 
         for (int pixelY = 0; pixelY < original.getHeight(); pixelY++) {
@@ -55,7 +55,7 @@ public class ImageUtils {
                 int green = (color & 0xff00) >> 8;
                 int blue = (color & 0xff);
 
-                red = clamp(red + amount, 0 ,255);
+                red = clamp(red + amount, 0, 255);
                 green = clamp(green + amount, 0, 255);
                 blue = clamp(blue + amount, 0, 255);
                 color &= 0xff000000;
@@ -75,7 +75,7 @@ public class ImageUtils {
      * Changes brightness of a given image and returns a new one based on amount of brightness change
      *
      * @param original the original image as bufferedImage
-     * @param amount the amount of points by which the image gets increased/decreased overall
+     * @param amount   the amount of points by which the image gets increased/decreased overall
      * @return new image with given change in brightness
      */
     public static BufferedImage changeBrightnessByte(BufferedImage original, int amount) {
@@ -92,10 +92,10 @@ public class ImageUtils {
                 int green = pixels[offset++];
                 int blue = pixels[offset++];
 
-                red = clamp(red + amount, 0 ,255);
+                red = clamp(red + amount, 0, 255);
                 green = clamp(green + amount, 0, 255);
                 blue = clamp(blue + amount, 0, 255);
-                int brightenedColor =  alpha << 24 | red << 16 | green << 8 | blue;
+                int brightenedColor = alpha << 24 | red << 16 | green << 8 | blue;
                 resultPixels[pixelX + pixelY * original.getWidth()] = brightenedColor;
             }
         }

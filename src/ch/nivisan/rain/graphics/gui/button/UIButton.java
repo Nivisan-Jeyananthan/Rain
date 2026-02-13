@@ -5,7 +5,6 @@ import ch.nivisan.rain.graphics.gui.UILabel;
 import ch.nivisan.rain.utils.Vector2;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class UIButton extends UIComponent {
     private final UIComponent childComponent;
@@ -35,8 +34,12 @@ public class UIButton extends UIComponent {
         this.backgroundImage = image;
     }
 
-    public Image getBackgroundImage(){
+    public Image getBackgroundImage() {
         return backgroundImage;
+    }
+
+    public void setBackgroundImage(Image image) {
+        this.backgroundImage = image;
     }
 
     public void setButtonListener(UIButtonListener buttonListener) {
@@ -49,10 +52,6 @@ public class UIButton extends UIComponent {
 
     public void setTextColor(Color color) {
         childComponent.setColor(color);
-    }
-
-    public void setBackgroundImage(Image image) {
-        this.backgroundImage = image;
     }
 
     @Override

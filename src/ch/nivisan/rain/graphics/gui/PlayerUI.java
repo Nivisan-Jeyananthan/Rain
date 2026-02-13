@@ -14,9 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class PlayerUI {
+    public final int panelStartX = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
     private static final UIManager uiManager = UIManager.getInstance();
     private static final String imagePath = "../../assets/gui/Home.png";
-    private final int panelStartX = (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth());
     private final UIPanel mainPanel = new UIPanel(new Vector2(panelStartX, 0), new Vector2(WindowManager.getScaledGUIWidth(), WindowManager.getScaledWindowHeight()), 0x4f4f4f);
     private final Player player;
     private UILabeledProgressbar uiHealthBar;
@@ -83,5 +83,6 @@ public class PlayerUI {
         uiHealthBar.setProgress(player.getHealth() / player.getMaxHealth());
     }
 
-    public void render() {}
+    public void render() {
+    }
 }
