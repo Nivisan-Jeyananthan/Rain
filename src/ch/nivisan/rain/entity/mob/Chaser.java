@@ -12,7 +12,7 @@ public class Chaser extends Mob {
     private static final AnimatedSprite left = new AnimatedSprite(SpriteSheet.dummyLeft, 32, 32, 3);
     private final int time = 0;
     private AnimatedSprite animatedSprite = front;
-    private Player targetPlayer;
+    private Mob targetPlayer;
     private float yAbsolute = 0;
     private float xAbsolute = 0;
 

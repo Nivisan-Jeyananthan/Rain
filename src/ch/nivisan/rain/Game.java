@@ -10,6 +10,7 @@ import ch.nivisan.rain.graphics.layers.Layer;
 import ch.nivisan.rain.input.Keyboard;
 import ch.nivisan.rain.input.Mouse;
 import ch.nivisan.rain.level.Level;
+import ch.nivisan.rain.net.player.NetPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,11 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Entry point of project.
+ * TODO: split up canvas and jframe as in class WindowScreen and GameWindow under "common" package
+ */
 public class Game extends Canvas implements Runnable, IEventListener {
 
     public static final float framerate = 60.0f;
@@ -71,6 +77,8 @@ public class Game extends Canvas implements Runnable, IEventListener {
         addLayer(level);
         player = new Player("Mambo", 20 << 4, 60 << 4, keyboard, level);
         level.addEntity(player);
+        NetPlayer netplayer = new NetPlayer(level,22 << 4, 60 << 4);
+        level.addPlayer(netplayer);
     }
 
     @Override

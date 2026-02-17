@@ -101,7 +101,7 @@ public class Player extends Mob implements IEventListener {
             walking = false;
         }
 
-        if (shooting) {
+        if (shooting | fireRate < 0) {
             updateShooting();
         }
 
@@ -111,7 +111,7 @@ public class Player extends Mob implements IEventListener {
         if(e.getX() > (WindowManager.getScaledWindowWidth() - WindowManager.getScaledGUIWidth()) || e.getY() > WindowManager.getScaledWindowHeight() || e.getY() < 0 || e.getX() < 0)
             return false;
 
-        if (e.getButton() == MouseButton.Left.getNumValue() && fireRate <= 0) {
+        if (e.getButton() == MouseButton.Left.getNumValue()) {
             shooting = true;
             return true;
         }
@@ -119,7 +119,9 @@ public class Player extends Mob implements IEventListener {
     }
 
     public boolean onMouseReleased(MouseReleasedEvent e) {
-        if(e.getButton() == MouseButton.Left.getNumValue() && fireRate <= 0) {
+        var val1 = e.getButton() == MouseButton.Left.getNumValue();
+        var val = val1;
+        if(val) {
             shooting = false;
             return true;
         }

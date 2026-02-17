@@ -252,6 +252,7 @@ public class Screen {
             yStart -= yOffset;
         }
 
+        // draws top and bottom at same time
         for (int x = xStart; x <= xStart + width; x++) {
             if (x < 0 || x >= this.width || yStart >= this.height)
                 continue;
@@ -263,6 +264,7 @@ public class Screen {
             pixels[x + (yStart + height) * this.width] = color;
         }
 
+        // draws left and right at same time
         for (int y = yStart; y <= yStart + height; y++) {
             if (xStart >= this.width || y < 0 || y >= this.height)
                 continue;
@@ -274,6 +276,29 @@ public class Screen {
             pixels[(xStart + width) + (y * this.width)] = color;
         }
     }
+
+    public void fillRectangle(int xStart, int yStart, int width, int height, int color, boolean fixed) {
+        if (fixed) {
+            xStart -= xOffset;
+            yStart -= yOffset;
+        }
+
+        for(int y = 0; y < height; y++){
+            int rectYStart = yStart + y;
+            if(rectYStart < 0 | rectYStart > this.height)
+                continue;
+
+            for (int x = 0; x < width; x++) {
+                int rectXStart = xStart + x;
+                if(rectXStart < 0 | rectXStart > this.width)
+                    continue;
+
+                pixels[rectXStart + rectYStart * this.width] = color;
+            }
+        }
+    }
+
+
 
     public void setOffsets(int xOffset, int yOffset) {
         this.yOffset = yOffset;

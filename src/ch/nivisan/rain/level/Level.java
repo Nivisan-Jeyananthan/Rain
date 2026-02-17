@@ -22,7 +22,7 @@ public class Level extends Layer {
     private final List<Entity> entities = new ArrayList<Entity>();
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
     private final List<Particle> particles = new ArrayList<Particle>();
-    private final List<Player> players = new ArrayList<Player>();
+    private final List<Mob> players = new ArrayList<Mob>();
     private final List<Mob> mobs = new ArrayList<>();
 
     protected int width;
@@ -38,6 +38,7 @@ public class Level extends Layer {
         tiles = new int[width * height];
         generateLevel();
     }
+
 
     // load from file
     public Level(String path) {
@@ -154,12 +155,12 @@ public class Level extends Layer {
         return result;
     }
 
-    public List<Player> getPlayers(Entity e, int radius) {
-        List<Player> result = new ArrayList<>();
+    public List<Mob> getPlayers(Entity e, int radius) {
+        List<Mob> result = new ArrayList<>();
         float ex = e.getX();
         float ey = e.getY();
 
-        for (Player entity : players) {
+        for (Mob entity : players) {
             float x = entity.getX();
             float y = entity.getY();
 
@@ -175,15 +176,23 @@ public class Level extends Layer {
     }
 
     public Player getClientPlayer() {
-        return players.getFirst();
+        return (Player) players.getFirst();
     }
 
-    public Player getPlayer(int index) {
+    public Mob getPlayer(int index) {
         return players.get(index);
     }
 
-    public List<Player> getPlayers() {
+    public List<Mob> getPlayers() {
         return players;
+    }
+
+    /**
+     * TODO: change parameter from Mob to a Parent player class/interface, which includes netplayer and player
+     * @param player
+     */
+    public void addPlayer(Mob player){
+        players.add(player);
     }
 
     public void addEntity(Entity entity) {
@@ -243,6 +252,10 @@ public class Level extends Layer {
         return solid;
     }
 
+    /**
+     * Performance decrease upon using generic function for updates.
+     * Tested from 1800fps to 900fps
+     */
     public void update() {
         updateEntities();
         updateProjectiles();
@@ -308,7 +321,9 @@ public class Level extends Layer {
 
     // convert pixel position data to tile position data
     public Tile getTile(int x, int y) {
-        if (x < 0 || y < 0 || x >= width || y >= height) return Tile.empty;
+        if (x < 0 || y < 0 || x >= width || y >= height){
+            return Tile.empty;
+        }
 
         int index = x + (y * width);
         int color = tiles[index];
@@ -345,6 +360,12 @@ public class Level extends Layer {
         this.yScroll = yScroll;
     }
 
+    /**
+     * Performance decrease upon using generic function for rendering.
+     * Seperate function calls for each rendering increases performance.
+     * Instead of 1800 fps 900 fps decrease when using generic version.
+     * @param screen
+     */
     public void render(Screen screen) {
         screen.setOffsets(xScroll, yScroll);
 
@@ -384,7 +405,7 @@ public class Level extends Layer {
     }
 
     private void renderPlayers(Screen screen) {
-        for (Player player : players) {
+        for (Mob player : players) {
             player.render(screen);
         }
     }
