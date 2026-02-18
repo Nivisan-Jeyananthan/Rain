@@ -10,3 +10,4 @@ Basic overview of implementations inside the program to find:
 - Event System
 - Tiling system
 - Path finding system
+- custom serialization system (save system/networking)
