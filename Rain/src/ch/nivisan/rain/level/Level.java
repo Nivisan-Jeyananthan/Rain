@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Level extends Layer {
 
-    public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
+    public static Level spawn = new SpawnLevel("/assets/levels/spawn2.png");
     private final List<Entity> entities = new ArrayList<Entity>();
     private final List<Projectile> projectiles = new ArrayList<Projectile>();
     private final List<Particle> particles = new ArrayList<Particle>();

@@ -8,7 +8,7 @@ public class SpriteFont {
             "nopqrstuvwxyz" + //
             "0123456789.,'" + //
             "\"();:!@$%-+";
-    private static final SpriteSheet fontSheet = new SpriteSheet("../assets/fonts/arial.png", 208, 96);
+    private static final SpriteSheet fontSheet = new SpriteSheet("/assets/fonts/arial.png", 208, 96);
     private static final Sprite[] fontCharacter = Sprite.split(fontSheet, 16, 16);
     private int spacing = 0;
     private int color = 0;

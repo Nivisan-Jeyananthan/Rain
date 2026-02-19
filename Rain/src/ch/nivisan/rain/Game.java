@@ -77,13 +77,13 @@ public class Game extends Canvas implements Runnable, IEventListener {
         addLayer(level);
         player = new Player("Mambo", 20 << 4, 60 << 4, keyboard, level);
         level.addEntity(player);
-        NetPlayer netplayer = new NetPlayer(level,22 << 4, 60 << 4);
+        NetPlayer netplayer = new NetPlayer(level, 22 << 4, 60 << 4);
         level.addPlayer(netplayer);
     }
 
     @Override
     public void onEvent(Event event) {
-        for (int i = layers.size() - 1  ; i >= 0; i--) {
+        for (int i = layers.size() - 1; i >= 0; i--) {
             layers.get(i).onEvent(event);
         }
     }

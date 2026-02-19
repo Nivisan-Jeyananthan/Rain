@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component inheritJdk="true">
+<component jdk="openjdk-25" jdk_type="JavaSDK">
 	<contentEntry url="file://$MODULE_DIR$"/>
 </component>
