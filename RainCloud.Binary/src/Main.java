@@ -1,5 +1,3 @@
-package Binary;
-
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 
 public class Main {
@@ -40,7 +38,7 @@ public class Main {
         int a = (value & 0xff00) >> 8;
 
         printHex(a);
-        
+
         SerializationWriter.test();
     }
 }
