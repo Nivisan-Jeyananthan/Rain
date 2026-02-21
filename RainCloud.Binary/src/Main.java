@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.Random;
+
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 
 public class Main {
@@ -9,6 +12,12 @@ public class Main {
     private static void printBin(int value)
     {
         System.out.println(Integer.toBinaryString(value));
+    }
+    
+    static void printBytes(byte[] data) {
+    	for(int i = 0;i < data.length; i++) {
+    		System.out.printf("0x%x ", data[i]);
+    	}
     }
 
 
@@ -39,6 +48,21 @@ public class Main {
 
         printHex(a);
 
-        SerializationWriter.test();
+        byte[] data = new byte[16];
+        var number = new boolean[4];
+        for (int i = 0; i < number.length -1; i++) {
+			number[i] = new Random().nextBoolean();
+		}
+        
+       int pointer = SerializationWriter.writeBytes(data, 0, number);
+       pointer = SerializationWriter.writeBytes(data, pointer,false);
+       pointer = SerializationWriter.writeBytes(data, pointer,false);
+       pointer = SerializationWriter.writeBytes(data, pointer,true);
+       
+       printBytes(data);
+       
+      // SerializationWriter.writeBytes(null, 0, 1.1f);
+       
+      
     }
 }
