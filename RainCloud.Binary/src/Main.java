@@ -59,10 +59,17 @@ public class Main {
        pointer = SerializationWriter.writeBytes(data, pointer,false);
        pointer = SerializationWriter.writeBytes(data, pointer,true);
        
-       printBytes(data);
        
       // SerializationWriter.writeBytes(null, 0, 1.1f);
        
+      byte[] names = new byte[] {0x0, 0x0 ,0x27 ,0x18};
+      short name = 15000;
+      int beginPointer = pointer;
+      pointer = SerializationWriter.writeBytes(data, pointer, name);
+     
       
+      short end = SerializationWriter.readShort(data, beginPointer);
+      System.out.println("my gage: " + end);
+      printBytes(data);
     }
 }

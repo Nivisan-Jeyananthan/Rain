@@ -14,6 +14,14 @@ public class SerializationWriter {
 	public static final byte[] headerName = "RC".getBytes();
 	public static final short version = 0x0100; // big-endian
 	
+	
+	public static int copyBytes(byte[] destination, int pointer, byte[] source) {		
+		for (int i = 0; i < source.length; i++) {
+			destination[pointer++] = source[i];
+		}
+		return pointer;
+	}
+	
 	public static int writeBytes(byte[] destination, int pointer, byte value) {
 		destination[pointer++] = value;
 		return pointer;
@@ -136,6 +144,60 @@ public class SerializationWriter {
 	}
 	 
   
+	/**
+	 * 	// 2 options: 
+		// 1. Write the size of the string before the string as a short ( 07 NI VI SA N).
+		// bytes of 2 for size so we are not limited to 255 characters but have plenty of space
+		// 2. Null-termination character (binary 0) at the end: (NI VI SA N0).
+		// it is not the same as the character 0
+	 * @param destination
+	 * @param pointer
+	 * @param value
+	 * @return
+	 */
+	public static int writeBytes(byte[] destination, int pointer, String value) {
+		pointer = writeBytes(destination, pointer, (short)value.length());
+		return copyBytes(destination, pointer, value.getBytes());
+	}
+	
+	public static byte readByte(byte[] source, int pointer) {
+		return source[pointer];
+	}
+	
+	public static char readChar(byte[] source, int pointer) {
+		return (char)  (source[pointer] << 8 | source[pointer+1]);
+	}
 	
 	
+	public static short readShort(byte[] source, int pointer) {
+		return (short)  (source[pointer] << 8 | source[pointer+1]);
+	}
+	
+	
+	public static int readInt(byte[] source, int pointer) {
+		return source[pointer] << 24 | source[pointer+1] << 16 | source[pointer+2] << 8 | source[pointer+3] << 0;
+	}
+	
+	public static int readLong(byte[] source, int pointer) {
+		return source[pointer] << 56 |
+				source[pointer+1] << 48 |
+				source[pointer+2] << 40 |
+				source[pointer+3] << 32 |
+				source[pointer+4] << 24 | 
+				source[pointer+5] << 16 | 
+				source[pointer+6] << 8 |
+				source[pointer+7] << 0;
+	}
+	
+	public static float readFloat(byte[] source, int pointer) {
+		return Float.intBitsToFloat(readInt(source, pointer));
+	}
+	
+	public static double readDouble(byte[] source, int pointer) {
+		return Double.longBitsToDouble(readLong(source, pointer));
+	}
+	
+	public static boolean readBoolean(byte[] source, int pointer) {
+		return source[pointer] != 0;
+	}
 }
