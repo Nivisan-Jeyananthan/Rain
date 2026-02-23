@@ -7,7 +7,7 @@ public class IntegerArray extends Array{
 
 	
 	public IntegerArray(String name, int[] values) {
-		super(name, Type.INT, values.length * Type.INT_SIZE);
+		super(name, Type.INT, values.length);
 		SerializationWriter.copyBytes(data, 0,values);
 	}
 	

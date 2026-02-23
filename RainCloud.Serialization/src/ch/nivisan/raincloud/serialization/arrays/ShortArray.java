@@ -6,7 +6,7 @@ import ch.nivisan.raincloud.serialization.Type;
 public class ShortArray extends Array {
 
 	public ShortArray(String name, short[] values) {
-		super(name, Type.SHORT, values.length * Type.SHORT_SIZE);
+		super(name, Type.SHORT, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

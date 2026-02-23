@@ -7,7 +7,7 @@ import ch.nivisan.raincloud.serialization.Type;
 public class Bitfield extends Array {
 
 	public Bitfield(String name, boolean[] values) {
-		super(name, Type.BITFIELD, values.length * Type.BOOLEAN_SIZE);
+		super(name, Type.BITFIELD, values.length);
 		
 		 SerializationWriter.writeBitfield(data, 0, values);
 	}

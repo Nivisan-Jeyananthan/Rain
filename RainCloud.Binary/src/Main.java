@@ -1,9 +1,7 @@
 import java.util.Random;
 
 import ch.nivisan.raincloud.serialization.fields.*;
-import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.arrays.IntegerArray;
-import ch.nivisan.raincloud.serialization.arrays.LongArray;
+import ch.nivisan.raincloud.serialization.arrays.*;
 
 public class Main {
     private static void printHex(int value) {
@@ -71,10 +69,10 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
         
-        var test = new int[] { 1,2,3,4};
+        var test = new int[] { 400, 20040,3844};
         ch.nivisan.raincloud.serialization.arrays.Array field = new IntegerArray("test", test);
 
-        byte[] dataNew = new byte[30];
+        byte[] dataNew = new byte[24];
         field.getBytes(dataNew, 0);
         printBytes(dataNew);
         

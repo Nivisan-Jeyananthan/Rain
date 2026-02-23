@@ -6,7 +6,7 @@ import ch.nivisan.raincloud.serialization.Type;
 public class CharArray extends Array {
 
 	public CharArray(String name, char[] values) {
-		super(name, Type.CHAR, values.length * Type.CHAR_SIZE);
+		super(name, Type.CHAR, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

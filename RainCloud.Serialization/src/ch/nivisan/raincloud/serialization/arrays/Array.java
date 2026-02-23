@@ -3,13 +3,14 @@ package ch.nivisan.raincloud.serialization.arrays;
 import ch.nivisan.raincloud.serialization.Container;
 import ch.nivisan.raincloud.serialization.ContainerType;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
+import ch.nivisan.raincloud.serialization.Type;
 
 public class Array extends Container{
     public final int elementCount;    
     
-    public Array(String name, byte type, int dataLength) {
-    	super(ContainerType.Array, name, type, dataLength);
-    	elementCount = data.length;
+    public Array(String name, byte type, int elements) {
+    	super(ContainerType.Array, name, type, elements * Type.getSize(type));
+    	elementCount = elements;
     }
     
     @Override
