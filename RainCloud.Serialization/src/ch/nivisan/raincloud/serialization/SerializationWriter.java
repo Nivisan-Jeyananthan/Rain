@@ -24,11 +24,137 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, byte[] source) {
-		if (destination.length - 1 < pointer + (source.length))
-			return pointer;
-
+		assert(destination.length >= pointer + source.length);
+		
 		for (int i = 0; i < source.length; i++) {
 			destination[pointer++] = source[i];
+		}
+		return pointer;
+	}	
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, char[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, short[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, boolean[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, int[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, float[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, double[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
+		}
+		return pointer;
+	}
+	
+	/**
+	 * Copies the bytes from 1 array to another using the pointer as a starting
+	 * position
+	 * 
+	 * @param destination into which array the data will be written to
+	 * @param pointer     the starting position at which we will insert our data
+	 * @param source      from where we will take the data
+	 * @return pointer position to the end of our data
+	 */
+	public static int copyBytes(byte[] destination, int pointer, long[] source) {
+		assert(destination.length >= pointer + source.length);
+		
+		for (int i = 0; i < source.length; i++) {
+			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
@@ -43,6 +169,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, byte value) {
+		assert(destination.length >= pointer + Type.BYTE_SIZE);
+		
 		destination[pointer++] = value;
 		return pointer;
 	}
@@ -57,6 +185,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, short value) {
+		assert(destination.length >= pointer + Type.SHORT_SIZE);
+		
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
 		destination[pointer++] = (byte) ((value >> 0) & 0xff);
 
@@ -73,6 +203,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, char value) {
+		assert(destination.length >= pointer + Type.CHAR_SIZE);
+		
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
 		destination[pointer++] = (byte) ((value >> 0) & 0xff);
 
@@ -89,6 +221,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, int value) {
+		assert(destination.length >= pointer + Type.INT_SIZE);
+		
 		destination[pointer++] = (byte) ((value >> 24) & 0xff);
 		destination[pointer++] = (byte) ((value >> 16) & 0xff);
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
@@ -107,6 +241,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, long value) {
+		assert(destination.length >= pointer + Type.LONG_SIZE);
+		
 		destination[pointer++] = (byte) ((value >> 56) & 0xff);
 		destination[pointer++] = (byte) ((value >> 48) & 0xff);
 		destination[pointer++] = (byte) ((value >> 40) & 0xff);
@@ -128,12 +264,16 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, float value) {
+		assert(destination.length >= pointer + Type.FLOAT_SIZE);
+		
 		int data = Float.floatToIntBits(value);
 
 		return writeBytes(destination, pointer, data);
 	}
 
 	public static int writeBytes(byte[] destination, int pointer, double value) {
+		assert(destination.length >= pointer + Type.DOUBLE_SIZE);
+		
 		double data = Double.doubleToLongBits(value);
 
 		return writeBytes(destination, pointer, data);
@@ -149,7 +289,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, boolean value) {
-
+		assert(destination.length >= pointer + Type.BOOLEAN);
+		
 		destination[pointer++] = (byte) (value ? 1 : 0);
 
 		return pointer;
@@ -167,7 +308,9 @@ public class SerializationWriter {
 	 * @param value       the value to insert
 	 * @return pointer position to the end of our data
 	 */
-	public static int writeBytes(byte[] destination, int pointer, boolean[] values) {
+	public static int writeBitfield(byte[] destination, int pointer, boolean[] values) {
+		assert(destination.length >= pointer + Type.BOOLEAN_SIZE);
+		
 		byte bitfield = 0;
 		int max = values.length >= 8 ? 8 : values.length - 1;
 
@@ -193,6 +336,8 @@ public class SerializationWriter {
 	 * @return pointer to next location
 	 */
 	public static int writeBytes(byte[] destination, int pointer, String value) {
+		assert(destination.length >= pointer + (short) value.length());
+		
 		pointer = writeBytes(destination, pointer, (short) value.length());
 		return copyBytes(destination, pointer, value.getBytes());
 	}

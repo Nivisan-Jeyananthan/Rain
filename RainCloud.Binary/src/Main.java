@@ -1,28 +1,26 @@
-import java.util.Iterator;
 import java.util.Random;
 
+import ch.nivisan.raincloud.serialization.fields.*;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
+import ch.nivisan.raincloud.serialization.arrays.IntegerArray;
+import ch.nivisan.raincloud.serialization.arrays.LongArray;
 
 public class Main {
-    private static void printHex(int value)
-    {
+    private static void printHex(int value) {
         System.out.printf("%x\n", value);
     }
 
-    private static void printBin(int value)
-    {
+    private static void printBin(int value) {
         System.out.println(Integer.toBinaryString(value));
     }
-    
+
     static void printBytes(byte[] data) {
-    	for(int i = 0;i < data.length; i++) {
-    		System.out.printf("0x%x ", data[i]);
-    	}
+        for (int i = 0; i < data.length; i++) {
+            System.out.printf("0x%x ", data[i]);
+        }
     }
 
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         int color = 0xFF00FF;
 
         int r = (color & 0xFF0000) >> 16;
@@ -50,26 +48,36 @@ public class Main {
 
         byte[] data = new byte[16];
         var number = new boolean[4];
-        for (int i = 0; i < number.length -1; i++) {
-			number[i] = new Random().nextBoolean();
-		}
+        for (int i = 0; i < number.length - 1; i++) {
+            number[i] = new Random().nextBoolean();
+        }
+
+        int pointer = SerializationWriter.writeBitfield(data, 0, number);
+        pointer = SerializationWriter.writeBytes(data, pointer, false);
+        pointer = SerializationWriter.writeBytes(data, pointer, false);
+        pointer = SerializationWriter.writeBytes(data, pointer, true);
+
+        // SerializationWriter.writeBytes(null, 0, 1.1f);
+
+        byte[] names = new byte[] { 0x0, 0x0, 0x27, 0x18 };
+        short name = 15000;
+        int beginPointer = pointer;
+        pointer = SerializationWriter.writeBytes(data, pointer, name);
+
+        short end = SerializationWriter.readShort(data, beginPointer);
+        System.out.println("my gage: " + end);
+        printBytes(data);
+
+        System.out.println("");
+        System.out.println("Data comes: ");
         
-       int pointer = SerializationWriter.writeBytes(data, 0, number);
-       pointer = SerializationWriter.writeBytes(data, pointer,false);
-       pointer = SerializationWriter.writeBytes(data, pointer,false);
-       pointer = SerializationWriter.writeBytes(data, pointer,true);
-       
-       
-      // SerializationWriter.writeBytes(null, 0, 1.1f);
-       
-      byte[] names = new byte[] {0x0, 0x0 ,0x27 ,0x18};
-      short name = 15000;
-      int beginPointer = pointer;
-      pointer = SerializationWriter.writeBytes(data, pointer, name);
-     
-      
-      short end = SerializationWriter.readShort(data, beginPointer);
-      System.out.println("my gage: " + end);
-      printBytes(data);
+        var test = new int[] { 1,2,3,4};
+        ch.nivisan.raincloud.serialization.arrays.Array field = new IntegerArray("test", test);
+
+        byte[] dataNew = new byte[30];
+        field.getBytes(dataNew, 0);
+        printBytes(dataNew);
+        
+        
     }
 }
