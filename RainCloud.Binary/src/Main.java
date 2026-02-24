@@ -1,6 +1,8 @@
 import java.util.Random;
 
 import ch.nivisan.raincloud.serialization.fields.*;
+import ch.nivisan.raincloud.serialization.FileService;
+import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.arrays.*;
 
 public class Main {
@@ -18,7 +20,8 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    static void colorStuff() {
+
         int color = 0xFF00FF;
 
         int r = (color & 0xFF0000) >> 16;
@@ -65,17 +68,24 @@ public class Main {
         short end = SerializationWriter.readShort(data, beginPointer);
         System.out.println("my gage: " + end);
         printBytes(data);
+    }
+
+    public static void main(String[] args) {
 
         System.out.println("");
         System.out.println("Data comes: ");
-        
-        var test = new int[] { 400, 20040,3844};
-        ch.nivisan.raincloud.serialization.arrays.Array field = new IntegerArray("test", test);
 
-        byte[] dataNew = new byte[24];
-        field.getBytes(dataNew, 0);
-        printBytes(dataNew);
-        
-        
+        var test = new int[500_000];
+        for (int i = 0; i < test.length; i++) {
+            int r = new Random().nextInt(500, 10000);
+            test[i] = r;
+        }
+        Array array = new IntegerArray("test", test);
+
+        System.out.println("");
+
+        byte[] dataNew = new byte[array.getSize()];
+        array.getBytes(dataNew, 0);
+        FileService.saveToFile("./data.rain", dataNew);
     }
 }

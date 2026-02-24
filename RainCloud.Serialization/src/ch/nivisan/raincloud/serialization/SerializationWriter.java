@@ -274,7 +274,7 @@ public class SerializationWriter {
 	public static int writeBytes(byte[] destination, int pointer, double value) {
 		assert(destination.length >= pointer + Type.DOUBLE_SIZE);
 		
-		double data = Double.doubleToLongBits(value);
+		long data = Double.doubleToLongBits(value);
 
 		return writeBytes(destination, pointer, data);
 	}
@@ -309,7 +309,7 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBitfield(byte[] destination, int pointer, boolean[] values) {
-		assert(destination.length >= pointer + Type.BOOLEAN_SIZE);
+		assert(destination.length >= pointer + Type.BYTE_SIZE);
 		
 		byte bitfield = 0;
 		int max = values.length >= 8 ? 8 : values.length - 1;
