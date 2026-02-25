@@ -4,14 +4,10 @@ public class Container {
 	public final byte containerType;
 	public byte[] name;
 	public short nameLength;
-	public final byte dataType;
-	public final byte[] data;
 
-	public Container(byte containerType, String name, byte type) {
+	public Container(byte containerType, String name) {
 		this.containerType = containerType;
 		setName(name);
-		data = new byte[RCType.getSize(type)];
-		dataType = type;
 	}
 
 	/**
@@ -25,8 +21,6 @@ public class Container {
 	public Container(byte containerType, String name, byte type, int dataLength) {
 		this.containerType = containerType;
 		setName(name);
-		this.data = new byte[dataLength];
-		dataType = type;
 	}
 
 	private void setName(String name) {
@@ -40,7 +34,6 @@ public class Container {
 		destination[pointer++] = containerType;
 		pointer = SerializationWriter.writeBytes(destination, pointer, nameLength);
 		pointer = SerializationWriter.copyBytes(destination, pointer, name);
-		pointer = SerializationWriter.writeBytes(destination, pointer, dataType);
 
 		return pointer;
 	}
@@ -52,6 +45,6 @@ public class Container {
 	 * @return
 	 */
 	public int getSize() {
-		return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE + data.length;
+		return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength;
 	}
 }

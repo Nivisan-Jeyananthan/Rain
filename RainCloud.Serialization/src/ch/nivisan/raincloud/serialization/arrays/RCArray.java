@@ -1,11 +1,11 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
-import ch.nivisan.raincloud.serialization.Container;
 import ch.nivisan.raincloud.serialization.ContainerType;
+import ch.nivisan.raincloud.serialization.DataContainer;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.RCType;
 
-public class RCArray extends Container {
+public class RCArray extends DataContainer {
     public final int elementCount;
 
     public RCArray(String name, byte type, int elements) {

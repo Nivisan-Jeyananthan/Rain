@@ -1,13 +1,13 @@
 package ch.nivisan.raincloud.serialization.fields;
 
-import ch.nivisan.raincloud.serialization.Container;
 import ch.nivisan.raincloud.serialization.ContainerType;
+import ch.nivisan.raincloud.serialization.DataContainer;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 
 /**
  * Stream of bytes
  */
-public class RCField extends Container {
+public class RCField extends DataContainer {
     public RCField(String name, byte type) {
         super(ContainerType.Field, name, type);
     }
