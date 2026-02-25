@@ -10,7 +10,7 @@ public class Container {
 	public Container(byte containerType, String name, byte type) {
 		this.containerType = containerType;
 		setName(name);
-		data = new byte[Type.getSize(type)];
+		data = new byte[RCType.getSize(type)];
 		dataType = type;
 	}
 
@@ -52,6 +52,6 @@ public class Container {
 	 * @return
 	 */
 	public int getSize() {
-		return Type.BYTE_SIZE + Type.SHORT_SIZE + nameLength + Type.BYTE + data.length;
+		return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE + data.length;
 	}
 }

@@ -1,15 +1,15 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
 // TODO: revise implementation of bitfield after finishing file implementation
 // maybe inherit from field instead of array
-public class Bitfield extends Array {
+public class Bitfield extends RCArray {
 
 	public Bitfield(String name, boolean[] values) {
 		int res = values.length >> 3 == 0 ? 1 : values.length >> 3;
-		super(name, Type.BITFIELD, res);
+		super(name, RCType.BITFIELD, res);
 
 		int pointer = 0;
 		for (int i = 0; i > res; i++) {
@@ -29,8 +29,8 @@ public class Bitfield extends Array {
 	 */
 	@Override
 	public int getSize() {
-		return Type.BYTE_SIZE + Type.SHORT_SIZE + nameLength + Type.BYTE + Type.INT
-				+ Type.BYTE_SIZE;
+		return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE + RCType.INT
+				+ RCType.BYTE_SIZE;
 	}
 
 }

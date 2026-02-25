@@ -1,12 +1,12 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class BooleanArray extends Array {
+public class BooleanArray extends RCArray {
 
 	public BooleanArray(String name, boolean[] values) {
-		super(name, Type.BOOLEAN, values.length);
+		super(name, RCType.BOOLEAN, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

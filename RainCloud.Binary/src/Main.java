@@ -80,7 +80,7 @@ public class Main {
             int r = new Random().nextInt(500, 10000);
             test[i] = r;
         }
-        Array array = new IntegerArray("test", test);
+        RCArray array = new IntegerArray("test", test);
 
         System.out.println("");
 

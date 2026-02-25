@@ -1,11 +1,11 @@
 package ch.nivisan.raincloud.serialization.fields;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class BooleanField extends Field {
+public class BooleanField extends RCField {
     public BooleanField(String name, boolean value) {
-        super(name,Type.BOOLEAN);
+        super(name,RCType.BOOLEAN);
         SerializationWriter.writeBytes(data, 0, value);
     }
 }

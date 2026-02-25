@@ -1,11 +1,11 @@
 package ch.nivisan.raincloud.serialization.fields;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class ByteField extends Field {
+public class ByteField extends RCField {
     public ByteField(String name, byte value) {
-        super(name,Type.BYTE);
+        super(name,RCType.BYTE);
         SerializationWriter.writeBytes(data, 0, value);
     }
 }

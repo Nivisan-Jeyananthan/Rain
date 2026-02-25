@@ -1,12 +1,12 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class ShortArray extends Array {
+public class ShortArray extends RCArray {
 
 	public ShortArray(String name, short[] values) {
-		super(name, Type.SHORT, values.length);
+		super(name, RCType.SHORT, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

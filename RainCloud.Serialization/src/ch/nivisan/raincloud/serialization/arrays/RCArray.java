@@ -3,13 +3,13 @@ package ch.nivisan.raincloud.serialization.arrays;
 import ch.nivisan.raincloud.serialization.Container;
 import ch.nivisan.raincloud.serialization.ContainerType;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class Array extends Container {
+public class RCArray extends Container {
     public final int elementCount;
 
-    public Array(String name, byte type, int elements) {
-        super(ContainerType.Array, name, type, elements * Type.getSize(type));
+    public RCArray(String name, byte type, int elements) {
+        super(ContainerType.Array, name, type, elements * RCType.getSize(type));
         elementCount = elements;
     }
 
@@ -20,8 +20,8 @@ public class Array extends Container {
      * @param elements
      * @param elementCount
      */
-    public Array(String name, byte type, int elements, int elementCount) {
-        super(ContainerType.Array, name, type, elements * Type.getSize(type));
+    public RCArray(String name, byte type, int elements, int elementCount) {
+        super(ContainerType.Array, name, type, elements * RCType.getSize(type));
         this.elementCount = elementCount;
     }
 
@@ -36,7 +36,7 @@ public class Array extends Container {
 
     @Override
     public int getSize() {
-        return Type.BYTE_SIZE + Type.SHORT_SIZE + nameLength + Type.BYTE + Type.INT
-                + elementCount * Type.getSize(dataType);
+        return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE + RCType.INT
+                + elementCount * RCType.getSize(dataType);
     }
 }

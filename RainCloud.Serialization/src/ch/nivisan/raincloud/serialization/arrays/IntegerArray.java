@@ -1,13 +1,13 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class IntegerArray extends Array{
+public class IntegerArray extends RCArray{
 
 	
 	public IntegerArray(String name, int[] values) {
-		super(name, Type.INT, values.length);
+		super(name, RCType.INT, values.length);
 		SerializationWriter.copyBytes(data, 0,values);
 	}
 	

@@ -1,12 +1,12 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class FloatArray extends Array {
+public class FloatArray extends RCArray {
 
 	public FloatArray(String name, float[] values) {
-		super(name, Type.FLOAT, values.length);
+		super(name, RCType.FLOAT, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

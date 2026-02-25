@@ -7,8 +7,8 @@ import ch.nivisan.raincloud.serialization.SerializationWriter;
 /**
  * Stream of bytes
  */
-public class Field extends Container {
-    public Field(String name, byte type) {
+public class RCField extends Container {
+    public RCField(String name, byte type) {
         super(ContainerType.Field, name, type);
     }
 

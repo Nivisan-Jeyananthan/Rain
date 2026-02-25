@@ -1,6 +1,6 @@
 package ch.nivisan.raincloud.serialization;
 
-public class Type {
+public class RCType {
     public static final byte UNKNOWN = 0;
     public static final byte BYTE = 1;
     public static final byte SHORT = 2;

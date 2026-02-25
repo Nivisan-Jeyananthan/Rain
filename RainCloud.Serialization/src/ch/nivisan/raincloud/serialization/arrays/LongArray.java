@@ -1,12 +1,12 @@
 package ch.nivisan.raincloud.serialization.arrays;
 
 import ch.nivisan.raincloud.serialization.SerializationWriter;
-import ch.nivisan.raincloud.serialization.Type;
+import ch.nivisan.raincloud.serialization.RCType;
 
-public class LongArray extends Array {
+public class LongArray extends RCArray {
 
 	public LongArray(String name, long[] values) {
-		super(name, Type.LONG, values.length);
+		super(name, RCType.LONG, values.length);
 		SerializationWriter.copyBytes(data, 0, values);
 	}
 

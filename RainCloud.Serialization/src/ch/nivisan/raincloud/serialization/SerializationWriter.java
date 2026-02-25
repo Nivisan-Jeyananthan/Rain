@@ -24,14 +24,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, byte[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			destination[pointer++] = source[i];
 		}
 		return pointer;
-	}	
-	
+	}
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -42,14 +42,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, char[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -60,14 +60,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, short[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -78,14 +78,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, boolean[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -96,15 +96,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, int[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -115,14 +114,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, float[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -133,14 +132,14 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, double[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
 		return pointer;
 	}
-	
+
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
 	 * position
@@ -151,8 +150,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int copyBytes(byte[] destination, int pointer, long[] source) {
-		assert(destination.length >= pointer + source.length);
-		
+		assert (destination.length >= pointer + source.length);
+
 		for (int i = 0; i < source.length; i++) {
 			pointer = writeBytes(destination, pointer, source[i]);
 		}
@@ -169,8 +168,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, byte value) {
-		assert(destination.length >= pointer + Type.BYTE_SIZE);
-		
+		assert (destination.length >= pointer + RCType.BYTE_SIZE);
+
 		destination[pointer++] = value;
 		return pointer;
 	}
@@ -185,8 +184,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, short value) {
-		assert(destination.length >= pointer + Type.SHORT_SIZE);
-		
+		assert (destination.length >= pointer + RCType.SHORT_SIZE);
+
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
 		destination[pointer++] = (byte) ((value >> 0) & 0xff);
 
@@ -203,8 +202,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, char value) {
-		assert(destination.length >= pointer + Type.CHAR_SIZE);
-		
+		assert (destination.length >= pointer + RCType.CHAR_SIZE);
+
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
 		destination[pointer++] = (byte) ((value >> 0) & 0xff);
 
@@ -221,8 +220,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, int value) {
-		assert(destination.length >= pointer + Type.INT_SIZE);
-		
+		assert (destination.length >= pointer + RCType.INT_SIZE);
+
 		destination[pointer++] = (byte) ((value >> 24) & 0xff);
 		destination[pointer++] = (byte) ((value >> 16) & 0xff);
 		destination[pointer++] = (byte) ((value >> 8) & 0xff);
@@ -241,8 +240,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, long value) {
-		assert(destination.length >= pointer + Type.LONG_SIZE);
-		
+		assert (destination.length >= pointer + RCType.LONG_SIZE);
+
 		destination[pointer++] = (byte) ((value >> 56) & 0xff);
 		destination[pointer++] = (byte) ((value >> 48) & 0xff);
 		destination[pointer++] = (byte) ((value >> 40) & 0xff);
@@ -264,16 +263,16 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, float value) {
-		assert(destination.length >= pointer + Type.FLOAT_SIZE);
-		
+		assert (destination.length >= pointer + RCType.FLOAT_SIZE);
+
 		int data = Float.floatToIntBits(value);
 
 		return writeBytes(destination, pointer, data);
 	}
 
 	public static int writeBytes(byte[] destination, int pointer, double value) {
-		assert(destination.length >= pointer + Type.DOUBLE_SIZE);
-		
+		assert (destination.length >= pointer + RCType.DOUBLE_SIZE);
+
 		long data = Double.doubleToLongBits(value);
 
 		return writeBytes(destination, pointer, data);
@@ -289,8 +288,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBytes(byte[] destination, int pointer, boolean value) {
-		assert(destination.length >= pointer + Type.BOOLEAN);
-		
+		assert (destination.length >= pointer + RCType.BOOLEAN);
+
 		destination[pointer++] = (byte) (value ? 1 : 0);
 
 		return pointer;
@@ -309,8 +308,8 @@ public class SerializationWriter {
 	 * @return pointer position to the end of our data
 	 */
 	public static int writeBitfield(byte[] destination, int pointer, boolean[] values) {
-		assert(destination.length >= pointer + Type.BYTE_SIZE);
-		
+		assert (destination.length >= pointer + RCType.BYTE_SIZE);
+
 		byte bitfield = 0;
 		int max = values.length >= 8 ? 8 : values.length - 1;
 
@@ -336,15 +335,16 @@ public class SerializationWriter {
 	 * @return pointer to next location
 	 */
 	public static int writeBytes(byte[] destination, int pointer, String value) {
-		assert(destination.length >= pointer + (short) value.length());
-		
+		assert (destination.length >= pointer + (short) value.length());
+
 		pointer = writeBytes(destination, pointer, (short) value.length());
 		return copyBytes(destination, pointer, value.getBytes());
 	}
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as byte
 	 */
@@ -354,7 +354,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as char
 	 */
@@ -364,7 +365,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as short
 	 */
@@ -374,7 +376,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as int
 	 */
@@ -384,7 +387,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as long
 	 */
@@ -401,7 +405,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as float
 	 */
@@ -411,7 +416,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as double
 	 */
@@ -421,7 +427,8 @@ public class SerializationWriter {
 
 	/**
 	 * Read data at said pointer position
-	 * @param source from where to read the data
+	 * 
+	 * @param source  from where to read the data
 	 * @param pointer at what position our data begins
 	 * @return our data as boolean
 	 */
