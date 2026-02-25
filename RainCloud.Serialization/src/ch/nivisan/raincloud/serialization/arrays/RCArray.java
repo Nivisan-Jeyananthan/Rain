@@ -5,7 +5,7 @@ import ch.nivisan.raincloud.serialization.DataContainer;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.RCType;
 
-public class RCArray extends DataContainer {
+public abstract class RCArray extends DataContainer {
     public final int elementCount;
 
     public RCArray(String name, byte type, int elements) {
@@ -36,7 +36,7 @@ public class RCArray extends DataContainer {
 
     @Override
     public int getSize() {
-        return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE + RCType.INT
+        return RCType.BYTE_SIZE + RCType.SHORT_SIZE + nameLength + RCType.BYTE_SIZE + RCType.INT_SIZE
                 + elementCount * RCType.getSize(dataType);
     }
 }

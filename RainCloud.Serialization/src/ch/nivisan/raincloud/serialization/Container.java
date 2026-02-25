@@ -1,6 +1,6 @@
 package ch.nivisan.raincloud.serialization;
 
-public class Container {
+public abstract class Container {
 	public final byte containerType;
 	public byte[] name;
 	public short nameLength;
@@ -40,7 +40,7 @@ public class Container {
 
 	/**
 	 * Calculates how much space the fields take up together
-	 * containerType, name, nameLength, dataType, data
+	 * containerType, name, nameLength 
 	 * 
 	 * @return
 	 */

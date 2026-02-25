@@ -2,6 +2,7 @@ import java.util.Random;
 
 import ch.nivisan.raincloud.serialization.fields.*;
 import ch.nivisan.raincloud.serialization.FileService;
+import ch.nivisan.raincloud.serialization.RCObject;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.arrays.*;
 
@@ -75,17 +76,25 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
-        var test = new int[500_000];
+        RCObject obj = new RCObject("Entity");
+        RCField field = new IntField("def",Integer.MAX_VALUE -1);
+        obj.addField(field);
+
+        var test = new int[500_000_000];
         for (int i = 0; i < test.length; i++) {
             int r = new Random().nextInt(500, 10000);
             test[i] = r;
         }
-        RCArray array = new IntegerArray("test", test);
+        RCArray array = new IntegerArray("abc", test);
+        obj.addArray(array);
 
-        System.out.println("");
 
-        byte[] dataNew = new byte[array.getSize()];
-        array.getBytes(dataNew, 0);
-        FileService.saveToFile("./data.rain", dataNew);
+        System.out.println("Size : " + obj.getSize());
+        byte[] dataNew = new byte[obj.getSize()]; 
+        obj.getBytes(dataNew, 0);
+        // FileService.saveToFile("./data.rain", dataNew);
+        FileService.saveOptimized("./data.rain", dataNew);
+
+        System.out.println("Written to file");
     }
 }

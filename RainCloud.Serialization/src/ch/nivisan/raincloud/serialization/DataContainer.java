@@ -1,6 +1,6 @@
 package ch.nivisan.raincloud.serialization;
 
-public class DataContainer extends Container {
+public abstract class DataContainer extends Container {
 	public final byte dataType;
 	public final byte[] data;
 
