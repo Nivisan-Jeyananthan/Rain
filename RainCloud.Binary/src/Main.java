@@ -2,7 +2,9 @@ import java.util.Random;
 
 import ch.nivisan.raincloud.serialization.fields.*;
 import ch.nivisan.raincloud.serialization.FileService;
+import ch.nivisan.raincloud.serialization.RCDatabase;
 import ch.nivisan.raincloud.serialization.RCObject;
+import ch.nivisan.raincloud.serialization.RCString;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.arrays.*;
 
@@ -76,11 +78,19 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
+        RCDatabase database = new RCDatabase("DB");
+        System.out.println("Size : " + database.getSize());
         RCObject obj = new RCObject("Entity");
-        RCField field = new IntField("def",Integer.MAX_VALUE -1);
+        RCField field = new IntField("def", Integer.MAX_VALUE - 1);
+        RCField positionX = new ShortField("X", (short) 20);
+        RCField positionY = new ShortField("Y", (short) 9);
+        RCString str = new RCString("stringName", "Hello World");
         obj.addField(field);
+        obj.addField(positionX);
+        obj.addField(positionY);
+        obj.addString(str);
 
-        var test = new int[500_000_000];
+        var test = new int[5];
         for (int i = 0; i < test.length; i++) {
             int r = new Random().nextInt(500, 10000);
             test[i] = r;
@@ -88,13 +98,19 @@ public class Main {
         RCArray array = new IntegerArray("abc", test);
         obj.addArray(array);
 
+        System.out.println("Obj Size : " + obj.getSize());
 
-        System.out.println("Size : " + obj.getSize());
-        byte[] dataNew = new byte[obj.getSize()]; 
-        obj.getBytes(dataNew, 0);
+        database.addObject(obj);
+        System.out.println("Size : " + database.getSize());
+        byte[] dataNew = new byte[database.getSize()];
+        database.getBytes(dataNew, 0);
         // FileService.saveToFile("./data.rain", dataNew);
         FileService.saveOptimized("./data.rain", dataNew);
 
-        System.out.println("Written to file");
+        printBytes(dataNew);
+
+        IO.println("");
+
+        IO.println("Written to file");
     }
 }

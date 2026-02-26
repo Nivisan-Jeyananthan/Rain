@@ -15,6 +15,7 @@ public abstract class RCArray extends DataContainer {
 
     /**
      * Bitfield usage
+     * 
      * @param name
      * @param type
      * @param elements
@@ -27,7 +28,7 @@ public abstract class RCArray extends DataContainer {
 
     @Override
     public int getBytes(byte[] destination, int pointer) {
-        pointer = super.getBytes(destination,pointer);
+        pointer = super.getBytes(destination, pointer);
         pointer = SerializationWriter.writeBytes(destination, pointer, elementCount);
         pointer = SerializationWriter.copyBytes(destination, pointer, data);
 

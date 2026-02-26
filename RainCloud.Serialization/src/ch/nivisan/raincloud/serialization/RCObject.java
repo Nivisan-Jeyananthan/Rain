@@ -10,6 +10,8 @@ public class RCObject extends Container {
     private int size;
     private short fieldCount;
     private short arrayCount;
+    private short stringCount;
+    private List<RCString> strings = new ArrayList<RCString>();
     private List<RCField> fields = new ArrayList<RCField>();
     private List<RCArray> arrays = new ArrayList<RCArray>();
 
@@ -32,18 +34,30 @@ public class RCObject extends Container {
         fieldCount = (short) fields.size();
     }
 
+    public void addString(RCString value) {
+        strings.add(value);
+        size += value.getSize();
+
+        stringCount = (short) fields.size();
+    }
+
     /**
      * 3 bytes (containertype + namelength) + nameLength in bytes + fieldCount
-     * (2 bytes) + arrayCount (2 bytes) + (fields) + (arrays)
+     * (2 bytes) + arrayCount (2 bytes) + stringCount (2 bytes) + (fields) + (arrays)
      */
     @Override
     public int getSize() {
-        return size + RCType.SHORT_SIZE + RCType.SHORT_SIZE;
+        return size + RCType.SHORT_SIZE + RCType.SHORT_SIZE + RCType.SHORT_SIZE;
+
     }
 
     @Override
     public int getBytes(byte[] destination, int pointer) {
         pointer = super.getBytes(destination, pointer);
+
+        pointer = SerializationWriter.writeBytes(destination, pointer, stringCount);
+        for (RCString string : strings)
+            pointer = string.getBytes(destination, pointer);
 
         pointer = SerializationWriter.writeBytes(destination, pointer, fieldCount);
         for (RCField field : fields)

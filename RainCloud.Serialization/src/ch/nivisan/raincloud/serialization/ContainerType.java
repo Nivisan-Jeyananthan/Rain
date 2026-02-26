@@ -4,5 +4,7 @@ public class ContainerType {
     public static final byte Uknown = 0;
     public static final byte Field = 1;
     public static final byte Array = 2;
-    public static final byte Object = 3;
+    public static final byte StringType = 3;
+    public static final byte Object = 4;
+    public static final byte Database = 5;
 }
