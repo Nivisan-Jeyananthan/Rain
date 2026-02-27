@@ -2,7 +2,7 @@ package ch.nivisan.raincloud.serialization;
 
 public abstract class Container {
 	public final byte containerType;
-	public byte[] name;
+	protected byte[] name;
 	public short nameLength;
 
 	public Container(byte containerType, String name) {
@@ -28,6 +28,10 @@ public abstract class Container {
 
 		nameLength = (short) name.length();
 		this.name = name.getBytes();
+	}
+
+	public String getName(){
+		return new String(name,0,nameLength);
 	}
 
 	public int getBytes(byte[] destination, int pointer) {

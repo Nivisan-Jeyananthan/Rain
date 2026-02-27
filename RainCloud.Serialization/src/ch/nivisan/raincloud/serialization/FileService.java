@@ -1,6 +1,8 @@
 package ch.nivisan.raincloud.serialization;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -31,6 +33,21 @@ public class FileService {
             e.printStackTrace();
         }
 
+    }
+
+    public static byte[] getFromFile(String path) {
+        byte[] buffer;
+        try {
+            BufferedInputStream stream = new BufferedInputStream(new FileInputStream(path));
+            buffer = new byte[stream.available()];
+            stream.read(buffer);
+            stream.close();
+        } catch (IOException e) {
+            System.out.println("Not found file");
+            e.printStackTrace();
+            return new byte[0];
+        }
+        return buffer;
     }
 
 }

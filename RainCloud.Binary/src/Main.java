@@ -1,10 +1,12 @@
 import java.util.Random;
 
 import ch.nivisan.raincloud.serialization.fields.*;
+import ch.nivisan.raincloud.serialization.DbDeserializer;
 import ch.nivisan.raincloud.serialization.FileService;
 import ch.nivisan.raincloud.serialization.RCDatabase;
 import ch.nivisan.raincloud.serialization.RCObject;
 import ch.nivisan.raincloud.serialization.RCString;
+import ch.nivisan.raincloud.serialization.SerializationReader;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.arrays.*;
 
@@ -68,16 +70,12 @@ public class Main {
         int beginPointer = pointer;
         pointer = SerializationWriter.writeBytes(data, pointer, name);
 
-        short end = SerializationWriter.readShort(data, beginPointer);
+        short end = SerializationReader.readShort(data, beginPointer);
         System.out.println("my gage: " + end);
         printBytes(data);
     }
 
-    public static void main(String[] args) {
-
-        System.out.println("");
-        System.out.println("Data comes: ");
-
+    static void serializationTest() {
         RCDatabase database = new RCDatabase("DB");
         System.out.println("Size : " + database.getSize());
         RCObject obj = new RCObject("Entity");
@@ -112,5 +110,20 @@ public class Main {
         IO.println("");
 
         IO.println("Written to file");
+    }
+
+    static void deserializationTest() {
+        byte[] dbData = FileService.getFromFile("./data.rain");
+        RCDatabase database = DbDeserializer.Deserialize(dbData);
+        System.out.println(database.getName());
+    }
+
+    public static void main(String[] args) {
+        System.out.println("");
+        System.out.println("Data comes: ");
+
+     //   serializationTest();
+
+        deserializationTest();
     }
 }

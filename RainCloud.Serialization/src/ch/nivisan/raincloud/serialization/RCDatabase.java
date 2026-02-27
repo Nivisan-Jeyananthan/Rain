@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RCDatabase extends Container {
-    private static final byte[] header = "RCDB".getBytes();
+    public static final byte[] header = "RCDB".getBytes();
     private int size;
     private short objectCount;
     private List<RCObject> objects = new ArrayList<RCObject>();
@@ -14,6 +14,7 @@ public class RCDatabase extends Container {
         size = super.getSize();
         size += header.length + RCType.INT_SIZE + RCType.SHORT_SIZE;
     }
+
 
     public void addObject(RCObject object) {
         objects.add(object);
