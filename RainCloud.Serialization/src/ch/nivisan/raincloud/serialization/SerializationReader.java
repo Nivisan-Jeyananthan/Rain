@@ -1,5 +1,7 @@
 package ch.nivisan.raincloud.serialization;
 
+import java.nio.ByteBuffer;
+
 public class SerializationReader {
     public static final byte[] headerName = "RC".getBytes();
     public static final short version = 0x0100; // big-endian
@@ -45,7 +47,13 @@ public class SerializationReader {
      * @return our data as int
      */
     public static int readInt(byte[] source, int pointer) {
-        return source[pointer] << 24 | source[pointer + 1] << 16 | source[pointer + 2] << 8 | source[pointer + 3] << 0;
+        return ByteBuffer.wrap(source,pointer,4).getInt();
+        /* 
+        return source[pointer] << 24 |
+                source[pointer + 1] << 16 |
+                source[pointer + 2] << 8 |
+                source[pointer + 3] << 0;
+        */
     }
 
     /**
@@ -100,6 +108,6 @@ public class SerializationReader {
     }
 
     public static String readString(byte[] source, int pointer, int length) {
-        return new String(source,pointer,length);
+        return new String(source, pointer, length);
     }
 }

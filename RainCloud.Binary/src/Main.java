@@ -88,7 +88,7 @@ public class Main {
         obj.addField(positionY);
         obj.addString(str);
 
-        var test = new int[5];
+        var test = new int[20];
         for (int i = 0; i < test.length; i++) {
             int r = new Random().nextInt(500, 10000);
             test[i] = r;
@@ -122,7 +122,7 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
-     //   serializationTest();
+       // serializationTest();
 
         deserializationTest();
     }
