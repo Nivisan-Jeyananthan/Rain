@@ -84,7 +84,7 @@ public class Main {
         RCField field = new IntField("def", Integer.MAX_VALUE - 1);
         RCField positionX = new ShortField("X", (short) 20);
         RCField positionY = new ShortField("Y", (short) 9);
-        RCString str = new RCString("stringName", "Hello World");
+        RCString str = new RCString("names", "Léo,Nadia");
         obj.addField(field);
         obj.addField(positionX);
         obj.addField(positionY);
