@@ -17,7 +17,7 @@ public class RCObject extends Container {
 
     public RCObject(String name) {
         super(ContainerType.Object, name);
-        size = super.getSize();
+        size = super.getSize() + RCType.SHORT_SIZE + RCType.SHORT_SIZE + RCType.SHORT_SIZE + RCType.INT_SIZE;
     }
 
     public void addArray(RCArray array) {
@@ -43,25 +43,26 @@ public class RCObject extends Container {
 
     /**
      * 3 bytes (containertype + namelength) + nameLength in bytes + fieldCount
-     * (2 bytes) + arrayCount (2 bytes) + stringCount (2 bytes) + (fields) + (arrays)
+     * (2 bytes) + arrayCount (2 bytes) + stringCount (2 bytes) + (fields) +
+     * (arrays)
      */
     @Override
     public int getSize() {
-        return size + RCType.SHORT_SIZE + RCType.SHORT_SIZE + RCType.SHORT_SIZE;
-
+        return size;
     }
 
     @Override
     public int getBytes(byte[] destination, int pointer) {
         pointer = super.getBytes(destination, pointer);
-
-        pointer = SerializationWriter.writeBytes(destination, pointer, stringCount);
-        for (RCString string : strings)
-            pointer = string.getBytes(destination, pointer);
+        pointer = SerializationWriter.writeBytes(destination, pointer, size);
 
         pointer = SerializationWriter.writeBytes(destination, pointer, fieldCount);
         for (RCField field : fields)
             pointer = field.getBytes(destination, pointer);
+
+        pointer = SerializationWriter.writeBytes(destination, pointer, stringCount);
+        for (RCString string : strings)
+            pointer = string.getBytes(destination, pointer);
 
         pointer = SerializationWriter.writeBytes(destination, pointer, arrayCount);
         for (RCArray currentArray : arrays)
