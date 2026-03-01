@@ -1,6 +1,7 @@
 package ch.nivisan.raincloud.serialization;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class SerializationReader {
     public static final byte[] headerName = "RC".getBytes();
@@ -47,13 +48,13 @@ public class SerializationReader {
      * @return our data as int
      */
     public static int readInt(byte[] source, int pointer) {
-        return ByteBuffer.wrap(source,pointer,4).getInt();
-        /* 
-        return source[pointer] << 24 |
-                source[pointer + 1] << 16 |
-                source[pointer + 2] << 8 |
-                source[pointer + 3] << 0;
-        */
+        return ByteBuffer.wrap(source, pointer, 4).getInt();
+        /*
+         * return source[pointer] << 24 |
+         * source[pointer + 1] << 16 |
+         * source[pointer + 2] << 8 |
+         * source[pointer + 3] << 0;
+         */
     }
 
     /**
@@ -107,7 +108,34 @@ public class SerializationReader {
         return source[pointer] != 0;
     }
 
+    /**
+     * Read data at said pointer position
+     * 
+     * @param source  from where to read the data
+     * @param pointer at what position our data begins
+     * @return our data as boolean
+     */
+    public static boolean[] readBitField(byte[] source, int pointer) {
+        byte field =  source[pointer++];
+        boolean[] bools = new boolean[8];
+        for (int i = 0; i < 8; i++)
+            bools[i] = (field >> i) & 1 ? true : false;
+    }
+
     public static String readString(byte[] source, int pointer, int length) {
         return new String(source, pointer, length);
     }
+
+    public static int readBytes(byte[] source, int pointer, byte[] destination) {
+        for (int i = 0; i < destination.length; i++) {
+            destination[i] = source[i + pointer];
+        }
+
+        return pointer += destination.length;
+    }
+
+    public static byte[] readBytes(byte[] source, int pointer, int length) {
+        return ByteBuffer.wrap(source, pointer, length).array();
+    }
+
 }

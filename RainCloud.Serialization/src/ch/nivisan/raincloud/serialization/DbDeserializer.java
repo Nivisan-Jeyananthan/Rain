@@ -1,8 +1,16 @@
 package ch.nivisan.raincloud.serialization;
 
+import ch.nivisan.raincloud.serialization.arrays.Bitfield;
 import ch.nivisan.raincloud.serialization.arrays.RCArray;
+import ch.nivisan.raincloud.serialization.fields.BooleanField;
+import ch.nivisan.raincloud.serialization.fields.ByteField;
+import ch.nivisan.raincloud.serialization.fields.CharField;
+import ch.nivisan.raincloud.serialization.fields.DoubleField;
+import ch.nivisan.raincloud.serialization.fields.FloatField;
 import ch.nivisan.raincloud.serialization.fields.IntField;
+import ch.nivisan.raincloud.serialization.fields.LongField;
 import ch.nivisan.raincloud.serialization.fields.RCField;
+import ch.nivisan.raincloud.serialization.fields.ShortField;
 
 public class DbDeserializer {
     private static RCDatabase database;
@@ -55,7 +63,7 @@ public class DbDeserializer {
         pointer[0] += RCType.INT_SIZE;
 
         RCObject obj = new RCObject(objName);
-       
+
         short fieldCount = SerializationReader.readShort(data, pointer[0]);
         pointer[0] += RCType.SHORT_SIZE;
         for (int i = 0; i < fieldCount; i++) {
@@ -84,18 +92,61 @@ public class DbDeserializer {
         byte containerType = data[pointer[0]++];
         assert (containerType == ContainerType.Field);
 
-        short objNameLength = SerializationReader.readShort(data, pointer[0]);
+        short fieldNameLength = SerializationReader.readShort(data, pointer[0]);
         pointer[0] += RCType.SHORT_SIZE;
 
-        String objName = SerializationReader.readString(data, pointer[0], objNameLength);
-        pointer[0] += objNameLength;
+        String fieldName = SerializationReader.readString(data, pointer[0], fieldNameLength);
+        pointer[0] += fieldNameLength;
 
         byte fieldType = data[pointer[0]++];
-        byte field = RCType.getSize(fieldType);
 
-        // TODO: create specific field based on type, switch.
+        byte fieldValue = RCType.getSize(fieldType);
+        RCField field;
 
-        return null;
+        switch (fieldValue) {
+            case RCType.BYTE:
+                field = new ByteField(fieldName, data[pointer[0]++]);
+                break;
+            case RCType.SHORT:
+                field = new ShortField(fieldName, SerializationReader.readShort(data, pointer[0]));
+                pointer[0] += RCType.SHORT_SIZE;
+                break;
+            case RCType.CHAR:
+                field = new CharField(fieldName, SerializationReader.readChar(data, pointer[0]));
+                pointer[0] += RCType.CHAR_SIZE;
+                break;
+            case RCType.BOOLEAN:
+                field = new BooleanField(fieldName, SerializationReader.readBoolean(data, pointer[0]));
+                pointer[0] += RCType.BOOLEAN;
+                break;
+            case RCType.INT:
+                field = new IntField(fieldName, SerializationReader.readInt(data, pointer[0]));
+                pointer[0] += RCType.INT_SIZE;
+                break;
+            case RCType.LONG:
+                field = new LongField(fieldName, SerializationReader.readLong(data, pointer[0]));
+                pointer[0] += RCType.LONG_SIZE;
+                break;
+            case RCType.FLOAT:
+                field = new FloatField(fieldName, SerializationReader.readFloat(data, pointer[0]));
+                pointer[0] += RCType.FLOAT_SIZE;
+                break;
+            case RCType.DOUBLE:
+                field = new DoubleField(fieldName, SerializationReader.readDouble(data, pointer[0]));
+                pointer[0] += RCType.DOUBLE_SIZE;
+                break;
+            case RCType.BITFIELD:
+                field = new Bitfield(fieldName, SerializationReader.readBitfield(data, pointer[0]));
+                pointer[0] += RCType.BITFIELD;
+                break;
+            default:
+                byte[] fieldData = new byte[fieldValue];
+                pointer[0] = SerializationReader.readBytes(data, pointer[0], fieldData);
+                field = null;
+                break;
+        }
+
+        return field;
     }
 
     private static RCString getString(byte[] data, int[] pointer) {
