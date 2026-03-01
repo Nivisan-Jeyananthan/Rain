@@ -99,6 +99,7 @@ public class Main {
         System.out.println("Obj Size : " + obj.getSize());
 
         database.addObject(obj);
+        database.addObject(new RCObject("Nivisan"));
         System.out.println("Size : " + database.getSize());
         byte[] dataNew = new byte[database.getSize()];
         database.getBytes(dataNew, 0);
@@ -122,7 +123,7 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
-       // serializationTest();
+        serializationTest();
 
         deserializationTest();
     }
