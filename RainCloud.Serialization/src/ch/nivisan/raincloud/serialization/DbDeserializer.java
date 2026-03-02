@@ -1,7 +1,15 @@
 package ch.nivisan.raincloud.serialization;
 
 import ch.nivisan.raincloud.serialization.arrays.Bitfield;
+import ch.nivisan.raincloud.serialization.arrays.BooleanArray;
+import ch.nivisan.raincloud.serialization.arrays.ByteArray;
+import ch.nivisan.raincloud.serialization.arrays.CharArray;
+import ch.nivisan.raincloud.serialization.arrays.DoubleArray;
+import ch.nivisan.raincloud.serialization.arrays.FloatArray;
+import ch.nivisan.raincloud.serialization.arrays.IntegerArray;
+import ch.nivisan.raincloud.serialization.arrays.LongArray;
 import ch.nivisan.raincloud.serialization.arrays.RCArray;
+import ch.nivisan.raincloud.serialization.arrays.ShortArray;
 import ch.nivisan.raincloud.serialization.fields.BooleanField;
 import ch.nivisan.raincloud.serialization.fields.ByteField;
 import ch.nivisan.raincloud.serialization.fields.CharField;
@@ -136,8 +144,8 @@ public class DbDeserializer {
                 pointer[0] += RCType.DOUBLE_SIZE;
                 break;
             case RCType.BITFIELD:
-                field = new Bitfield(fieldName, SerializationReader.readBitfield(data, pointer[0]));
-                pointer[0] += RCType.BITFIELD;
+                field = new Bitfield(fieldName, SerializationReader.readBitField(data, pointer[0]));
+                pointer[0] += RCType.BITFIELD_SIZE;
                 break;
             default:
                 byte[] fieldData = new byte[fieldValue];
@@ -150,10 +158,83 @@ public class DbDeserializer {
     }
 
     private static RCString getString(byte[] data, int[] pointer) {
-        return null;
+        byte containerType = data[pointer[0]++];
+        assert (containerType == ContainerType.Object);
+
+        short nameLength = SerializationReader.readShort(data, pointer[0]);
+        pointer[0] += RCType.SHORT_SIZE;
+
+        String name = SerializationReader.readString(data, pointer[0], nameLength);
+        pointer[0] += nameLength;
+
+        int size = SerializationReader.readInt(data, pointer[0]);
+        pointer[0] += RCType.INT_SIZE;
+
+        short characterCount = SerializationReader.readShort(data, pointer[0]);
+        pointer[0] += RCType.SHORT_SIZE;
+
+        String characters = SerializationReader.readString(data, pointer[0], characterCount);
+        assert (characterCount == characters.length());
+
+        return new RCString(name, characters);
     }
 
     private static RCArray getArray(byte[] data, int[] pointer) {
-        return null;
+        byte containerType = data[pointer[0]++];
+        assert (containerType == ContainerType.Object);
+
+        short nameLength = SerializationReader.readShort(data, pointer[0]);
+        pointer[0] += RCType.SHORT_SIZE;
+
+        String name = SerializationReader.readString(data, pointer[0], nameLength);
+        pointer[0] += nameLength;
+
+        byte dataType = data[pointer[0]++];
+
+        int elementsCount = SerializationReader.readShort(data, pointer[0]);
+        pointer[0] += RCType.SHORT_SIZE;
+
+        RCArray array;
+
+        switch (dataType) {
+            case RCType.BYTE:
+                array = new ByteArray(name, SerializationReader.readBytes(data, pointer[0], elementsCount));
+                pointer[0] += elementsCount;
+                break;
+            case RCType.SHORT:
+                array = new ShortArray(name, SerializationReader.readShortArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.SHORT_SIZE * elementsCount);
+                break;
+            case RCType.CHAR:
+                array = new CharArray(name, SerializationReader.readCharArray(data, pointer[0], elementsCount));
+                pointer[0] += RCType.CHAR_SIZE * elementsCount;
+                break;
+            case RCType.BOOLEAN:
+                array = new BooleanArray(name, SerializationReader.readBoolArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.BOOLEAN_SIZE * elementsCount);
+                break;
+            case RCType.INT:
+                array = new IntegerArray(name, SerializationReader.readIntArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.INT_SIZE * elementsCount);
+                break;
+            case RCType.LONG:
+                array = new LongArray(name, SerializationReader.readLongArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.LONG_SIZE * elementsCount);
+                break;
+            case RCType.FLOAT:
+                array = new FloatArray(name, SerializationReader.readFloatArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.FLOAT_SIZE * elementsCount);
+                break;
+            case RCType.DOUBLE:
+                array = new DoubleArray(name, SerializationReader.readDoubleArray(data, pointer[0], elementsCount));
+                pointer[0] += (RCType.DOUBLE_SIZE * elementsCount);
+                break;
+            default:
+                byte[] arrayData = new byte[elementsCount];
+                pointer[0] = SerializationReader.readBytes(data, pointer[0], arrayData);
+                array = null;
+                break;
+        }
+        return array;
     }
 }

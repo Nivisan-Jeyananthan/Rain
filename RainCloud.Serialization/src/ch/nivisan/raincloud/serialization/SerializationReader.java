@@ -109,17 +109,19 @@ public class SerializationReader {
     }
 
     /**
-     * Read data at said pointer position
+     * Read multiple booleans from one byte at given position
      * 
-     * @param source  from where to read the data
-     * @param pointer at what position our data begins
-     * @return our data as boolean
+     * @param source
+     * @param pointer
+     * @return
      */
     public static boolean[] readBitField(byte[] source, int pointer) {
-        byte field =  source[pointer++];
+        byte field = source[pointer++];
         boolean[] bools = new boolean[8];
-        for (int i = 0; i < 8; i++)
-            bools[i] = (field >> i) & 1 ? true : false;
+        for (byte i = 0; i < 8; i++)
+            bools[i] = ((field >> i) & 1) != 0;
+
+        return bools;
     }
 
     public static String readString(byte[] source, int pointer, int length) {
@@ -138,4 +140,104 @@ public class SerializationReader {
         return ByteBuffer.wrap(source, pointer, length).array();
     }
 
+    public static char[] readCharArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.CHAR_SIZE));
+        char[] results = new char[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = readChar(source, pointer);
+            pointer += RCType.CHAR_SIZE;
+        }
+        return results;
+    }
+
+    public static boolean[] readBoolArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.BOOLEAN_SIZE));
+        boolean[] results = new boolean[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = source[pointer] != 0;
+            pointer += RCType.BOOLEAN_SIZE;
+        }
+        return results;
+    }
+
+    public static short[] readShortArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.SHORT_SIZE));
+        short[] results = new short[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = (short) (source[pointer + i] << 8 | source[pointer + i + 1]);
+            pointer += RCType.SHORT_SIZE;
+        }
+        return results;
+    }
+
+    /**
+     * Creates an int array from a byte array
+     * @param source
+     * @param pointer from which point we can expect the values to be 
+     * @param length the length of the new array
+     * @return a new int array with values from the byte array
+     */
+    public static int[] readIntArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.INT_SIZE));
+        int[] results = new int[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = readInt(source, pointer);
+            pointer += RCType.INT_SIZE;
+        }
+        return results;
+    }
+
+    /**
+     * Creates a long array from a byte array
+     * 
+     * @param source
+     * @param pointer
+     * @param length  length of the new array
+     * @return a long array with the values form the byte array
+     */
+    public static long[] readLongArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.LONG_SIZE));
+        long[] results = new long[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = readInt(source, pointer);
+            pointer += RCType.LONG_SIZE;
+        }
+        return results;
+    }
+
+    /**
+     * Reads a float array from a byte array
+     * 
+     * @param source
+     * @param pointer
+     * @param length  length of the new array
+     * @return the byte array vlaues as a float array
+     */
+    public static float[] readFloatArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.FLOAT_SIZE));
+        float[] results = new float[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = readFloat(source, pointer);
+            pointer += RCType.FLOAT_SIZE;
+        }
+        return results;
+    }
+
+    /**
+     * Reads a double array from a byte array
+     * 
+     * @param source
+     * @param pointer
+     * @param length  length of the new array
+     * @return the byte array as a double array
+     */
+    public static double[] readDoubleArray(byte[] source, int pointer, int length) {
+        assert (source.length == pointer + (length * RCType.DOUBLE_SIZE));
+        double[] results = new double[length];
+        for (int i = 0; i < results.length; i++) {
+            results[i] = readDouble(source, pointer);
+            pointer += RCType.DOUBLE_SIZE;
+        }
+        return results;
+    }
 }

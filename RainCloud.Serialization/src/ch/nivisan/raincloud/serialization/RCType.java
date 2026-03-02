@@ -21,6 +21,7 @@ public class RCType {
     public static final byte FLOAT_SIZE = 4;
     public static final byte DOUBLE_SIZE = 8;
     public static final byte BOOLEAN_SIZE = 1;
+    public static final byte BITFIELD_SIZE = 1;
     
     public static byte getSize(byte type) {
         switch (type) {
