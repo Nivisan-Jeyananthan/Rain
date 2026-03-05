@@ -14,7 +14,7 @@ public class RCString extends Container {
     public RCString(String name, String value) {
         super(ContainerType.StringType, name);
         size = super.getSize() + (value.length() * RCType.CHAR_SIZE) + RCType.INT_SIZE + RCType.SHORT_SIZE;
-        this.characterCount = (short) value.length();
+        this.characterCount = (short) (value.toCharArray().length * RCType.CHAR_SIZE);
 
         this.data = new byte[value.length() * RCType.SHORT_SIZE];
         SerializationWriter.copyBytes(data, 0, value.toCharArray());

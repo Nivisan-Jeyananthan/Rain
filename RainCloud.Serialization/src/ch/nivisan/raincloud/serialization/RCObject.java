@@ -38,7 +38,7 @@ public class RCObject extends Container {
         strings.add(value);
         size += value.getSize();
 
-        stringCount = (short) fields.size();
+        stringCount = (short) strings.size();
     }
 
     /**

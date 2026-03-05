@@ -335,7 +335,6 @@ public class SerializationWriter {
 	public static int writeBytes(byte[] destination, int pointer, String value) {
 		assert (destination.length >= pointer + (short) value.length());
 
-		pointer = writeBytes(destination, pointer, (short) value.length());
 		return copyBytes(destination, pointer, value.getBytes());
 	}
 
