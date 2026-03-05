@@ -270,7 +270,7 @@ public class SerializationReader {
         assert (source.length >= pointer + (length * RCType.SHORT_SIZE));
         short[] results = new short[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = (short) (source[pointer + i] << 8 | source[pointer + i + 1]);
+            results[i] = (short) (source[pointer] << 8 | source[pointer + 1]);
             pointer += RCType.SHORT_SIZE;
         }
         return results;
@@ -290,7 +290,7 @@ public class SerializationReader {
         assert (source.length >= pointer[0] + (length * RCType.SHORT_SIZE));
         short[] results = new short[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = (short) (source[pointer[0] + i] << 8 | source[pointer[0] + i + 1]);
+            results[i] = (short) (source[pointer[0]] << 8 | source[pointer[0] + 1]);
             pointer[0] += RCType.SHORT_SIZE;
         }
         return results;

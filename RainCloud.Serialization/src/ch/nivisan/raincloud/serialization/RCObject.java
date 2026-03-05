@@ -11,9 +11,9 @@ public class RCObject extends Container {
     private short fieldCount;
     private short arrayCount;
     private short stringCount;
-    private List<RCString> strings = new ArrayList<RCString>();
-    private List<RCField> fields = new ArrayList<RCField>();
-    private List<RCArray> arrays = new ArrayList<RCArray>();
+    private final List<RCString> strings = new ArrayList<RCString>();
+    private final List<RCField> fields = new ArrayList<RCField>();
+    private final List<RCArray> arrays = new ArrayList<RCArray>();
 
     public RCObject(String name) {
         super(ContainerType.Object, name);

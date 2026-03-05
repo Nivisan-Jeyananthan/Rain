@@ -88,12 +88,8 @@ public class Main {
         obj.addField(positionY);
         obj.addString(str);
 
-        var test = new int[20];
-        for (int i = 0; i < test.length; i++) {
-            int r = new Random().nextInt(500, 10000);
-            test[i] = r;
-        }
-        RCArray array = new IntegerArray("abc", test);
+        var test = new short[] { 1, 2, 3, 4 };
+        RCArray array = new ShortArray("abc", test);
         obj.addArray(array);
 
         System.out.println("Obj Size : " + obj.getSize());
@@ -106,7 +102,7 @@ public class Main {
         // FileService.saveToFile("./data.rain", dataNew);
         FileService.saveOptimized("./data.rain", dataNew);
 
-        printBytes(dataNew);
+        // printBytes(dataNew);
 
         IO.println("");
 
@@ -117,6 +113,7 @@ public class Main {
         byte[] dbData = FileService.getFromFile("./data.rain");
         RCDatabase database = DbDeserializer.Deserialize(dbData);
         System.out.println(database.getName());
+
     }
 
     public static void main(String[] args) {

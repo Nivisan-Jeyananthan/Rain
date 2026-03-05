@@ -20,6 +20,10 @@ public class RCString extends Container {
         SerializationWriter.copyBytes(data, 0, value.toCharArray());
     }
 
+    public String getValue(){
+        return SerializationReader.readString(data, 0, nameLength);
+    }
+
     @Override
     public int getBytes(byte[] destination, int pointer) {
         pointer = super.getBytes(destination, pointer);

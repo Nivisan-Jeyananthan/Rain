@@ -7,14 +7,13 @@ public class RCDatabase extends Container {
     public static final byte[] header = "RCDB".getBytes();
     private int size;
     private short objectCount;
-    private List<RCObject> objects = new ArrayList<RCObject>();
+    private final List<RCObject> objects = new ArrayList<RCObject>();
 
     public RCDatabase(String name) {
         super(ContainerType.Database, name);
         size = super.getSize();
         size += header.length + RCType.INT_SIZE + RCType.SHORT_SIZE;
     }
-
 
     public void addObject(RCObject object) {
         objects.add(object);

@@ -3,10 +3,12 @@ package ch.nivisan.raincloud.serialization.arrays;
 import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.fields.RCField;
 import ch.nivisan.raincloud.serialization.RCType;
+import ch.nivisan.raincloud.serialization.SerializationReader;
 
 /**
  * Bitfield where one byte represents the size of the data.
- * It contains multiple (8) booleans, where each boolean state is represented with one bit.
+ * It contains multiple (8) booleans, where each boolean state is represented
+ * with one bit.
  * Saving onto disk saves spaces by using this process.
  */
 public class Bitfield extends RCField {
@@ -22,6 +24,10 @@ public class Bitfield extends RCField {
 					values[i + 7] };
 			pointer = SerializationWriter.writeBitfield(data, pointer, temp);
 		}
+	}
+
+	public boolean[] getValues() {
+		return SerializationReader.readBitField(data, 0);
 	}
 
 	/**
