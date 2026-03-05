@@ -124,10 +124,26 @@ public class SerializationReader {
         return bools;
     }
 
+    /**
+     * Reads a string from a byte array with given length
+     * 
+     * @param source
+     * @param pointer
+     * @param length
+     * @return A new String based on values from the byte array
+     */
     public static String readString(byte[] source, int pointer, int length) {
         return new String(source, pointer, length);
     }
 
+    /**
+     * Reads a byte array from a byte array
+     * 
+     * @param source      from where to read the data
+     * @param pointer     at which index it will begin reading
+     * @param destination to where to write the data
+     * @return the pointers new location
+     */
     public static int readBytes(byte[] source, int pointer, byte[] destination) {
         for (int i = 0; i < destination.length; i++) {
             destination[i] = source[i + pointer];
@@ -136,10 +152,27 @@ public class SerializationReader {
         return pointer += destination.length;
     }
 
+    /**
+     * Reads a byte array from a byte array by length
+     * 
+     * @param source  the array to read values from
+     * @param pointer at which index it will begin reading
+     * @param length  the desired length of the new array
+     * @return a new byte array with given length
+     */
     public static byte[] readBytes(byte[] source, int pointer, int length) {
         return ByteBuffer.wrap(source, pointer, length).array();
     }
 
+    /**
+     * Reads character values from a given byte array and retrieves one
+     * 
+     * @param source  the array to read values from
+     * @param pointer at which index it will begin reading
+     * @param length  the desired length of the new array
+     * @return a new byte array with given length
+     * @return
+     */
     public static char[] readCharArray(byte[] source, int pointer, int length) {
         assert (source.length == pointer + (length * RCType.CHAR_SIZE));
         char[] results = new char[length];
@@ -150,6 +183,16 @@ public class SerializationReader {
         return results;
     }
 
+    /**
+     * Reads boolean values from a given byte array and creates a new one with the
+     * values
+     * 
+     * @param source  the array to read values from
+     * @param pointer at which index it will begin reading
+     * @param length  the desired length of the new array
+     * @return a new byte array with given length
+     * @return the new boolean array with desired length
+     */
     public static boolean[] readBoolArray(byte[] source, int pointer, int length) {
         assert (source.length == pointer + (length * RCType.BOOLEAN_SIZE));
         boolean[] results = new boolean[length];
@@ -160,6 +203,15 @@ public class SerializationReader {
         return results;
     }
 
+    /**
+     * Reads short values from a given byte array and creates a new short array to return
+     * 
+     * @param source  the array to read values from
+     * @param pointer at which index it will begin reading
+     * @param length  the desired length of the new array
+     * @return a new byte array with given length
+     * @return the new short array with desired length
+     */
     public static short[] readShortArray(byte[] source, int pointer, int length) {
         assert (source.length == pointer + (length * RCType.SHORT_SIZE));
         short[] results = new short[length];
@@ -172,9 +224,10 @@ public class SerializationReader {
 
     /**
      * Creates an int array from a byte array
+     * 
      * @param source
-     * @param pointer from which point we can expect the values to be 
-     * @param length the length of the new array
+     * @param pointer from which point we can expect the values to be
+     * @param length  the length of the new array
      * @return a new int array with values from the byte array
      */
     public static int[] readIntArray(byte[] source, int pointer, int length) {
