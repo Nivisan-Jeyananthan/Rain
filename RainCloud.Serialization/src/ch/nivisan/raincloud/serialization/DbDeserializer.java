@@ -32,6 +32,9 @@ public class DbDeserializer {
         assert (header.equals(RCDatabase.header));
         pointer += RCDatabase.header.length;
 
+        short version = SerializationReader.readShort(data, pointer);
+        pointer += RCType.SHORT_SIZE;
+
         byte containerType = SerializationReader.readByte(data, pointer++);
         assert (containerType == ContainerType.Database);
 

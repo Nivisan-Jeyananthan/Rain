@@ -5,6 +5,7 @@ import java.util.List;
 
 public class RCDatabase extends Container {
     public static final byte[] header = "RCDB".getBytes();
+	public static final short version = 0x0100; 
     private int size;
     private short objectCount;
     private final List<RCObject> objects = new ArrayList<RCObject>();
@@ -12,7 +13,7 @@ public class RCDatabase extends Container {
     public RCDatabase(String name) {
         super(ContainerType.Database, name);
         size = super.getSize();
-        size += header.length + RCType.INT_SIZE + RCType.SHORT_SIZE;
+        size += header.length + RCType.INT_SIZE + RCType.SHORT_SIZE + RCType.SHORT_SIZE;
     }
 
     public void addObject(RCObject object) {
@@ -34,6 +35,8 @@ public class RCDatabase extends Container {
     @Override
     public int getBytes(byte[] destination, int pointer) {
         pointer = SerializationWriter.copyBytes(destination, pointer, header);
+        pointer = SerializationWriter.writeBytes(destination, pointer, version);
+
         pointer = super.getBytes(destination, pointer);
 
         pointer = SerializationWriter.writeBytes(destination, pointer, size);

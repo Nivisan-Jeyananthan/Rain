@@ -9,8 +9,6 @@ package ch.nivisan.raincloud.serialization;
  */
 
 public class SerializationWriter {
-	public static final byte[] headerName = "RC".getBytes();
-	public static final short version = 0x0100; // big-endian
 
 	/**
 	 * Copies the bytes from 1 array to another using the pointer as a starting
