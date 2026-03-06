@@ -13,9 +13,9 @@ import ch.nivisan.raincloud.serialization.fields.IntField;
 public class Sandbox {
     public class Level {
         private List<Entity> entities = new ArrayList<>();
-        private String name;
-        private int width, height;
-        private String filePath;
+        private final String name;
+        private final int width, height;
+        private final String filePath;
 
         public Level(String path) {
             this.name = "Level 1";
@@ -78,13 +78,11 @@ public class Sandbox {
         public Level load(String path) {
             byte[] leveldata = FileService.getFromFile("./level.rcdb");
             RCDatabase levelDatabase = DbDeserializer.Deserialize(leveldata);
-            System.out.println(levelDatabase.getName());
 
             RCObject levelObject = levelDatabase.getObject("Level 1");
             int width = ((IntField) levelObject.getField("width")).getValue();
             int height = ((IntField) levelObject.getField("height")).getValue();
-            RCString rclevelPath = levelObject.getString("filePath");
-            var levelPath = rclevelPath.getValue();
+            String levelPath = levelObject.getString("filePath").getValue();
             String name = levelObject.getString("name").getValue();
 
             Level lvl = new Level(name, width, height, levelPath);
@@ -93,26 +91,25 @@ public class Sandbox {
             entitiesObj[0] = levelDatabase.getObject("Entity: 0");
             entitiesObj[1] = levelDatabase.getObject("Entity: 1");
 
-            List<Entity> entities = new ArrayList<>();
             for (int i = 0; i < entities.size(); i++) {
-                entities.add(new Entity(lvl));
+                int x = ((IntField) entitiesObj[i].getField("x")).getValue();
+                int y = ((IntField) entitiesObj[i].getField("y")).getValue();
+                BooleanField removed = ((BooleanField) entitiesObj[i].getField("removed"));
+                boolean isRemoved = removed.getValue();
+                String entityName = levelObject.getString("name").getValue();
+                lvl.addEntity(new Entity(lvl, entityName, x, y, isRemoved));
             }
 
-            lvl.setEntities(entities);
             return lvl;
         }
 
     }
 
     class Player extends Entity {
-        private String name;
         private String avatarPath;
 
         public Player(String name, int x, int y, Level level) {
-            super(level);
-            this.name = name;
-            this.x = x;
-            this.y = y;
+            super(level, name, x, y, false);
 
             this.avatarPath = "/res/avatar.png";
         }
@@ -126,15 +123,24 @@ public class Sandbox {
     }
 
     class Entity {
-        private String name;
-        protected int x, y;
-        private boolean removed = false;
-        private Level level;
+        public final String name;
+        protected final int x, y;
+        private boolean removed;
+        private final Level level;
 
-        public Entity(Level level) {
+        public Entity(Level level, String name) {
             this.x = 0;
             this.y = 0;
             this.level = level;
+            this.name = name;
+        }
+
+        public Entity(Level level, String name, int x, int y, boolean removed) {
+            this.level = level;
+            this.name = name;
+            this.x = x;
+            this.y = y;
+            this.removed = removed;
         }
 
         public void serialize(RCObject entity) {
@@ -146,7 +152,7 @@ public class Sandbox {
 
     public void play() {
         Level level = new Level("/res/leveldata.rcd");
-        Entity mob = new Entity(level);
+        Entity mob = new Entity(level, "mob");
         Player player = new Player("Nivisan", 40, 28, level);
 
         level.addEntity(mob);

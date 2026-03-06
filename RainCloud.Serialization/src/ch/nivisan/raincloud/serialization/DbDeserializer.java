@@ -119,10 +119,9 @@ public class DbDeserializer {
 
         byte fieldType = data[pointer[0]++];
 
-        byte fieldValue = RCType.getSize(fieldType);
         RCField field;
 
-        switch (fieldValue) {
+        switch (fieldType) {
             case RCType.BYTE:
                 field = new ByteField(fieldName, data[pointer[0]++]);
                 break;
@@ -136,7 +135,7 @@ public class DbDeserializer {
                 break;
             case RCType.BOOLEAN:
                 field = new BooleanField(fieldName, SerializationReader.readBoolean(data, pointer[0]));
-                pointer[0] += RCType.BOOLEAN;
+                pointer[0] += RCType.BOOLEAN_SIZE;
                 break;
             case RCType.INT:
                 field = new IntField(fieldName, SerializationReader.readInt(data, pointer[0]));
