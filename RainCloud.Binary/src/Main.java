@@ -88,8 +88,9 @@ public class Main {
         obj.addField(positionY);
         obj.addString(str);
 
-        var test = new short[] { 1, 2, 3, 4 };
-        RCArray array = new ShortArray("abc", test);
+        var test = new long[] { -14, 2, -3, 12 };
+        LongArray array = new LongArray("abc", test);
+        var values = array.getValues();
         obj.addArray(array);
 
         System.out.println("Obj Size : " + obj.getSize());
@@ -120,8 +121,11 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
-        serializationTest();
+        // serializationTest();
 
-        deserializationTest();
+        // deserializationTest();
+
+        Sandbox sandbox = new Sandbox();
+        sandbox.play();
     }
 }

@@ -159,8 +159,6 @@ public class DbDeserializer {
                 pointer[0] += RCType.BITFIELD_SIZE;
                 break;
             default:
-                byte[] fieldData = new byte[fieldValue];
-                pointer[0] = SerializationReader.readBytes(data, pointer[0], fieldData);
                 field = null;
                 break;
         }
@@ -235,8 +233,6 @@ public class DbDeserializer {
                 array = new DoubleArray(name, SerializationReader.readDoubleArray(data, pointer, elementsCount));
                 break;
             default:
-                byte[] arrayData = new byte[elementsCount];
-                pointer[0] = SerializationReader.readBytes(data, pointer[0], arrayData);
                 array = null;
                 break;
         }

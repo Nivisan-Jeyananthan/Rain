@@ -37,7 +37,7 @@ public class SerializationReader {
      * @return our data as short
      */
     public static short readShort(byte[] source, int pointer) {
-        return (short) (source[pointer] << 8 | source[pointer + 1]);
+        return ByteBuffer.wrap(source,pointer,2).getShort();
     }
 
     /**
@@ -49,12 +49,6 @@ public class SerializationReader {
      */
     public static int readInt(byte[] source, int pointer) {
         return ByteBuffer.wrap(source, pointer, 4).getInt();
-        /*
-         * return source[pointer] << 24 |
-         * source[pointer + 1] << 16 |
-         * source[pointer + 2] << 8 |
-         * source[pointer + 3] << 0;
-         */
     }
 
     /**
@@ -65,14 +59,7 @@ public class SerializationReader {
      * @return our data as long
      */
     public static long readLong(byte[] source, int pointer) {
-        return source[pointer] << 56 |
-                source[pointer + 1] << 48 |
-                source[pointer + 2] << 40 |
-                source[pointer + 3] << 32 |
-                source[pointer + 4] << 24 |
-                source[pointer + 5] << 16 |
-                source[pointer + 6] << 8 |
-                source[pointer + 7] << 0;
+        return ByteBuffer.wrap(source, pointer, 8).getLong();
     }
 
     /**
@@ -270,7 +257,7 @@ public class SerializationReader {
         assert (source.length >= pointer + (length * RCType.SHORT_SIZE));
         short[] results = new short[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = (short) (source[pointer] << 8 | source[pointer + 1]);
+            results[i] = readShort(source, pointer);
             pointer += RCType.SHORT_SIZE;
         }
         return results;
@@ -290,7 +277,7 @@ public class SerializationReader {
         assert (source.length >= pointer[0] + (length * RCType.SHORT_SIZE));
         short[] results = new short[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = (short) (source[pointer[0]] << 8 | source[pointer[0] + 1]);
+            results[i] = readShort(source, pointer[0]);
             pointer[0] += RCType.SHORT_SIZE;
         }
         return results;
@@ -344,7 +331,7 @@ public class SerializationReader {
         assert (source.length >= pointer + (length * RCType.LONG_SIZE));
         long[] results = new long[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = readInt(source, pointer);
+            results[i] = readLong(source, pointer);
             pointer += RCType.LONG_SIZE;
         }
         return results;
@@ -360,9 +347,9 @@ public class SerializationReader {
      */
     public static long[] readLongArray(byte[] source, int[] pointer, int length) {
         assert (source.length >= pointer[0] + (length * RCType.LONG_SIZE));
-        long[] results = new long[length * RCType.LONG_SIZE];
+        long[] results = new long[length];
         for (int i = 0; i < results.length; i++) {
-            results[i] = readInt(source, pointer[0]);
+            results[i] = readLong(source, pointer[0]);
             pointer[0] += RCType.LONG_SIZE;
         }
         return results;
@@ -378,7 +365,7 @@ public class SerializationReader {
      */
     public static float[] readFloatArray(byte[] source, int[] pointer, int length) {
         assert (source.length >= pointer[0] + (length * RCType.FLOAT_SIZE));
-        float[] results = new float[length * RCType.FLOAT_SIZE];
+        float[] results = new float[length];
         for (int i = 0; i < results.length; i++) {
             results[i] = readFloat(source, pointer[0]);
             pointer[0] += RCType.FLOAT_SIZE;
@@ -396,7 +383,7 @@ public class SerializationReader {
      */
     public static float[] readFloatArray(byte[] source, int pointer, int length) {
         assert (source.length >= pointer + (length * RCType.FLOAT_SIZE));
-        float[] results = new float[length * RCType.FLOAT_SIZE];
+        float[] results = new float[length];
         for (int i = 0; i < results.length; i++) {
             results[i] = readFloat(source, pointer);
             pointer += RCType.FLOAT_SIZE;

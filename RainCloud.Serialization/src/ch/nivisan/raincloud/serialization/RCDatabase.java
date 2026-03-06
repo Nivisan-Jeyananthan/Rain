@@ -5,10 +5,10 @@ import java.util.List;
 
 public class RCDatabase extends Container {
     public static final byte[] header = "RCDB".getBytes();
-	public static final short version = 0x0100; 
+    public static final short version = 0x0100;
     private int size;
     private short objectCount;
-    private final List<RCObject> objects = new ArrayList<RCObject>();
+    public final List<RCObject> objects = new ArrayList<RCObject>();
 
     public RCDatabase(String name) {
         super(ContainerType.Database, name);
@@ -21,6 +21,14 @@ public class RCDatabase extends Container {
         size += object.getSize();
 
         objectCount = (short) objects.size();
+    }
+
+    public RCObject getObject(String name) {
+        for (RCObject object : this.objects) {
+            if (object.getName().equals(name))
+                return object;
+        }
+        return null;
     }
 
     /**

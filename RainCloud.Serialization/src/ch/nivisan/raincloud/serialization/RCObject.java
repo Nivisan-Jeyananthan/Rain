@@ -13,7 +13,7 @@ public class RCObject extends Container {
     private short stringCount;
     private final List<RCString> strings = new ArrayList<RCString>();
     private final List<RCField> fields = new ArrayList<RCField>();
-    private final List<RCArray> arrays = new ArrayList<RCArray>();
+    public final List<RCArray> arrays = new ArrayList<RCArray>();
 
     public RCObject(String name) {
         super(ContainerType.Object, name);
@@ -39,6 +39,30 @@ public class RCObject extends Container {
         size += value.getSize();
 
         stringCount = (short) strings.size();
+    }
+
+    public RCString getString(String name) {
+        for (RCString string : this.strings) {
+            if (string.getName().equals(name))
+                return string;
+        }
+        return null;
+    }
+
+    public RCArray getArray(String name) {
+        for (RCArray array : this.arrays) {
+            if (array.getName().equals(name))
+                return array;
+        }
+        return null;
+    }
+
+    public RCField getField(String name) {
+        for (RCField field : this.fields) {
+            if (field.getName().equals(name))
+                return field;
+        }
+        return null;
     }
 
     /**
