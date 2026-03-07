@@ -1,6 +1,7 @@
 package ch.nivisan.raincloud.network;
 
-import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,6 +18,7 @@ public class Login extends JFrame {
 	private JTextField txtName;
 	private PlaceholderTextField txtIpAddress;
 	private PlaceholderTextField txtPort;
+
 
 	public Login() {
 		try {
@@ -44,7 +46,6 @@ public class Login extends JFrame {
 		txtName.setBounds(67, 60, 165, 28);
 		contentPanel.add(txtName);
 		txtName.setColumns(10);
-		
 
 		JLabel ipLabel = new JLabel("IP Address");
 		ipLabel.setBounds(127, 100, 100, 16);
@@ -67,8 +68,26 @@ public class Login extends JFrame {
 		txtPort.setColumns(10);
 
 		JButton loginButton = new JButton("Login");
-		loginButton.setBounds(91,280,117,29);
+		loginButton.setBounds(91, 280, 117, 29);
 		contentPanel.add(loginButton);
+		loginButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				String name = txtName.getText();
+				String ipaddress = txtIpAddress.getText();
+				int port = Integer.parseInt(txtPort.getText());
 
+				login(name, ipaddress, port);
+			}
+
+		});
+	}
+
+	private void login(String name, String ipaddress, int port) {
+		dispose();
+		System.out.println("Name: " + name);
+		System.out.println("IP: " + ipaddress);
+		System.out.println("Port: " + port);
+		System.exit(0);
 	}
 }
