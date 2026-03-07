@@ -2,10 +2,13 @@ package ch.nivisan.raincloud.network;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
 public class Login extends JFrame {
@@ -16,6 +19,13 @@ public class Login extends JFrame {
 	private PlaceholderTextField txtPort;
 
 	public Login() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+
 		setTitle("Login");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,6 +44,7 @@ public class Login extends JFrame {
 		txtName.setBounds(67, 60, 165, 28);
 		contentPanel.add(txtName);
 		txtName.setColumns(10);
+		
 
 		JLabel ipLabel = new JLabel("IP Address");
 		ipLabel.setBounds(127, 100, 100, 16);
@@ -47,12 +58,17 @@ public class Login extends JFrame {
 
 		JLabel portLabel = new JLabel("Port");
 		portLabel.setBounds(127, 160, 100, 16);
-		contentPanel.add(ipLabel);
+		contentPanel.add(portLabel);
 
 		txtPort = new PlaceholderTextField();
 		txtPort.setBounds(67, 180, 165, 28);
-		txtIpAddress.setText("e.g 8080");
-		contentPanel.add(txtIpAddress);
-		txtIpAddress.setColumns(10);
+		txtPort.setPlaceholder("e.g 8080");
+		contentPanel.add(txtPort);
+		txtPort.setColumns(10);
+
+		JButton loginButton = new JButton("Login");
+		loginButton.setBounds(91,280,117,29);
+		contentPanel.add(loginButton);
+
 	}
 }
