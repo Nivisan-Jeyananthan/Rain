@@ -19,7 +19,6 @@ public class Login extends JFrame {
 	private PlaceholderTextField txtIpAddress;
 	private PlaceholderTextField txtPort;
 
-
 	public Login() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -75,8 +74,8 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				String name = txtName.getText();
 				String ipaddress = txtIpAddress.getText();
-				int port = Integer.parseInt(txtPort.getText());
-
+				String portText = txtPort.getText().trim().length() > 0 ? txtPort.getText() : "8080";
+				int port = Integer.parseInt(portText);
 				login(name, ipaddress, port);
 			}
 
@@ -88,6 +87,7 @@ public class Login extends JFrame {
 		System.out.println("Name: " + name);
 		System.out.println("IP: " + ipaddress);
 		System.out.println("Port: " + port);
-		System.exit(0);
+
+		new Client(name, ipaddress, port);
 	}
 }
