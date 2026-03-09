@@ -91,6 +91,6 @@ public class Login extends JFrame {
 		if(ipaddress.trim().length() == 0)
 			ipaddress = "localhost";
 
-		new Client(name, ipaddress, port);
+		new ClientWindow(name, ipaddress, port);
 	}
 }
