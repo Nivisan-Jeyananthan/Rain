@@ -29,14 +29,16 @@ import javax.swing.text.DefaultCaret;
 
 public class Client extends JFrame {
     private static final long serialVersionUID = 1L;
-    private JTextArea txtHistory;
+
     private PlaceholderTextField messagTextField;
+    private JTextArea txtHistory;
     private JPanel contentPanel;
+    private DefaultCaret caret;
+
+    private NetworkUtils networkUtils;
     private final String name;
     private final String address;
     private final int port;
-    private DefaultCaret caret;
-    private NetworkUtils networkUtils;
 
     public Client(String name, String address, int port) {
         this.port = port;
@@ -44,11 +46,20 @@ public class Client extends JFrame {
         this.address = address;
         networkUtils = new NetworkUtils(address, port);
 
-        if (!networkUtils.connected())
+        if (!networkUtils.connected()) {
             writeConsole("Connectioin failed!");
+            return;
+        }
 
         createWindow();
         writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);
+        String data = "/c/" + name;
+        networkUtils.sendBytes(data.getBytes());
+
+        printWelcomeMessage();
+    }
+
+    private void printWelcomeMessage() {
         writeConsole("Connected successfully! ");
         writeConsole("You can start chatting.");
         writeConsole("------------------------");
@@ -133,6 +144,8 @@ public class Client extends JFrame {
 
         message = name + " : " + message;
         writeConsole(message);
+        message = "/m/" + message;
+        networkUtils.sendBytes(message.getBytes());
         txtHistory.setCaretPosition(txtHistory.getDocument().getLength());
         messagTextField.setText(null);
     }

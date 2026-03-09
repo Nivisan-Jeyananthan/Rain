@@ -88,6 +88,9 @@ public class Login extends JFrame {
 		System.out.println("IP: " + ipaddress);
 		System.out.println("Port: " + port);
 
+		if(ipaddress.trim().length() == 0)
+			ipaddress = "localhost";
+
 		new Client(name, ipaddress, port);
 	}
 }

@@ -18,7 +18,7 @@ public class NetworkUtils {
 
     public NetworkUtils(String address, int port) {
         try {
-            socket = new DatagramSocket(port);
+            socket = new DatagramSocket();
             ip = InetAddress.getByName(address);
             this.port = port;
         } catch (UnknownHostException | SocketException e) {
@@ -30,7 +30,7 @@ public class NetworkUtils {
         return ip != null;
     }
 
-    private String recieveBytes() {
+    public String recieveBytes() {
         byte[] data = new byte[1024];
         DatagramPacket packet = new DatagramPacket(data, data.length);
 
@@ -48,7 +48,7 @@ public class NetworkUtils {
         return null;
     }
 
-    private void sendBytes(final byte[] data) {
+    public void sendBytes(final byte[] data) {
         sendThread = new Thread("Send") {
             public void run() {
                 DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
