@@ -16,22 +16,21 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.DefaultCaret;
 
-public class ClientWindow extends JFrame {
+public class ClientWindow extends JFrame  {
     private static final long serialVersionUID = 1L;
 
     private PlaceholderTextField messagTextField;
     private JTextArea txtHistory;
     private JPanel contentPanel;
-    private DefaultCaret caret;
-
+    private Thread recieveThread;
     private Client client;
+
+    private boolean running;
 
     public ClientWindow(final String name, final String address, final int port) {
         createWindow();
         writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);
-
         client = new Client(name, address, port);
 
         if (!client.connected()) {
@@ -39,11 +38,12 @@ public class ClientWindow extends JFrame {
             return;
         }
 
+        running = true;
+        listen();
         printWelcomeMessage();
     }
 
     private void printWelcomeMessage() {
-        writeConsole("Connected successfully! ");
         writeConsole("You can start chatting.");
         writeConsole("------------------------");
     }
@@ -110,6 +110,7 @@ public class ClientWindow extends JFrame {
         gbcBtnSend.gridy = 2;
         btnSend.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
+                running = false;
                 sendMessage();
             }
         });
@@ -131,6 +132,20 @@ public class ClientWindow extends JFrame {
         client.sendBytes(message.getBytes());
         txtHistory.setCaretPosition(txtHistory.getDocument().getLength());
         messagTextField.setText(null);
+    }
+
+    private void listen() {
+        recieveThread = new Thread("recieve") {
+            public void run() {
+                while (running) {
+                    String message = client.recieveBytes();
+                    if (message.startsWith("/c/"))
+                        writeConsole("Successfully connected: " + client.getId());
+                }
+
+            }
+        };
+        recieveThread.start();
     }
 
     private void writeConsole(String message) {

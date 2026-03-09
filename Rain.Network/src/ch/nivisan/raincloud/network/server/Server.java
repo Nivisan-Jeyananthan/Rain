@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +66,12 @@ public class Server implements Runnable {
     private void processPacket(DatagramPacket packet) {
         String value = new String(packet.getData());
         if (value.startsWith("/c/")) {
-            clients.add(
-                    new ServerClient(value.substring(4, value.length()), packet.getAddress(), packet.getPort()));
+            ServerClient serverClient = new ServerClient(value.substring(4, value.length()), packet.getAddress(),
+                    packet.getPort());
+            clients.add(serverClient);
+            String id = "/c/" + serverClient.Id;
+            sendBytes(id.getBytes(), packet.getAddress(), packet.getPort());
+
         } else if (value.startsWith("/m/")) {
             relayMessage(value);
         } else {
