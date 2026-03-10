@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import javax.xml.stream.events.StartDocument;
+
 public class Client {
 	private DatagramSocket socket;
 	private InetAddress ip;
@@ -24,22 +26,29 @@ public class Client {
 		this.address = address;
 		this.port = port;
 
-		try {
-			socket = new DatagramSocket();
-			ip = InetAddress.getByName(address);
-		} catch (UnknownHostException | SocketException e) {
-			e.printStackTrace();
-			return;
-		}
-
-	establishConnection();
-		running = true;
+		establishConnection();
 	}
 
 	private void establishConnection() {
 		String data = "/c/" + name + "/e/";
-		sendBytes(data.getBytes());
-		recieveBytes();
+		new Thread() {
+			public void run() {
+				try {
+					socket = new DatagramSocket();
+					ip = InetAddress.getByName(address);
+				} catch (UnknownHostException | SocketException e) {
+					e.printStackTrace();
+					return;
+				}
+
+				sendBytes(data.getBytes());
+				recieveBytes();
+				running = true;
+
+			}
+		}.start();
+
+
 	}
 
 	public boolean connected() {
@@ -59,8 +68,7 @@ public class Client {
 		if (message.startsWith("/c/")) {
 			String tempString = message.split("/c/|/e/")[1];
 			this.Id = Integer.parseInt(tempString);
-		}
-		else if (message.startsWith("/i/")) {
+		} else if (message.startsWith("/i/")) {
 			String serverData = "/i/" + Id + "/e/";
 			sendBytes(serverData.getBytes());
 		}

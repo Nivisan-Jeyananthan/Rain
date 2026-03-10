@@ -8,9 +8,8 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Login frameLogin = new Login();
-					frameLogin.setVisible(true);
-				}catch(Exception e) {
+					new Login();
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

@@ -70,8 +70,6 @@ public class ClientWindow extends JFrame {
         GridBagLayout gblContentPanel = new GridBagLayout();
         gblContentPanel.columnWidths = new int[] { 10, 850, 30, 10 };
         gblContentPanel.rowHeights = new int[] { 35, 475, 40 };
-        gblContentPanel.columnWeights = new double[] { 1.0, 1.0 };
-        gblContentPanel.rowWeights = new double[] { 1.0, Double.MIN_VALUE };
         contentPanel.setLayout(gblContentPanel);
 
         txtHistory = new JTextArea();
@@ -87,6 +85,8 @@ public class ClientWindow extends JFrame {
         gbcHistory.gridy = 0;
         gbcHistory.gridwidth = 3;
         gbcHistory.gridheight = 2;
+        gbcHistory.weightx = 1;
+        gbcHistory.weighty = 1;
         contentPanel.add(scroll, gbcHistory);
 
         messagTextField = new PlaceholderTextField();
@@ -97,6 +97,8 @@ public class ClientWindow extends JFrame {
         gbcMessage.gridx = 0;
         gbcMessage.gridy = 2;
         gbcMessage.gridwidth = 2;
+        gbcMessage.weightx = 1;
+        gbcMessage.weighty = 0;
         messagTextField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_ENTER)
@@ -111,6 +113,8 @@ public class ClientWindow extends JFrame {
         gbcBtnSend.insets = new Insets(0, 0, 0, 5);
         gbcBtnSend.gridx = 2;
         gbcBtnSend.gridy = 2;
+        gbcBtnSend.weightx = 0;
+        gbcBtnSend.weighty = 0;
         btnSend.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 running = false;
@@ -153,10 +157,10 @@ public class ClientWindow extends JFrame {
                      if (message.startsWith("/m/")) {
                         String text = message.split("/m/|/e/")[1];
                         writeConsole(text);
-                    } else {
-                    	System.out.println("Other message : ");
-                    	System.out.println(message);
-                    }
+                    }else if (message.startsWith("/d/")) {
+                    	dispose();
+                    	new Login();
+            		}
                 }
 
             }

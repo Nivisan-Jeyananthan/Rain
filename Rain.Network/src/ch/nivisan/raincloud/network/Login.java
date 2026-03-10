@@ -80,6 +80,8 @@ public class Login extends JFrame {
 			}
 
 		});
+		
+		setVisible(true);
 	}
 
 	private void login(String name, String ipaddress, int port) {

@@ -7,9 +7,9 @@ public class ServerClient {
 	public static final AtomicInteger count = new AtomicInteger(0);
 	
 	public final int Id;
-	public String name;
-	public InetAddress address;
-	public int port;
+	public final String name;
+	public final InetAddress address;
+	public final int port;
 	public int attempt = 0;
 	
 	public final static int maxAttempts = 5;

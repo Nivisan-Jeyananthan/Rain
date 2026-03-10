@@ -8,19 +8,21 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 
 public class Server implements Runnable {
-	private List<ServerClient> clients = new ArrayList<ServerClient>();
-	private HashSet<Integer> clientResponses = new HashSet<Integer>();
+	protected final List<ServerClient> clients = new ArrayList<ServerClient>();
+	private final HashSet<Integer> clientResponses = new HashSet<Integer>();
 
 	private final int port;
-	private DatagramSocket socket;
+	protected DatagramSocket socket;
 
 	private Thread serverThread;
 	private Thread manageThread;
 	private Thread recieveThread;
 	private Thread sendThread;
-	private boolean running;
+	protected boolean running;
+	protected boolean raw;
 
 	public Server(int port) {
 		this.port = port;
@@ -39,8 +41,19 @@ public class Server implements Runnable {
 	public void run() {
 		running = true;
 		System.out.println("Server listening on port: " + port);
-		// manageClients();
+		manageClients();
 		recieveBytes();
+
+		Scanner scanner = new Scanner(System.in);
+		while (running) {
+			String text = scanner.nextLine();
+			if (!text.startsWith(".")) {
+				relayMessage("/m/Server:" + text + "/e/");
+				continue;
+			}
+
+			ServerCommands.read(text, this, scanner);
+		}
 	}
 
 	private void recieveBytes() {
@@ -65,17 +78,25 @@ public class Server implements Runnable {
 
 	private void processPacket(DatagramPacket packet) {
 		String value = new String(packet.getData());
+		if (raw) {
+			System.out.println("Raw: " + value);
+		}
+
 		if (value.startsWith("/c/")) {
 			String name = value.split("/c/|/e/")[1];
-			ServerClient serverClient = new ServerClient(name,packet.getAddress(),
+			ServerClient serverClient = new ServerClient(name, packet.getAddress(),
 					packet.getPort());
 			clients.add(serverClient);
-			sendMessage(serverClient);
-		} else if (value.startsWith("/m/")) {
+			sendConnectionId(serverClient);
+			String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
+			relayMessage(message);
+			return;
+		} 	
+		else if (value.startsWith("/m/")) {
 			relayMessage(value);
 		} else if (value.startsWith("/d/")) {
 			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
-			disconnectClient(index, true);
+			disconnectClient(index, ClientDisconnectType.Disconnect);
 		} else if (value.startsWith("/i/")) {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
@@ -89,7 +110,7 @@ public class Server implements Runnable {
 	 * @param id
 	 * @param status client closed = true, unnatural causes = false
 	 */
-	private void disconnectClient(int id, boolean status) {
+	private void disconnectClient(int id, ClientDisconnectType status) {
 		ServerClient client = null;
 		for (int i = 0; i < clients.size(); i++) {
 			if (clients.get(i).getId() == id) {
@@ -103,30 +124,60 @@ public class Server implements Runnable {
 			return;
 
 		String message = "";
-		if (status) {
+		if (status == ClientDisconnectType.Disconnect) {
 			message = "Client " + client.name + "(" + client.Id + ")" + "@" + client.address.toString() + ":"
 					+ client.port + " disconnected";
-		} else {
+		} else if (status == ClientDisconnectType.Timeout) {
 			message = "Client " + client.name + "(" + client.Id + ")" + "@" + client.address.toString() + ":"
 					+ client.port + " timed out";
+		} else if (status == ClientDisconnectType.Kick) {
+			message = "Client " + client.name + "(" + client.Id + ")" + "@" + client.address.toString() + ":"
+					+ client.port + " kicked out";
+			sendBytes("/d/".getBytes(), client.address, client.port);
+			relayMessage("/m/ ---- Server: The user (" + client.name + ") has been kicked from the server ----");
 		}
 
 		System.out.println(message);
 
 	}
 
-	private void relayMessage(String message) {
+	protected boolean kickClient(String name) {
 		for (int i = 0; i < clients.size(); i++) {
 			ServerClient client = clients.get(i);
-			sendBytes(message.getBytes(), client.address, client.port);
+			if (client.name.equals(name)) {
+				disconnectClient(client.Id, ClientDisconnectType.Kick);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean kickClient(int id) {
+		for (int i = 0; i < clients.size(); i++) {
+			ServerClient client = clients.get(i);
+			if (client.getId() == id) {
+				disconnectClient(id, ClientDisconnectType.Kick);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected void relayMessage(String message) {
+		byte[] messageBytes = message.getBytes();
+		for (int i = 0; i < clients.size(); i++) {
+			ServerClient client = clients.get(i);
+			sendBytes(messageBytes, client.address, client.port);
 		}
 	}
 
 	private void manageClients() {
+		final String messageString = "/i/server/e/";
+
 		manageThread = new Thread("Manage") {
 			public void run() {
 				while (running) {
-					relayMessage("/i/server/e/");
+					relayMessage(messageString);
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
@@ -136,9 +187,9 @@ public class Server implements Runnable {
 
 					for (int i = 0; i < clients.size(); i++) {
 						ServerClient client = clients.get(i);
-						if (!clientResponses.contains(clientResponses)) {
+						if (!clientResponses.contains(client.Id)) {
 							if (client.attempt >= ServerClient.maxAttempts) {
-								disconnectClient(client.Id, false);
+								disconnectClient(client.Id, ClientDisconnectType.Timeout);
 							} else {
 								client.attempt++;
 							}
@@ -155,10 +206,10 @@ public class Server implements Runnable {
 		manageThread.start();
 	}
 
-	private void sendMessage(ServerClient client) {
+	private void sendConnectionId(ServerClient client) {
 		String message = "/c/" + client.getId() + "/e/";
-		sendBytes(message.getBytes(), client.address, port);
-		System.out.println("Client created with ID: "+ client.getId());
+		sendBytes(message.getBytes(), client.address, client.port);
+		System.out.println("Client created with ID: " + client.getId());
 	}
 
 	private void sendBytes(final byte[] data, final InetAddress clientAddress, final int clientPort) {
