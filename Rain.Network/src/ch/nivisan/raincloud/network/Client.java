@@ -79,6 +79,10 @@ public class Client {
 		sendThread.start();
 	}
 
+	public void setId(int Id){
+		this.Id = Id;
+	}
+
 	public int getId() {
 		return Id;
 	}

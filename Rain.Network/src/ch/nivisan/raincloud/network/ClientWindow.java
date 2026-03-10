@@ -17,7 +17,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-public class ClientWindow extends JFrame  {
+public class ClientWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private PlaceholderTextField messagTextField;
@@ -139,8 +139,15 @@ public class ClientWindow extends JFrame  {
             public void run() {
                 while (running) {
                     String message = client.recieveBytes();
-                    if (message.startsWith("/c/"))
-                        writeConsole("Successfully connected: " + client.getId());
+                    if (message.startsWith("/c/")) {
+                        int id = Integer.parseInt(message.split("/c/|/e/")[1]);
+                        client.setId(id);
+                    } else if (message.startsWith("/m/")) {
+                        String text = message.split("/m/|/e/")[1];
+                        writeConsole(text);
+                    } else {
+
+                    }
                 }
 
             }

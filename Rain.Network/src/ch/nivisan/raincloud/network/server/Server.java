@@ -70,7 +70,7 @@ public class Server implements Runnable {
                     packet.getPort());
             clients.add(serverClient);
             String id = "/c/" + serverClient.Id;
-            sendBytes(id.getBytes(), packet.getAddress(), packet.getPort());
+            sendMessage(id, packet.getAddress(), packet.getPort());
 
         } else if (value.startsWith("/m/")) {
             relayMessage(value);
@@ -94,6 +94,11 @@ public class Server implements Runnable {
         };
 
         manageThread.start();
+    }
+
+    private void sendMessage(String message, InetAddress address, int port) {
+        message += "/e/";
+        sendBytes(message.getBytes(), address, port);
     }
 
     private void sendBytes(final byte[] data, final InetAddress clientAddress, final int clientPort) {
