@@ -6,9 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
 public class Client {
 	private DatagramSocket socket;
@@ -32,14 +29,15 @@ public class Client {
 			ip = InetAddress.getByName(address);
 		} catch (UnknownHostException | SocketException e) {
 			e.printStackTrace();
+			return;
 		}
 
-		establishConnection();
+	establishConnection();
 		running = true;
 	}
 
 	private void establishConnection() {
-		String data = "/c/" + name;
+		String data = "/c/" + name + "/e/";
 		sendBytes(data.getBytes());
 		recieveBytes();
 	}
@@ -59,13 +57,24 @@ public class Client {
 		}
 		String message = new String(packet.getData());
 		if (message.startsWith("/c/")) {
-			Id = Integer.parseInt(message.substring(3, 7));
+			String tempString = message.split("/c/|/e/")[1];
+			this.Id = Integer.parseInt(tempString);
+		}
+		else if (message.startsWith("/i/")) {
+			String serverData = "/i/" + Id + "/e/";
+			sendBytes(serverData.getBytes());
 		}
 
 		return message;
 	}
 
-	public void sendBytes(final byte[] data) {
+	public void sendText(String message) {
+		message = message.replaceAll("/\\w/", "");
+		message = "/m/" + message + "/e/";
+		sendBytes(message.getBytes());
+	}
+
+	private void sendBytes(final byte[] data) {
 		sendThread = new Thread("Send") {
 			public void run() {
 				DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
@@ -79,12 +88,29 @@ public class Client {
 		sendThread.start();
 	}
 
-	public void setId(int Id){
+	public void setId(int Id) {
 		this.Id = Id;
 	}
 
 	public int getId() {
 		return Id;
+	}
+
+	public void quit() {
+		if (!connected())
+			return;
+
+		String message = "/d/" + Id + "/e/";
+		sendBytes(message.getBytes());
+
+		new Thread() {
+			public void run() {
+				synchronized (socket) {
+					socket.close();
+				}
+			}
+		}.start();
+
 	}
 
 }

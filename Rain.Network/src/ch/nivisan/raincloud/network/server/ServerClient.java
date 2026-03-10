@@ -12,6 +12,8 @@ public class ServerClient {
 	public int port;
 	public int attempt = 0;
 	
+	public final static int maxAttempts = 5;
+	
 	public ServerClient(String name, InetAddress address, int port) {
 		Id = UniqueIdentifier.getIdentifier();
 		System.out.println("ID: "+Id);
@@ -19,8 +21,8 @@ public class ServerClient {
 		this.address = address;
 		this.port = port;
 	}
-	
-	public int getId() {
+
+	public int getId(){
 		return Id;
 	}
 }

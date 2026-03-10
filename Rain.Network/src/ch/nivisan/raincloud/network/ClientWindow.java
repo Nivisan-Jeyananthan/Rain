@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -116,6 +119,13 @@ public class ClientWindow extends JFrame {
         });
         contentPanel.add(btnSend, gbcBtnSend);
 
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent event) {
+                running = false;
+                client.quit();
+            }
+        });
+
         setVisible(true);
         requestFocus();
         messagTextField.requestFocusInWindow();
@@ -127,26 +137,25 @@ public class ClientWindow extends JFrame {
             return;
 
         message = client.name + " : " + message;
-        writeConsole(message);
-        message = "/m/" + message;
-        client.sendBytes(message.getBytes());
+        client.sendText(message);
         txtHistory.setCaretPosition(txtHistory.getDocument().getLength());
         messagTextField.setText(null);
     }
 
+    /**
+     * Listen for incoming traffic
+     */
     private void listen() {
         recieveThread = new Thread("recieve") {
             public void run() {
                 while (running) {
                     String message = client.recieveBytes();
-                    if (message.startsWith("/c/")) {
-                        int id = Integer.parseInt(message.split("/c/|/e/")[1]);
-                        client.setId(id);
-                    } else if (message.startsWith("/m/")) {
+                     if (message.startsWith("/m/")) {
                         String text = message.split("/m/|/e/")[1];
                         writeConsole(text);
                     } else {
-
+                    	System.out.println("Other message : ");
+                    	System.out.println(message);
                     }
                 }
 
