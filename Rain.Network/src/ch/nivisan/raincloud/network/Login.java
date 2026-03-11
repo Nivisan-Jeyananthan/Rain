@@ -80,7 +80,7 @@ public class Login extends JFrame {
 			}
 
 		});
-		
+
 		setVisible(true);
 	}
 
@@ -90,7 +90,7 @@ public class Login extends JFrame {
 		System.out.println("IP: " + ipaddress);
 		System.out.println("Port: " + port);
 
-		if(ipaddress.trim().length() == 0)
+		if (ipaddress.trim().length() == 0)
 			ipaddress = "localhost";
 
 		new ClientWindow(name, ipaddress, port);

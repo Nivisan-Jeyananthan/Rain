@@ -29,18 +29,18 @@ public class ServerCommands {
 			exitProgram(server, scanner);
 		} else if (text.startsWith(kickClient)) {
 			kickClient(text, server);
-		}else {
+		} else {
 			printHelp();
 		}
 	}
-	
+
 	private static void printHelp() {
 		System.out.println("Available commands are: ");
 		System.out.println("------------------------------");
 		System.out.println(clearConsole + " -> clears the console\n");
 		System.out.println(raw + " -> enables raw mode to see all incoming data\n");
 		System.out.println(clients + " -> lists all connected clients\n");
-		System.out.println(kickClient + " [id or name]"+ " -> kick the connected client with id or name");
+		System.out.println(kickClient + " [id or name]" + " -> kick the connected client with id or name");
 		System.out.println("\t e.g id  : .kick 1850");
 		System.out.println("\t e.g name: .kick Hugo\n");
 		System.out.println(exitProgramm + " -> kicks all connected clients and quits the program\n");
@@ -55,7 +55,6 @@ public class ServerCommands {
 		try {
 			id = Integer.parseInt(name);
 		} catch (Exception exception) {
-			exception.printStackTrace();
 		}
 
 		boolean isKicked = false;

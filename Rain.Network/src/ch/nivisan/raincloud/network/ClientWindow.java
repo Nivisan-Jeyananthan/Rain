@@ -24,7 +24,6 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MenuListener;
 
 public class ClientWindow extends JFrame {
 	private static final long serialVersionUID = 1L;

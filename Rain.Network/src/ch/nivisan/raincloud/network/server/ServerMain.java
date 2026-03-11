@@ -10,13 +10,12 @@ public class ServerMain {
     }
 
     public static void main(String[] args) {
-        int localPort;
         if (args.length > 1 || args.length == 0) {
             System.out.println("Usage: java ServerMain.jar <port>");
             return;
         }
 
-        localPort = Integer.parseInt(args[0]);
+        int localPort = Integer.parseInt(args[0]);
         new ServerMain(localPort);
     }
 }

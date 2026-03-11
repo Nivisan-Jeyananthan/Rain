@@ -1,11 +1,9 @@
 package ch.nivisan.raincloud.network;
 
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
