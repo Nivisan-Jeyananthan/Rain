@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class Server implements Runnable {
 	protected final List<ServerClient> clients = new ArrayList<ServerClient>();
@@ -47,13 +49,15 @@ public class Server implements Runnable {
 		Scanner scanner = new Scanner(System.in);
 		while (running) {
 			String text = scanner.nextLine();
-			if (!text.startsWith(".")) {
+			if (text.startsWith("-m")) {
+				text = text.split("-m")[1].trim();
 				relayMessage("/m/Server:" + text + "/e/");
 				continue;
 			}
 
 			ServerCommands.read(text, this, scanner);
 		}
+		scanner.close();
 	}
 
 	private void recieveBytes() {
@@ -64,8 +68,10 @@ public class Server implements Runnable {
 					DatagramPacket packet = new DatagramPacket(data, data.length);
 
 					try {
-						socket.receive(packet);
+						if (!socket.isClosed())
+							socket.receive(packet);
 						processPacket(packet);
+					} catch (SocketException e) {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -84,15 +90,13 @@ public class Server implements Runnable {
 
 		if (value.startsWith("/c/")) {
 			String name = value.split("/c/|/e/")[1];
-			ServerClient serverClient = new ServerClient(name, packet.getAddress(),
-					packet.getPort());
+			ServerClient serverClient = new ServerClient(name, packet.getAddress(), packet.getPort());
 			clients.add(serverClient);
 			sendConnectionId(serverClient);
 			String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
 			relayMessage(message);
 			return;
-		} 	
-		else if (value.startsWith("/m/")) {
+		} else if (value.startsWith("/m/")) {
 			relayMessage(value);
 		} else if (value.startsWith("/d/")) {
 			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
@@ -100,6 +104,8 @@ public class Server implements Runnable {
 		} else if (value.startsWith("/i/")) {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
+		} else if (value.startsWith("/u/")) {
+			sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
 		} else {
 			System.out.println(value);
 		}
@@ -141,34 +147,46 @@ public class Server implements Runnable {
 
 	}
 
-	protected boolean kickClient(String name) {
+	private boolean handleClientAction(Predicate<ServerClient> condition, Consumer<ServerClient> action) {
 		for (int i = 0; i < clients.size(); i++) {
 			ServerClient client = clients.get(i);
-			if (client.name.equals(name)) {
-				disconnectClient(client.Id, ClientDisconnectType.Kick);
+			if (condition.test(client)) {
+				action.accept(client);
 				return true;
 			}
 		}
 		return false;
 	}
 
+	protected boolean kickClient(String name) {
+		return handleClientAction(client -> client.name.toLowerCase().equals(name),
+				client -> disconnectClient(client.Id, ClientDisconnectType.Kick));
+	}
+
 	protected boolean kickClient(int id) {
-		for (int i = 0; i < clients.size(); i++) {
-			ServerClient client = clients.get(i);
-			if (client.getId() == id) {
-				disconnectClient(id, ClientDisconnectType.Kick);
-				return true;
-			}
-		}
-		return false;
+		return handleClientAction(client -> client.Id == id,
+				client -> disconnectClient(client.Id, ClientDisconnectType.Kick));
 	}
 
 	protected void relayMessage(String message) {
 		byte[] messageBytes = message.getBytes();
-		for (int i = 0; i < clients.size(); i++) {
-			ServerClient client = clients.get(i);
-			sendBytes(messageBytes, client.address, client.port);
+		handleClientAction(_ -> true, client -> sendBytes(messageBytes, client.address, client.port));
+	}
+
+	protected String getOnlineUsers() {
+		String usernames = "/u/";
+		if (clients.size() == 1) {
+			return "/u/" + clients.getFirst().name + "/e/";
 		}
+
+		for (int i = 0; i < clients.size() - 1; i++) {
+			ServerClient client = clients.get(i);
+			if (!client.name.isBlank())
+				usernames += client.name + "/n/";
+		}
+
+		usernames += clients.getLast().name + "/e/";
+		return usernames;
 	}
 
 	private void manageClients() {
@@ -218,7 +236,8 @@ public class Server implements Runnable {
 				DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
 
 				try {
-					socket.send(packet);
+					if (!socket.isClosed())
+						socket.send(packet);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

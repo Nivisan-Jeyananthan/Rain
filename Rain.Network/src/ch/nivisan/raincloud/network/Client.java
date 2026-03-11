@@ -31,23 +31,19 @@ public class Client {
 
 	private void establishConnection() {
 		String data = "/c/" + name + "/e/";
-		new Thread() {
-			public void run() {
-				try {
-					socket = new DatagramSocket();
-					ip = InetAddress.getByName(address);
-				} catch (UnknownHostException | SocketException e) {
-					e.printStackTrace();
-					return;
-				}
+		try {
+			socket = new DatagramSocket();
+			ip = InetAddress.getByName(address);
+		} catch (UnknownHostException | SocketException e) {
+			e.printStackTrace();
+			return;
+		}
 
-				sendBytes(data.getBytes());
-				recieveBytes();
-				running = true;
+		sendBytes(data.getBytes());
+		recieveBytes();
 
-			}
-		}.start();
-
+		System.out.println("Local port: " + socket.getLocalPort() + " normal: " + socket.getPort());
+		running = true;
 
 	}
 
@@ -60,7 +56,8 @@ public class Client {
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 
 		try {
-			socket.receive(packet);
+			if (!socket.isClosed())
+				socket.receive(packet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,12 +79,18 @@ public class Client {
 		sendBytes(message.getBytes());
 	}
 
+	public void requestUsernames() {
+		sendBytes("/u/".getBytes());
+	}
+
 	private void sendBytes(final byte[] data) {
 		sendThread = new Thread("Send") {
 			public void run() {
 				DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
+
 				try {
-					socket.send(packet);
+					if (!socket.isClosed())
+						socket.send(packet);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -104,17 +107,24 @@ public class Client {
 		return Id;
 	}
 
-	public void quit() {
+	public void quit(boolean kicked) {
 		if (!connected())
 			return;
 
-		String message = "/d/" + Id + "/e/";
-		sendBytes(message.getBytes());
+		if (!kicked) {
+			String message = "/d/" + Id + "/e/";
+			sendBytes(message.getBytes());
+		}
 
 		new Thread() {
 			public void run() {
 				synchronized (socket) {
-					socket.close();
+					try {
+						socket.close();
+					} catch (Exception e) {
+						System.out.println("Not closed socket system");
+					}
+
 				}
 			}
 		}.start();
