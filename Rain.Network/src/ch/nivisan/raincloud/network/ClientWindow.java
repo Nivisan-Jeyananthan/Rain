@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
+import java.util.Random;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,7 +21,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
@@ -201,8 +202,8 @@ public class ClientWindow extends JFrame {
 			public void run() {
 				while (running) {
 					String message = client.recieveBytes();
-				if (message == null || message.isEmpty())
-					continue;          // timeout or no data
+					if (message.startsWith("/m/")) {
+						String text = message.split("/m/|/e/")[1];
 						writeConsole(text);
 					} else if (message.startsWith("/u/")) {
 						String[] users = message.split("/u/|/n/|/e/");

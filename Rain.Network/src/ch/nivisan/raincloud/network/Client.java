@@ -67,15 +67,20 @@ public class Client {
 		try {
 			if (!socket.isClosed())
 				socket.receive(packet);
-        } catch (java.net.SocketTimeoutException timeout) {
-            // silently ignore; this is expected when no packet arrives
-            return "";
-        } catch (IOException e) {
-            // includes SocketException and others
-            e.printStackTrace();
-            return "";
-        }
-
+		} catch (SocketException socketException) {
+			socketException.printStackTrace();
+			return "";
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+		String message = new String(packet.getData());
+		if (message.startsWith("/c/")) {
+			final String tempString = message.split("/c/|/e/")[1];
+			this.Id = Integer.parseInt(tempString);
+		} else if (message.startsWith("/i/")) {
+			final String serverData = "/i/" + Id + "/e/";
+			sendBytes(serverData.getBytes());
 		}
 
 		return message;
