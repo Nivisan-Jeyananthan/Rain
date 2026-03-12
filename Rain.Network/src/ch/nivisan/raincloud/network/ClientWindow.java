@@ -43,14 +43,18 @@ public class ClientWindow extends JFrame {
 		writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);
 		client = new Client(name, address, port);
 
-		if (!client.connected()) {
-			writeConsole("Connectioin failed!");
-			return;
-		}
+		new Thread("connect") {
+			public void run() {
+				if (!client.connect()) {
+					SwingUtilities.invokeLater(() -> writeConsole("Connection failed!"));
+					return;
+				}
 
-		running = true;
-		listen();
-		printWelcomeMessage();
+				running = true;
+				listen();
+				SwingUtilities.invokeLater(() -> printWelcomeMessage());
+			}
+		}.start();
 	}
 
 	private void printWelcomeMessage() {
@@ -194,9 +198,7 @@ public class ClientWindow extends JFrame {
 	 * Listen for incoming traffic
 	 */
 	private void listen() {
-		final Random random = new Random();
-		final int randomint = random.nextInt();
-		recieveThread = new Thread("recieve" + randomint) {
+		recieveThread = new Thread("recieve") {
 			public void run() {
 				while (running) {
 					String message = client.recieveBytes();
@@ -219,7 +221,10 @@ public class ClientWindow extends JFrame {
 	}
 
 	private void writeConsole(String message) {
-		txtHistory.append(message + "\r\n");
+		if (SwingUtilities.isEventDispatchThread()) {
+			txtHistory.append(message + "\r\n");
+		} else {
+			SwingUtilities.invokeLater(() -> txtHistory.append(message + "\r\n"));
+		}
 	}
-
 }

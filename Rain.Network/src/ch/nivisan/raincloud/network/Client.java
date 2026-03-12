@@ -20,35 +20,46 @@ public class Client {
 	private Thread sendThread;
 	private Thread recieveThread;
 	private boolean running;
+	private boolean connected;
 
 	public Client(final String name, final String address, final int port) {
 		this.name = name;
 		this.address = address;
 		this.port = port;
 
-		establishConnection();
-	}
-
-	private void establishConnection() {
-		String data = "/c/" + name + "/e/";
 		try {
 			socket = new DatagramSocket();
+			socket.setSoTimeout(3000);
 			ip = InetAddress.getByName(address);
 		} catch (UnknownHostException | SocketException e) {
 			e.printStackTrace();
+			ip = null;
+			socket = null;
 			return;
 		}
-
-		sendBytes(data.getBytes());
-		recieveBytes();
-
-		System.out.println("Local port: " + socket.getLocalPort() + " normal: " + socket.getPort());
-		running = true;
-
 	}
 
 	public boolean connected() {
-		return ip != null;
+		return connected;
+	}
+
+	public boolean connect() {
+		if (ip == null || socket == null)
+			return false;
+
+		sendBytes(("/c/" + name + "/e/").getBytes());
+		String response = recieveBytes(); // now returns "" on timeout
+		if (response.startsWith("/c/")) {
+			try {
+				this.Id = Integer.parseInt(response.split("/c/|/e/")[1]);
+				connected = true;
+				running = true;
+				return true;
+			} catch (NumberFormatException e) {
+				/* ignore malformed */ }
+		}
+		connected = false;
+		return false;
 	}
 
 	public String recieveBytes() {
@@ -58,15 +69,19 @@ public class Client {
 		try {
 			if (!socket.isClosed())
 				socket.receive(packet);
+		} catch (SocketException socketException) {
+			socketException.printStackTrace();
+			return String.empty();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return String.empty();
 		}
 		String message = new String(packet.getData());
 		if (message.startsWith("/c/")) {
-			String tempString = message.split("/c/|/e/")[1];
+			final String tempString = message.split("/c/|/e/")[1];
 			this.Id = Integer.parseInt(tempString);
 		} else if (message.startsWith("/i/")) {
-			String serverData = "/i/" + Id + "/e/";
+			final String serverData = "/i/" + Id + "/e/";
 			sendBytes(serverData.getBytes());
 		}
 
