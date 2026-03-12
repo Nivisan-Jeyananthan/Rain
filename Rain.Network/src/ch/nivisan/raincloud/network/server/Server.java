@@ -50,6 +50,16 @@ public class Server implements Runnable {
 
 		Scanner scanner = new Scanner(System.in);
 		while (running) {
+			// avoid blocking if stdin is closed (e.g., non-interactive container)
+			if (!scanner.hasNextLine()) {
+				// no more input available; sleep briefly and continue
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+				continue;
+			}
 			String text = scanner.nextLine();
 			if (text.startsWith("-m")) {
 				text = text.split("-m")[1].trim();
