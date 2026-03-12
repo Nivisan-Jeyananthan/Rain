@@ -7,8 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import javax.xml.stream.events.StartDocument;
-
 public class Client {
 	private DatagramSocket socket;
 	private InetAddress ip;
@@ -71,10 +69,10 @@ public class Client {
 				socket.receive(packet);
 		} catch (SocketException socketException) {
 			socketException.printStackTrace();
-			return String.empty();
+			return "";
 		} catch (IOException e) {
 			e.printStackTrace();
-			return String.empty();
+			return "";
 		}
 		String message = new String(packet.getData());
 		if (message.startsWith("/c/")) {
