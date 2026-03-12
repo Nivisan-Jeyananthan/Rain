@@ -102,7 +102,7 @@ public class Server implements Runnable {
 			relayMessage(value);
 		} else if (value.startsWith("/d/")) {
 			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
-			disconnectClient(index, ClientDisconnectType.Disconnect);
+			disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
 		} else if (value.startsWith("/i/")) {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
@@ -111,6 +111,16 @@ public class Server implements Runnable {
 		} else {
 			System.out.println(value);
 		}
+	}
+
+	private ServerClient getClient(int id) {
+		ServerClient client = null;
+		for (int i = 0; i < clients.size(); i++) {
+			client = clients.get(i);
+			if (client.Id == id)
+				return client;
+		}
+		return client;
 	}
 
 	/**
@@ -143,10 +153,10 @@ public class Server implements Runnable {
 	}
 
 	/**
-	 * Perform an action on every client matching the predicate.  The previous
+	 * Perform an action on every client matching the predicate. The previous
 	 * implementation returned from the loop after the first match, which meant
 	 * broadcasts (`condition` always true) only ever reached the first client in
-	 * the list.  That is why the second client never saw the periodic `/i/`
+	 * the list. That is why the second client never saw the periodic `/i/`
 	 * keep‑alive and timed out.
 	 *
 	 * @return true if at least one client matched the condition
@@ -230,16 +240,14 @@ public class Server implements Runnable {
 					try {
 						Thread.sleep(5000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
 					for (int i = 0; i < clients.size(); i++) {
 						ServerClient client = clients.get(i);
-						System.out.println("Client ID: " + client.Id);
 						if (!clientResponses.contains(client.Id)) {
 							if (client.attempt >= ServerClient.maxAttempts) {
-								disconnectClient(client.Id, ClientDisconnectType.Timeout);
+								disconnectClient(client, ClientDisconnectType.Timeout);
 							} else {
 								client.attempt++;
 							}

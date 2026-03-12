@@ -16,7 +16,6 @@ public class Client {
 	private int Id = -1;
 
 	private Thread sendThread;
-	private Thread recieveThread;
 	private boolean running;
 	private boolean connected;
 
@@ -135,6 +134,7 @@ public class Client {
 			public void run() {
 				synchronized (socket) {
 					try {
+						socket.disconnect();
 						socket.close();
 					} catch (Exception e) {
 						System.out.println("Not closed socket system");
