@@ -201,8 +201,8 @@ public class ClientWindow extends JFrame {
 			public void run() {
 				while (running) {
 					String message = client.recieveBytes();
-					if (message.startsWith("/m/")) {
-						String text = message.split("/m/|/e/")[1];
+				if (message == null || message.isEmpty())
+					continue;          // timeout or no data
 						writeConsole(text);
 					} else if (message.startsWith("/u/")) {
 						String[] users = message.split("/u/|/n/|/e/");
