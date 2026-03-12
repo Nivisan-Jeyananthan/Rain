@@ -1,7 +1,5 @@
 package ch.nivisan.raincloud.network.server;
 
-import java.io.IOException;
-import java.net.SocketException;
 import java.util.Scanner;
 
 public class ServerCommands {

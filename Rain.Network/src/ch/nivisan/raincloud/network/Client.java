@@ -46,23 +46,23 @@ public class Client {
 			return false;
 
 		sendBytes(("/c/" + name + "/e/").getBytes());
-		String response = recieveBytes(); // now returns "" on timeout
-		if (response.startsWith("/c/")) {
-			try {
-				this.Id = Integer.parseInt(response.split("/c/|/e/")[1]);
-				connected = true;
-				running = true;
-				return true;
-			} catch (NumberFormatException e) {
-				/* ignore malformed */ }
+		return recieveBytes() != "";
+	}
+	
+	public String getBytes() {
+		try {
+			socket.setSoTimeout(0);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		connected = false;
-		return false;
+		
+		return recieveBytes();
 	}
 
-	public String recieveBytes() {
+	private String recieveBytes() {
 		byte[] data = new byte[1024];
-		DatagramPacket packet = new DatagramPacket(data, data.length);
+		DatagramPacket packet = new DatagramPacket(data, data.length);		
 
 		try {
 			if (!socket.isClosed())
@@ -78,6 +78,8 @@ public class Client {
 		if (message.startsWith("/c/")) {
 			final String tempString = message.split("/c/|/e/")[1];
 			this.Id = Integer.parseInt(tempString);
+			connected = true;
+			running = true;
 		} else if (message.startsWith("/i/")) {
 			final String serverData = "/i/" + Id + "/e/";
 			sendBytes(serverData.getBytes());

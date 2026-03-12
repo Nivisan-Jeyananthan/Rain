@@ -205,6 +205,7 @@ public class Server implements Runnable {
 
 					for (int i = 0; i < clients.size(); i++) {
 						ServerClient client = clients.get(i);
+						System.out.println("Client ID: " + client.Id);
 						if (!clientResponses.contains(client.Id)) {
 							if (client.attempt >= ServerClient.maxAttempts) {
 								disconnectClient(client.Id, ClientDisconnectType.Timeout);
