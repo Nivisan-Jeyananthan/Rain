@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Server implements Runnable {
-	protected final List<ServerClient> clients = new ArrayList<ServerClient>();
+	protected final List<ServerClient> clients = Collections.synchronizedList(new ArrayList<ServerClient>());
+
 	private final HashSet<Integer> clientResponses = new HashSet<Integer>();
 
 	private final int port;
@@ -116,15 +118,8 @@ public class Server implements Runnable {
 	 * @param id
 	 * @param status client closed = true, unnatural causes = false
 	 */
-	private void disconnectClient(int id, ClientDisconnectType status) {
-		ServerClient client = null;
-		for (int i = 0; i < clients.size(); i++) {
-			if (clients.get(i).getId() == id) {
-				client = clients.get(i);
-				clients.remove(i);
-				break;
-			}
-		}
+	private void disconnectClient(ServerClient client, ClientDisconnectType status) {
+		clients.remove(client);
 
 		if (client == null)
 			return;
@@ -147,7 +142,43 @@ public class Server implements Runnable {
 
 	}
 
+	/**
+	 * Perform an action on every client matching the predicate.  The previous
+	 * implementation returned from the loop after the first match, which meant
+	 * broadcasts (`condition` always true) only ever reached the first client in
+	 * the list.  That is why the second client never saw the periodic `/i/`
+	 * keep‑alive and timed out.
+	 *
+	 * @return true if at least one client matched the condition
+	 */
+	/**
+	 * Execute the given action on every client that satisfies the predicate.
+	 * This is used for broadcasts (e.g. relaying a message to all clients, or
+	 * sending the periodic heartbeat) and therefore must iterate the entire
+	 * list.
+	 *
+	 * @return true if at least one client matched the condition
+	 */
 	private boolean handleClientAction(Predicate<ServerClient> condition, Consumer<ServerClient> action) {
+		boolean any = false;
+		for (int i = 0; i < clients.size(); i++) {
+			ServerClient client = clients.get(i);
+			if (condition.test(client)) {
+				action.accept(client);
+				any = true;
+			}
+		}
+		return any;
+	}
+
+	/**
+	 * Execute an action once on the first client that satisfies the predicate.
+	 * The loop exits immediately after the first match, which is desirable for
+	 * operations such as kicking or disconnecting a specific user.
+	 *
+	 * @return true if a client was found and action executed
+	 */
+	private boolean handleFirstClient(Predicate<ServerClient> condition, Consumer<ServerClient> action) {
 		for (int i = 0; i < clients.size(); i++) {
 			ServerClient client = clients.get(i);
 			if (condition.test(client)) {
@@ -159,13 +190,13 @@ public class Server implements Runnable {
 	}
 
 	protected boolean kickClient(String name) {
-		return handleClientAction(client -> client.name.toLowerCase().equals(name),
-				client -> disconnectClient(client.Id, ClientDisconnectType.Kick));
+		return handleFirstClient(client -> client.name.toLowerCase().equals(name),
+				client -> disconnectClient(client, ClientDisconnectType.Kick));
 	}
 
 	protected boolean kickClient(int id) {
-		return handleClientAction(client -> client.Id == id,
-				client -> disconnectClient(client.Id, ClientDisconnectType.Kick));
+		return handleFirstClient(client -> client.Id == id,
+				client -> disconnectClient(client, ClientDisconnectType.Kick));
 	}
 
 	protected void relayMessage(String message) {
@@ -176,7 +207,7 @@ public class Server implements Runnable {
 	protected String getOnlineUsers() {
 		String usernames = "/u/";
 		if (clients.size() == 1) {
-			return "/u/" + clients.getFirst().name + "/e/";
+			return "/u/" + clients.get(0).name + "/e/";
 		}
 
 		for (int i = 0; i < clients.size() - 1; i++) {
@@ -185,7 +216,7 @@ public class Server implements Runnable {
 				usernames += client.name + "/n/";
 		}
 
-		usernames += clients.getLast().name + "/e/";
+		usernames += clients.get(clients.size() - 1).name + "/e/";
 		return usernames;
 	}
 
