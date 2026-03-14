@@ -1,11 +1,13 @@
 package ch.nivisan.raincloud.network.server;
 
 import java.net.InetAddress;
+import java.security.PublicKey;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerClient {
 	public static final AtomicInteger count = new AtomicInteger(0);
 
+	private PublicKey key;
 	public final int Id;
 	public final String name;
 	public final InetAddress address;
