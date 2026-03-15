@@ -10,5 +10,7 @@ Basic overview of implementations inside the program to find:
 - Event System
 - Tiling system
 - Path finding system
+
+## Other Projects
 - serialization and deserialization system (save system/networking)
 - Networking Client / Hub architecture using UDP 
