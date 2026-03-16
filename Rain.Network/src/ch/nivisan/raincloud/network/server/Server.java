@@ -6,14 +6,16 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.security.KeyPair;
 import java.security.SecureRandom;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
@@ -24,8 +26,6 @@ public class Server implements Runnable {
 
 	private final int port;
 	protected DatagramSocket socket;
-
-	private KeyPair keypair = StringCipher.generateRSAKey();
 
 	private Thread serverThread;
 	private Thread manageThread;
@@ -102,21 +102,65 @@ public class Server implements Runnable {
 	}
 
 	private void processPacket(DatagramPacket packet) {
-		String value = new String(packet.getData());
+		String value = new String(packet.getData(), 0, packet.getLength());
 		if (raw) {
 			System.out.println("Raw: " + value);
 		}
 
 		if (value.startsWith("/c/")) {
-			String name = value.split("/c/|/e/")[1];
-			ServerClient serverClient = new ServerClient(name, packet.getAddress(), packet.getPort());
-			clients.add(serverClient);
-			sendConnectionId(serverClient);
-			String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
-			relayMessage(message);
+			int endIndex = value.lastIndexOf("/e/");
+			if (endIndex <= 3) return;
+			String body = value.substring(3, endIndex);
+			int sep = body.indexOf('/');
+			if (sep < 0) return;
+			String name = body.substring(0, sep);
+			String clientPubKeyBase64 = body.substring(sep + 1);
+			try {
+				byte[] decoded = Base64.getUrlDecoder().decode(clientPubKeyBase64);
+				java.security.spec.X509EncodedKeySpec keySpec = new java.security.spec.X509EncodedKeySpec(decoded);
+				java.security.KeyFactory kf = java.security.KeyFactory.getInstance("RSA");
+				java.security.PublicKey clientPublicKey = kf.generatePublic(keySpec);
+				ServerClient serverClient = new ServerClient(name, packet.getAddress(), packet.getPort());
+				serverClient.clientPublicKey = clientPublicKey;
+				clients.add(serverClient);
+				SecretKey symmetricKey = StringCipher.generateKey();
+				IvParameterSpec iv = StringCipher.generateIv();
+				serverClient.sessionKey = symmetricKey;
+				serverClient.sessionIv = iv;
+				serverClient.handshakeComplete = true;
+				String plainToken = "SYMMETRIC:" + serverClient.getId() + ":" + Base64.getUrlEncoder().withoutPadding().encodeToString(symmetricKey.getEncoded()) + ":" + Base64.getUrlEncoder().withoutPadding().encodeToString(iv.getIV());
+				byte[] encrypted = StringCipher.encryptRSA(plainToken, clientPublicKey);
+				if (encrypted != null) {
+					String payload = Base64.getUrlEncoder().withoutPadding().encodeToString(encrypted);
+					sendBytes(("/ks/" + payload + "/e/").getBytes(), packet.getAddress(), packet.getPort());
+				}
+				sendConnectionId(serverClient);
+				String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
+				relayMessage(message);
+			} catch (Exception e) {
+				return;
+			}
+			return;
+		} else if (value.startsWith("/e/")) {
+			int endIndex = value.lastIndexOf("/e/");
+			if (endIndex <= 3) return;
+			String encoded = value.substring(3, endIndex);
+			ServerClient client = getClient(packet.getAddress(), packet.getPort());
+			if (client == null || !client.handshakeComplete) return;
+			byte[] cipherText;
+			try {
+				cipherText = Base64.getDecoder().decode(encoded);
+			} catch (IllegalArgumentException e) {
+				System.out.println("Invalid encrypted packet Base64: " + encoded);
+				return;
+			}
+			String plain = StringCipher.decrypt(cipherText, client.sessionKey, client.sessionIv);
+			if (plain == null) return;
+			processDecryptedPacket(plain, client);
 			return;
 		} else if (value.startsWith("/m/")) {
 			relayMessage(value);
+			return;
 		} else if (value.startsWith("/d/")) {
 			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
 			disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
@@ -124,7 +168,12 @@ public class Server implements Runnable {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
 		} else if (value.startsWith("/u/")) {
-			sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
+			ServerClient client = getClient(packet.getAddress(), packet.getPort());
+			if (client != null && client.handshakeComplete) {
+				sendToClient(getOnlineUsers(), client);
+			} else {
+				sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
+			}
 		} else {
 			System.out.println(value);
 		}
@@ -227,8 +276,19 @@ public class Server implements Runnable {
 	}
 
 	protected void relayMessage(String message) {
-		byte[] messageBytes = message.getBytes();
-		handleClientAction(_ -> true, client -> sendBytes(messageBytes, client.address, client.port));
+		handleClientAction(client -> true, client -> sendToClient(message, client));
+	}
+
+	protected void sendToClient(String message, ServerClient client) {
+		if (client.handshakeComplete && client.sessionKey != null && client.sessionIv != null) {
+			byte[] encrypted = StringCipher.encrypt(message, client.sessionKey, client.sessionIv);
+			if (encrypted != null) {
+				String payload = Base64.getEncoder().encodeToString(encrypted);
+				sendBytes(("/e/" + payload + "/e/").getBytes(), client.address, client.port);
+				return;
+			}
+		}
+		sendBytes(message.getBytes(), client.address, client.port);
 	}
 
 	protected String getOnlineUsers() {
@@ -285,6 +345,30 @@ public class Server implements Runnable {
 		String message = "/c/" + client.getId() + "/e/";
 		sendBytes(message.getBytes(), client.address, client.port);
 		System.out.println("Client created with ID: " + client.getId());
+	}
+
+	private void processDecryptedPacket(String value, ServerClient client) {
+		if (value.startsWith("/m/")) {
+			relayMessage(value);
+		} else if (value.startsWith("/d/")) {
+			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
+			disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
+		} else if (value.startsWith("/i/")) {
+			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
+			clientResponses.add(id);
+		} else if (value.startsWith("/u/")) {
+			sendToClient(getOnlineUsers(), client);
+		} else {
+			System.out.println("Server decrypted command: " + value);
+		}
+	}
+
+	private ServerClient getClient(InetAddress address, int port) {
+		for (ServerClient client : clients) {
+			if (client.address.equals(address) && client.port == port)
+				return client;
+		}
+		return null;
 	}
 
 	private void sendBytes(final byte[] data, final InetAddress clientAddress, final int clientPort) {

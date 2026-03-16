@@ -19,6 +19,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class StringCipher {
 	public static int offset = 0;
@@ -87,6 +88,10 @@ public class StringCipher {
 
 	public static String encodeString(byte[] data) {
 		return Base64.getEncoder().encodeToString(data);
+	}
+
+	public static SecretKey decodeSecretKey(byte[] keyBytes) {
+		return new SecretKeySpec(keyBytes, algorithm);
 	}
 
 	public static String encode32(byte[] data) {
