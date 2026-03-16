@@ -66,10 +66,8 @@ public class Client {
 
 		long deadline = System.currentTimeMillis() + 8000;
 		while (System.currentTimeMillis() < deadline) {
-			String message = receiveMessage();
-			if (connected)
-				return true;
-			if (handshakeComplete && message.startsWith("/c/"))
+			receiveMessage();
+			if (handshakeComplete && connected)
 				return true;
 		}
 		return connected;
@@ -117,7 +115,6 @@ public class Client {
 			if (parts.length > 1) {
 				Id = Integer.parseInt(parts[1]);
 				connected = true;
-				handshakeComplete = true;
 				running = true;
 			}
 			return message;
@@ -138,6 +135,8 @@ public class Client {
 						sessionKey = StringCipher.decodeSecretKeyFromBase64(token[2]);
 						sessionIv = new IvParameterSpec(StringCipher.decodeString(token[3]));
 						handshakeComplete = true;
+						connected = true;
+						running = true;
 					}
 				}
 			} catch (Exception e) {
