@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network;
+package ch.nivisan.raincloud.network.client;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

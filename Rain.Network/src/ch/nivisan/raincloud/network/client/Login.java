@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network;
+package ch.nivisan.raincloud.network.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

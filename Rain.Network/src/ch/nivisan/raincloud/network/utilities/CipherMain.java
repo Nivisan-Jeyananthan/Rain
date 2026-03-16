@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.utilities;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 
 import javax.crypto.SecretKey;
@@ -14,7 +15,7 @@ public class CipherMain {
 		if(symmetricKey == null ||  iv == null)
 			return;
 		
-		String message = "Something";
+		String message = "Somethingl";
 		byte[] cipherText = StringCipher.encrypt(message,symmetricKey, iv);
 		if (cipherText == null) {
 			return;
@@ -32,10 +33,16 @@ public class CipherMain {
 		IO.println("The decrypted message is: " + originalMessage);
 		
 		KeyPair keyPair = StringCipher.generateRSAKey();
+		System.out.println("Bytes : "+ StringCipher.encodeString(keyPair.getPublic().getEncoded()));
+		System.out.println("Length : "+ StringCipher.encodeString(keyPair.getPublic().getEncoded()).length());
 		
-		String pkeyString = keyPair.getPublic().toString();
-		
-		StringCipher.encryptRSA(originalMessage, keyPair.getPublic());
+		byte[] rsaCipherText = StringCipher.encryptRSA(originalMessage, keyPair.getPublic());
+
+		String rsaString = StringCipher.encodeString(rsaCipherText);
+
+		byte[] rsaTransferedText = StringCipher.decodeString(rsaString);
+
+		StringCipher.decryptRSA(rsaCipherText, keyPair.getPrivate());
 	}
 
 }

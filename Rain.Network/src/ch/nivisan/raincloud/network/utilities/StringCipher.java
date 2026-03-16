@@ -10,13 +10,11 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -87,6 +85,13 @@ public class StringCipher {
 
 	public static String encodeString(byte[] data) {
 		return Base64.getEncoder().encodeToString(data);
+	}
+
+	public static String encode32(byte[] data) {
+		Base64.Encoder base32 = Base64.getUrlEncoder().withoutPadding();
+
+		byte[] encodedByes = base32.encode(data);
+		return new String(encodedByes, StandardCharsets.UTF_8);
 	}
 
 	public static byte[] decodeString(String data) {

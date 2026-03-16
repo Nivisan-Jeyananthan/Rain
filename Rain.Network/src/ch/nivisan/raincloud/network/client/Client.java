@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network;
+package ch.nivisan.raincloud.network.client;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -13,6 +13,7 @@ public class Client {
 	public final int port;
 	public final String name;
 	public final String address;
+	private String serverPublicKey;
 	private int Id = -1;
 
 	private Thread sendThread;
