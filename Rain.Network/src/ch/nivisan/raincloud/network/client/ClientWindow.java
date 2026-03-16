@@ -217,9 +217,16 @@ public class ClientWindow extends JFrame {
 					writeConsole(message.substring(3, endIndex));
 				}
 			} else if (message.startsWith("/u/")) {
-				String payload = message.substring(3, message.lastIndexOf("/e/") > 3 ? message.lastIndexOf("/e/") : message.length());
-				String[] users = payload.split("/n/");
-				usersWindow.updateUsers(users);
+				int endIndex = message.indexOf("/e/", 3);
+				if (endIndex < 0)
+					endIndex = message.length();
+				String payload = message.substring(3, endIndex);
+				if (payload.isBlank()) {
+					usersWindow.updateUsers(new String[0]);
+				} else {
+					String[] users = payload.split("/n/");
+					usersWindow.updateUsers(users);
+				}
 			} else if (message.startsWith("/d/")) {
 				dispose();
 				client.quit(true);

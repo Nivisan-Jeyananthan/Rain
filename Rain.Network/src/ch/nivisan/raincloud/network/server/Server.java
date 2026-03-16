@@ -309,19 +309,24 @@ public class Server implements Runnable {
 	}
 
 	protected String getOnlineUsers() {
-		String usernames = "/u/";
-		if (clients.size() == 1) {
-			return "/u/" + clients.get(0).name + "/e/";
+		if (clients.isEmpty()) {
+			return "/u//e/";
 		}
 
-		for (int i = 0; i < clients.size() - 1; i++) {
-			ServerClient client = clients.get(i);
-			if (!client.name.isBlank())
-				usernames += client.name + "/n/";
+		StringBuilder usernames = new StringBuilder("/u/");
+		int added = 0;
+		for (ServerClient client : clients) {
+			if (client == null || client.name == null || client.name.isBlank()) {
+				continue;
+			}
+			if (added > 0) {
+				usernames.append("/n/");
+			}
+			usernames.append(client.name);
+			added++;
 		}
-
-		usernames += clients.get(clients.size() - 1).name + "/e/";
-		return usernames;
+		usernames.append("/e/");
+		return usernames.toString();
 	}
 
 	private void manageClients() {
