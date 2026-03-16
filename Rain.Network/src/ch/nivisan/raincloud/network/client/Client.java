@@ -64,8 +64,15 @@ public class Client {
 		String clientPubKey = Base64.getUrlEncoder().withoutPadding().encodeToString(keyPair.getPublic().getEncoded());
 		sendBytes(("/c/" + name + "/" + clientPubKey + "/e/").getBytes());
 
-		String message = receiveMessage();
-		return connected || (message != null && !message.isEmpty());
+		long deadline = System.currentTimeMillis() + 8000;
+		while (System.currentTimeMillis() < deadline) {
+			String message = receiveMessage();
+			if (connected)
+				return true;
+			if (handshakeComplete && message.startsWith("/c/"))
+				return true;
+		}
+		return connected;
 	}
 
 	public String getBytes() {
@@ -90,6 +97,20 @@ public class Client {
 		}
 
 		String message = new String(packet.getData(), 0, packet.getLength());
+
+		if (message.startsWith("/e/")) {
+			int endIndex = message.lastIndexOf("/e/");
+			if (endIndex <= 3)
+				return "";
+			String encoded = message.substring(3, endIndex);
+			try {
+				byte[] cipherText = Base64.getDecoder().decode(encoded);
+				String plain = StringCipher.decrypt(cipherText, sessionKey, sessionIv);
+				message = plain == null ? "" : plain;
+			} catch (Exception e) {
+				return "";
+			}
+		}
 
 		if (message.startsWith("/c/") && !handshakeComplete) {
 			String[] parts = message.split("/c/|/e/");
@@ -122,19 +143,6 @@ public class Client {
 				return "";
 			}
 			return "";
-		}
-
-		if (message.startsWith("/e/")) {
-			int endIndex = message.lastIndexOf("/e/");
-			if (endIndex <= 3) return "";
-			String encoded = message.substring(3, endIndex);
-			try {
-				byte[] cipherText = Base64.getDecoder().decode(encoded);
-				String plain = StringCipher.decrypt(cipherText, sessionKey, sessionIv);
-				return plain == null ? "" : plain;
-			} catch (Exception e) {
-				return "";
-			}
 		}
 
 		if (message.startsWith("/i/")) {
