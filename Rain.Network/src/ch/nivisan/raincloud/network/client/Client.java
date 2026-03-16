@@ -112,7 +112,7 @@ public class Client {
 			}
 		}
 
-		if (message.startsWith("/c/") && !handshakeComplete) {
+		if (message.startsWith("/c/")) {
 			String[] parts = message.split("/c/|/e/");
 			if (parts.length > 1) {
 				Id = Integer.parseInt(parts[1]);
@@ -204,7 +204,7 @@ public class Client {
 			return;
 
 		if (!kicked) {
-			sendBytes(("/d/" + Id + "/e/").getBytes());
+			sendEncrypted("/d/" + Id + "/e/");
 		}
 
 		new Thread(() -> {

@@ -162,8 +162,12 @@ public class Server implements Runnable {
 			relayMessage(value);
 			return;
 		} else if (value.startsWith("/d/")) {
-			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
-			disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
+			// Unencrypted disconnects are only honored for non-handshake or legacy cases.
+			ServerClient client = getClient(packet.getAddress(), packet.getPort());
+			if (client == null || !client.handshakeComplete) {
+				int index = Integer.parseInt(value.split("/d/|/e/")[1]);
+				disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
+			}
 		} else if (value.startsWith("/i/")) {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
@@ -352,7 +356,9 @@ public class Server implements Runnable {
 			relayMessage(value);
 		} else if (value.startsWith("/d/")) {
 			int index = Integer.parseInt(value.split("/d/|/e/")[1]);
-			disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
+			if (index == client.Id) {
+				disconnectClient(client, ClientDisconnectType.Disconnect);
+			}
 		} else if (value.startsWith("/i/")) {
 			int id = Integer.parseInt(value.split("/i/|/e/")[1]);
 			clientResponses.add(id);
