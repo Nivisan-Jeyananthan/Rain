@@ -30,12 +30,43 @@ Der Server und Client kommunizieren per UDP mit einfachen Paket-Tags:
 7. Client speichert AES-Schlüssel + IV und markiert Handshake abgeschlossen.
 8. Server sendet `/c/<id>/e/` zur Bestätigung.
 
+### Handshake-Sequenzdiagramm
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: /c/<name>/<pubkey>/e/
+    Note right of S: Generiere AES-Session-Key + IV
+    S->>C: /ks/<rsa-base64>/e/
+    Note left of C: Entschlüssel mit RSA-Privat
+    C->>S: /c/<id>/e/
+    Note right of C: connected=true
+```
+
 ## Verschlüsselung
 
 - RSA (3072 Bit) wird nur zur Schlüsselaushandlung verwendet.
 - Symmetrische Nachrichtencodierung nutzt AES/CFB8/NoPadding.
 - Verschlüsselte Chat-Payload wird mit Standard-Base64 (`Base64.getEncoder()/getDecoder()`) kodiert.
 - RSA-Keys und `SYMMETRIC:` Token im Handshake werden URL-safe Base64 kodiert (`Base64.getUrlEncoder().withoutPadding()`).
+
+## Warum verwenden wir IV + Session Key, wenn Public Key genug scheint?
+
+RSA ist stark, aber für den Dauerbetrieb nicht ideal:
+
+1. RSA ist viel langsamer als AES. Für jede Chatnachricht wäre es ineffizient.
+2. RSA sollte nicht zum Verschlüsseln großer oder häufiger Datenmengen verwendet werden.
+3. Mit RSA allein kann ein Angreifer bei Neukeys Replay oder CPU-Angriffe forcieren.
+
+Darum nutzen wir eine hybride Verschlüsselung:
+
+- RSA schützt nur den einmaligen Schlüsselaustausch (`/ks/`).
+- Server sendet AES-Sessionkey + IV verschlüsselt an den Client.
+- Danach verschlüsseln Client und Server Nachrichten mit AES/CFB8 (schnell, geeignet für Streaming).
+
+Der IV wird benötigt, weil CFB8 eine Initialisierungsphase braucht und sonst ähnliche Klartextblöcke zu identischen Ciphertextblöcken führen könnten.
+Durch IV + Schlüssel werden gleiche Nachrichten unterschiedlich verschlüsselt und die Verbindung bleibt sicher.
 
 ## Nachrichten-Lesbarkeit
 
