@@ -200,20 +200,32 @@ public class ClientWindow extends JFrame {
 		recieveThread = new Thread("recieve") {
 			public void run() {
 				while (running) {
-					String message = client.getBytes();
-					if (message.startsWith("/m/")) {
-						String text = message.split("/m/|/e/")[1];
-						writeConsole(text);
-					} else if (message.startsWith("/u/")) {
-						String[] users = message.split("/u/|/n/|/e/");
-						usersWindow.updateUsers(Arrays.copyOfRange(users, 1, users.length - 1));
-					} else if (message.startsWith("/d/")) {
-						dispose();
-						client.quit(true);
-						new Login();
-					}
-				}
+			String message = client.getBytes();
+			if (message == null || message.isEmpty())
+				continue;
 
+			if (message.startsWith("/e/")) {
+				int endIndex = message.lastIndexOf("/e/");
+				if (endIndex > 3) {
+					message = message.substring(3, endIndex);
+				}
+			}
+
+			if (message.startsWith("/m/")) {
+				int endIndex = message.indexOf("/e/", 3);
+				if (endIndex > 3) {
+					writeConsole(message.substring(3, endIndex));
+				}
+			} else if (message.startsWith("/u/")) {
+				String payload = message.substring(3, message.lastIndexOf("/e/") > 3 ? message.lastIndexOf("/e/") : message.length());
+				String[] users = payload.split("/n/");
+				usersWindow.updateUsers(users);
+			} else if (message.startsWith("/d/")) {
+				dispose();
+				client.quit(true);
+				new Login();
+			}
+		}
 			}
 		};
 		recieveThread.start();

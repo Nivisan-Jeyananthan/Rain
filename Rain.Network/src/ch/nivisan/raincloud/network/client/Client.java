@@ -6,8 +6,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 import javax.crypto.SecretKey;
@@ -16,6 +18,8 @@ import javax.crypto.spec.IvParameterSpec;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
 public class Client {
+	private static final int MAX_PACKET_SIZE = 1024;
+
 	private DatagramSocket socket;
 	private InetAddress ip;
 	public final int port;
@@ -44,7 +48,6 @@ public class Client {
 			e.printStackTrace();
 			ip = null;
 			socket = null;
-			return;
 		}
 	}
 
@@ -61,92 +64,47 @@ public class Client {
 		String clientPubKey = Base64.getUrlEncoder().withoutPadding().encodeToString(keyPair.getPublic().getEncoded());
 		sendBytes(("/c/" + name + "/" + clientPubKey + "/e/").getBytes());
 
-		String response = recieveBytes();
-		return connected || (response != null && !response.isEmpty());
+		String message = receiveMessage();
+		return connected || (message != null && !message.isEmpty());
 	}
-	
+
 	public String getBytes() {
 		try {
 			socket.setSoTimeout(0);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return recieveBytes();
+		return receiveMessage();
 	}
 
-	private String recieveBytes() {
-		byte[] data = new byte[1024];
-		DatagramPacket packet = new DatagramPacket(data, data.length);		
+	private String receiveMessage() {
+		byte[] data = new byte[MAX_PACKET_SIZE];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
 
 		try {
 			if (!socket.isClosed())
 				socket.receive(packet);
-		} catch (SocketException socketException) {
-			socketException.printStackTrace();
-			return "";
-		} catch (IOException e) {
+		} catch (SocketException | IOException e) {
 			e.printStackTrace();
 			return "";
 		}
 
 		String message = new String(packet.getData(), 0, packet.getLength());
 
-		// format is: 
-		// /pk/{id}/{publicKey}/e/ for public key exchange
-		// /c/{id}/e/ for connection confirmation
-		// /e/{encryptedMessage}/e/ for encrypted messages
-		// /i/{id}/e/ for id request
-		if (!handshakeComplete && message.startsWith("/pk/")) {
-			int endIndex = message.indexOf("/e/");
-			if (endIndex > 0) {
-				String body = message.substring(4, endIndex);
-				int separator = body.indexOf("/");
-				if (separator > 0) {
-					String idPart = body.substring(0, separator);
-					String keyPart = body.substring(separator + 1);
-					try {
-						this.Id = Integer.parseInt(idPart);
-						byte[] keyBytes = Base64.getDecoder().decode(keyPart);
-						X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-						KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-						serverPublicKey = keyFactory.generatePublic(keySpec);
-					} catch (Exception e) {
-						return "";
-					}
-
-					try {
-						sessionKey = StringCipher.generateKey();
-						sessionIv = StringCipher.generateIv();
-						String plainToken = "SYMMETRIC:" + Id + ":" + Base64.getEncoder().encodeToString(sessionKey.getEncoded()) + ":" + Base64.getEncoder().encodeToString(sessionIv.getIV());
-						byte[] encrypted = StringCipher.encryptRSA(plainToken, serverPublicKey);
-						if (encrypted == null)
-							return "";
-						String payload = Base64.getEncoder().encodeToString(encrypted);
-						sendBytes(("/ks/" + payload + "/e/").getBytes());
-					} catch (Exception e) {
-						e.printStackTrace();
-						return "";
-					}
-				}
-			}
-			return "";
-		}
-
-		if (message.startsWith("/c/")) {
+		if (message.startsWith("/c/") && !handshakeComplete) {
 			String[] parts = message.split("/c/|/e/");
 			if (parts.length > 1) {
-				this.Id = Integer.parseInt(parts[1]);
+				Id = Integer.parseInt(parts[1]);
 				connected = true;
 				handshakeComplete = true;
 				running = true;
 			}
 			return message;
-		} else if (message.startsWith("/ks/")) {
+		}
+
+		if (message.startsWith("/ks/")) {
 			int endIndex = message.indexOf("/e/");
-			if (endIndex <= 4)
-				return "";
+			if (endIndex <= 4) return "";
 			String payload = message.substring(4, endIndex);
 			try {
 				byte[] encrypted = Base64.getUrlDecoder().decode(payload);
@@ -154,12 +112,9 @@ public class Client {
 				if (decrypted != null && decrypted.startsWith("SYMMETRIC:")) {
 					String[] token = decrypted.split(":", 4);
 					if (token.length == 4) {
-						int id = Integer.parseInt(token[1]);
-						this.Id = id;
-						byte[] keyBytes = Base64.getUrlDecoder().decode(token[2]);
-						byte[] ivBytes = Base64.getUrlDecoder().decode(token[3]);
-						sessionKey = StringCipher.decodeSecretKey(keyBytes);
-						sessionIv = new IvParameterSpec(ivBytes);
+						Id = Integer.parseInt(token[1]);
+						sessionKey = StringCipher.decodeSecretKey(Base64.getUrlDecoder().decode(token[2]));
+						sessionIv = new IvParameterSpec(Base64.getUrlDecoder().decode(token[3]));
 						handshakeComplete = true;
 					}
 				}
@@ -167,18 +122,24 @@ public class Client {
 				return "";
 			}
 			return "";
-		} else if (message.startsWith("/e/")) {
+		}
+
+		if (message.startsWith("/e/")) {
 			int endIndex = message.lastIndexOf("/e/");
-			if (endIndex <= 3)
-				return "";
+			if (endIndex <= 3) return "";
 			String encoded = message.substring(3, endIndex);
-			byte[] cipherText = Base64.getUrlDecoder().decode(encoded);
-			String plain = StringCipher.decrypt(cipherText, sessionKey, sessionIv);
-			return plain == null ? "" : plain;
-		} else if (message.startsWith("/i/")) {
+			try {
+				byte[] cipherText = Base64.getDecoder().decode(encoded);
+				String plain = StringCipher.decrypt(cipherText, sessionKey, sessionIv);
+				return plain == null ? "" : plain;
+			} catch (Exception e) {
+				return "";
+			}
+		}
+
+		if (message.startsWith("/i/")) {
 			if (Id >= 0) {
-				final String serverData = "/i/" + Id + "/e/";
-				sendBytes(serverData.getBytes());
+				sendBytes(("/i/" + Id + "/e/").getBytes());
 			}
 		}
 
@@ -187,8 +148,7 @@ public class Client {
 
 	public void sendText(String message) {
 		message = message.replaceAll("/\\w/", "");
-		String packet = "/m/" + message + "/e/";
-		sendEncrypted(packet);
+		sendEncrypted("/m/" + message + "/e/");
 	}
 
 	public void requestUsernames() {
@@ -210,11 +170,11 @@ public class Client {
 	private void sendBytes(final byte[] data) {
 		sendThread = new Thread("Send") {
 			public void run() {
-				DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
-
 				try {
-					if (!socket.isClosed())
+					if (!socket.isClosed()) {
+						DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 						socket.send(packet);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -232,28 +192,22 @@ public class Client {
 	}
 
 	public void quit(boolean kicked) {
-		if (!connected())
+		if (!connected)
 			return;
 
 		if (!kicked) {
-			String message = "/d/" + Id + "/e/";
-			sendBytes(message.getBytes());
+			sendBytes(("/d/" + Id + "/e/").getBytes());
 		}
 
-		new Thread() {
-			public void run() {
-				synchronized (socket) {
-					try {
-						socket.disconnect();
-						socket.close();
-					} catch (Exception e) {
-						System.out.println("Not closed socket system");
-					}
-
+		new Thread(() -> {
+			synchronized (socket) {
+				try {
+					socket.disconnect();
+					socket.close();
+				} catch (Exception e) {
+					System.out.println("Not closed socket system");
 				}
 			}
-		}.start();
-
+		}).start();
 	}
-
 }
