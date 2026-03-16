@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.utilities;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -10,6 +11,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Base64;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -127,7 +129,54 @@ public class StringCipher {
 		} catch (Exception e) {
 			return null;
 		}
-
 	}
 
+	private static final int dataOffset = 3;
+
+	public static byte[] encryptData(String text) {
+		if (text == null)
+			return null;
+
+		int pointer = 1;
+		byte[] temp = new byte[1024];
+		byte[] result = new byte[1024];
+		final int N = 1021; // nutzbare Range 1..1023
+		char[] characters = text.toCharArray();
+		int shift = new Random().nextInt(10); // 0..9
+
+		if ((characters.length * 2) > N)
+			return null;
+
+		result[0] = (byte) shift;
+		pointer = SerializationWriter.writeBytes(result, pointer, (short) characters.length);
+		pointer = SerializationWriter.copyBytes(temp, 0, characters);
+
+		for (int i = 0; i < N; i++) {
+			int tempIndex = dataOffset + ((i + shift) % N);
+			result[tempIndex++] = temp[i];
+		}
+
+		return result;
+	}
+
+	public static String decryptData(byte[] data) {
+		final int[] pointer = new int[] { 0 };
+		if (data == null || data.length != 1024)
+			throw new IllegalArgumentException("data must be 1024 bytes");
+
+		int shift = Byte.toUnsignedInt(data[pointer[0]++]);
+		short length = SerializationReader.readShort(data, pointer[0]);
+		pointer[0] += 2;
+
+		final int N = 1021;
+		byte[] temp = new byte[1024];
+
+		for (int i = 0; i < N; i++) {
+			int src = 1 + Math.floorMod(i + shift, N);
+			temp[dataOffset + i] = data[src];
+		}
+
+		char[] characters = SerializationReader.readCharArray(temp, pointer, length);
+		return new String(characters);
+	}
 }

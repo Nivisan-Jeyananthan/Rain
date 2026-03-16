@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.security.KeyPair;
+import java.security.SecureRandom;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
-
 
 public class Server implements Runnable {
 	protected final List<ServerClient> clients = Collections.synchronizedList(new ArrayList<ServerClient>());
@@ -24,7 +24,7 @@ public class Server implements Runnable {
 
 	private final int port;
 	protected DatagramSocket socket;
-	
+
 	private KeyPair keypair = StringCipher.generateRSAKey();
 
 	private Thread serverThread;
@@ -35,6 +35,7 @@ public class Server implements Runnable {
 	protected boolean raw;
 
 	public Server(int port) {
+
 		this.port = port;
 		try {
 			socket = new DatagramSocket(port);
