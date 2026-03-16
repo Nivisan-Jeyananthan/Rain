@@ -32,8 +32,9 @@ public class ServerClient {
 		this.clientPublicKey = clientKey;
 		this.sessionKey = key;
 		this.sessionIv = iv;
+		this.handshakeComplete = handshakeComplete;
 
-		System.out.println("ID: " + Id);
+		System.out.println("ID: " + Id + " handshake=" + handshakeComplete);
 	}
 
 	public int getId() {
