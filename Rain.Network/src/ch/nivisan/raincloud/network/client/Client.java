@@ -91,7 +91,7 @@ public class Client {
 		try {
 			if (!socket.isClosed())
 				socket.receive(packet);
-		} catch (SocketException | IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
 		}
