@@ -16,19 +16,24 @@ public class ServerClient {
 	public final int port;
 	public int attempt = 0;
 
-	public PublicKey clientPublicKey;
-	public SecretKey sessionKey;
-	public IvParameterSpec sessionIv;
-	public boolean handshakeComplete = false;
+	protected final PublicKey clientPublicKey;
+	protected final SecretKey sessionKey;
+	protected final IvParameterSpec sessionIv;
+	protected boolean handshakeComplete = false;
 
 	public final static int maxAttempts = 5;
 
-	public ServerClient(String name, InetAddress address, int port) {
+	public ServerClient(String name, InetAddress address, int port, PublicKey clientKey, SecretKey key,
+			IvParameterSpec iv, boolean handshakeComplete) {
 		Id = UniqueIdentifier.getIdentifier();
-		System.out.println("ID: " + Id);
 		this.name = name;
 		this.address = address;
 		this.port = port;
+		this.clientPublicKey = clientKey;
+		this.sessionKey = key;
+		this.sessionIv = iv;
+
+		System.out.println("ID: " + Id);
 	}
 
 	public int getId() {

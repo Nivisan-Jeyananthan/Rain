@@ -61,7 +61,7 @@ public class Client {
 
 		handshakeComplete = false;
 		keyPair = StringCipher.generateRSAKey();
-		String clientPubKey = Base64.getUrlEncoder().withoutPadding().encodeToString(keyPair.getPublic().getEncoded());
+		String clientPubKey = StringCipher.encodeString(keyPair.getPublic().getEncoded());
 		sendBytes(("/c/" + name + "/" + clientPubKey + "/e/").getBytes());
 
 		long deadline = System.currentTimeMillis() + 8000;
@@ -125,7 +125,8 @@ public class Client {
 
 		if (message.startsWith("/ks/")) {
 			int endIndex = message.indexOf("/e/");
-			if (endIndex <= 4) return "";
+			if (endIndex <= 4)
+				return "";
 			String payload = message.substring(4, endIndex);
 			try {
 				byte[] encrypted = Base64.getUrlDecoder().decode(payload);
@@ -134,8 +135,8 @@ public class Client {
 					String[] token = decrypted.split(":", 4);
 					if (token.length == 4) {
 						Id = Integer.parseInt(token[1]);
-						sessionKey = StringCipher.decodeSecretKey(Base64.getUrlDecoder().decode(token[2]));
-						sessionIv = new IvParameterSpec(Base64.getUrlDecoder().decode(token[3]));
+						sessionKey = StringCipher.decodeSecretKeyFromBase64(token[2]);
+						sessionIv = new IvParameterSpec(StringCipher.decodeString(token[3]));
 						handshakeComplete = true;
 					}
 				}

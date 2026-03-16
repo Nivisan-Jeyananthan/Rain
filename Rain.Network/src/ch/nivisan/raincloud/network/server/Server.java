@@ -108,56 +108,9 @@ public class Server implements Runnable {
 		}
 
 		if (value.startsWith("/c/")) {
-			int endIndex = value.lastIndexOf("/e/");
-			if (endIndex <= 3) return;
-			String body = value.substring(3, endIndex);
-			int sep = body.indexOf('/');
-			if (sep < 0) return;
-			String name = body.substring(0, sep);
-			String clientPubKeyBase64 = body.substring(sep + 1);
-			try {
-				byte[] decoded = Base64.getUrlDecoder().decode(clientPubKeyBase64);
-				java.security.spec.X509EncodedKeySpec keySpec = new java.security.spec.X509EncodedKeySpec(decoded);
-				java.security.KeyFactory kf = java.security.KeyFactory.getInstance("RSA");
-				java.security.PublicKey clientPublicKey = kf.generatePublic(keySpec);
-				ServerClient serverClient = new ServerClient(name, packet.getAddress(), packet.getPort());
-				serverClient.clientPublicKey = clientPublicKey;
-				clients.add(serverClient);
-				SecretKey symmetricKey = StringCipher.generateKey();
-				IvParameterSpec iv = StringCipher.generateIv();
-				serverClient.sessionKey = symmetricKey;
-				serverClient.sessionIv = iv;
-				serverClient.handshakeComplete = true;
-				String plainToken = "SYMMETRIC:" + serverClient.getId() + ":" + Base64.getUrlEncoder().withoutPadding().encodeToString(symmetricKey.getEncoded()) + ":" + Base64.getUrlEncoder().withoutPadding().encodeToString(iv.getIV());
-				byte[] encrypted = StringCipher.encryptRSA(plainToken, clientPublicKey);
-				if (encrypted != null) {
-					String payload = Base64.getUrlEncoder().withoutPadding().encodeToString(encrypted);
-					sendBytes(("/ks/" + payload + "/e/").getBytes(), packet.getAddress(), packet.getPort());
-				}
-				sendConnectionId(serverClient);
-				String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
-				relayMessage(message);
-			} catch (Exception e) {
-				return;
-			}
-			return;
+			registerClient(packet, value);
 		} else if (value.startsWith("/e/")) {
-			int endIndex = value.lastIndexOf("/e/");
-			if (endIndex <= 3) return;
-			String encoded = value.substring(3, endIndex);
-			ServerClient client = getClient(packet.getAddress(), packet.getPort());
-			if (client == null || !client.handshakeComplete) return;
-			byte[] cipherText;
-			try {
-				cipherText = Base64.getDecoder().decode(encoded);
-			} catch (IllegalArgumentException e) {
-				System.out.println("Invalid encrypted packet Base64: " + encoded);
-				return;
-			}
-			String plain = StringCipher.decrypt(cipherText, client.sessionKey, client.sessionIv);
-			if (plain == null) return;
-			processDecryptedPacket(plain, client);
-			return;
+			handleEncryptedMessage(packet, value);
 		} else if (value.startsWith("/m/")) {
 			relayMessage(value);
 			return;
@@ -181,6 +134,66 @@ public class Server implements Runnable {
 		} else {
 			System.out.println(value);
 		}
+	}
+
+	private void registerClient(DatagramPacket packet, String value) {
+		final int endIndex = value.lastIndexOf("/e/");
+		if (endIndex <= 3)
+			return;
+		final String body = value.substring(3, endIndex);
+		final int sep = body.indexOf('/');
+		if (sep < 0)
+			return;
+		final String name = body.substring(0, sep);
+		final String clientPubKeyBase64 = body.substring(sep + 1);
+		try {
+			byte[] decoded = Base64.getUrlDecoder().decode(clientPubKeyBase64);
+			java.security.spec.X509EncodedKeySpec keySpec = new java.security.spec.X509EncodedKeySpec(decoded);
+			java.security.KeyFactory kf = java.security.KeyFactory.getInstance("RSA");
+			java.security.PublicKey clientPublicKey = kf.generatePublic(keySpec);
+			SecretKey symmetricKey = StringCipher.generateKey();
+			IvParameterSpec iv = StringCipher.generateIv();
+
+			ServerClient serverClient = new ServerClient(name, packet.getAddress(), packet.getPort(),
+					clientPublicKey, symmetricKey, iv, true);
+
+			String plainToken = "SYMMETRIC:" + serverClient.getId() + ":"
+					+ StringCipher.encodeString(symmetricKey.getEncoded()) + ":"
+					+ StringCipher.encodeString(iv.getIV());
+			byte[] encrypted = StringCipher.encryptRSA(plainToken, serverClient.clientPublicKey);
+			if (encrypted != null) {
+				String payload = StringCipher.encodeString(encrypted);
+				sendBytes(("/ks/" + payload + "/e/").getBytes(), packet.getAddress(), packet.getPort());
+			}
+
+			clients.add(serverClient);
+			sendConnectionId(serverClient);
+			String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
+			relayMessage(message);
+		} catch (Exception e) {
+			return;
+		}
+	}
+
+	private void handleEncryptedMessage(DatagramPacket packet, String value) {
+		int endIndex = value.lastIndexOf("/e/");
+		if (endIndex <= 3)
+			return;
+		String encoded = value.substring(3, endIndex);
+		ServerClient client = getClient(packet.getAddress(), packet.getPort());
+		if (client == null || !client.handshakeComplete)
+			return;
+		byte[] cipherText;
+		try {
+			cipherText = Base64.getDecoder().decode(encoded);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Invalid encrypted packet Base64: " + encoded);
+			return;
+		}
+		String plain = StringCipher.decrypt(cipherText, client.sessionKey, client.sessionIv);
+		if (plain == null)
+			return;
+		processDecryptedPacket(plain, client);
 	}
 
 	private ServerClient getClient(int id) {

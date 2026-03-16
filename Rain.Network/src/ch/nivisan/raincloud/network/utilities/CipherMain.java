@@ -43,15 +43,7 @@ public class CipherMain {
 
 		StringCipher.decryptRSA(rsaCipherText, keyPair.getPrivate());
 
-		IO.println("prints bytes: ");
-		String encodeText = "test data";
-		var data = StringCipher.encryptData(encodeText);
-		printBytes(data);
 
-		FileService.saveToFile("file.txt", data);
-
-		IO.println();
-		IO.println(StringCipher.decryptData(data));
 
 	}
 
