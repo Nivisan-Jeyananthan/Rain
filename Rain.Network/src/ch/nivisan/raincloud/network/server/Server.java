@@ -147,7 +147,13 @@ public class Server implements Runnable {
 			String encoded = value.substring(3, endIndex);
 			ServerClient client = getClient(packet.getAddress(), packet.getPort());
 			if (client == null || !client.handshakeComplete) return;
-			byte[] cipherText = Base64.getUrlDecoder().decode(encoded);
+			byte[] cipherText;
+			try {
+				cipherText = Base64.getDecoder().decode(encoded);
+			} catch (IllegalArgumentException e) {
+				System.out.println("Invalid encrypted packet Base64: " + encoded);
+				return;
+			}
 			String plain = StringCipher.decrypt(cipherText, client.sessionKey, client.sessionIv);
 			if (plain == null) return;
 			processDecryptedPacket(plain, client);
