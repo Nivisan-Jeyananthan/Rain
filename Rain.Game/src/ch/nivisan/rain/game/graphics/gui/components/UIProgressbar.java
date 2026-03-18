@@ -1,0 +1,43 @@
+package ch.nivisan.rain.game.graphics.gui.components;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import ch.nivisan.rain.game.utils.Vector2;
+
+public class UIProgressbar extends UIComponent {
+    protected final Color foregroundColor;
+    protected float progress = 0;
+
+    public UIProgressbar(Vector2 position, Vector2 size, Color foregroundColor) {
+        super(position);
+        this.size = size;
+        this.foregroundColor = foregroundColor;
+    }
+
+    public float getProgress() {
+        return progress;
+    }
+
+    public void setProgress(float progress) {
+        if (progress < 0.0f || progress > 1.0f) {
+            throw new IllegalArgumentException("Progress must be between 0.1 and 1");
+        }
+
+        this.progress = progress;
+    }
+
+    public void render(Graphics graphics) {
+        if (!active) {
+            return;
+        }
+
+        super.render(graphics);
+
+        graphics.setColor(color);
+        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), size.getX(), size.getY());
+
+        graphics.setColor(foregroundColor);
+        graphics.fillRect(position.getX() + offset.getX(), position.getY() + offset.getY(), (int) (progress * size.getX()), size.getY());
+    }
+}

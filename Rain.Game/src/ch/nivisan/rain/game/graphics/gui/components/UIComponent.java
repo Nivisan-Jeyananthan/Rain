@@ -1,0 +1,64 @@
+package ch.nivisan.rain.game.graphics.gui.components;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import ch.nivisan.rain.game.common.IRenderable;
+import ch.nivisan.rain.game.graphics.Screen;
+import ch.nivisan.rain.game.utils.Vector2;
+
+public class UIComponent implements IRenderable {
+    protected Vector2 position;
+    protected Vector2 size;
+    protected Vector2 offset;
+    protected Color color = Color.WHITE;
+    protected boolean active = true;
+
+    protected UIComponent(Vector2 position) {
+        this.position = position;
+        offset = new Vector2();
+    }
+
+    protected UIComponent(Vector2 position, Vector2 size) {
+        this.position = position;
+        this.size = size;
+        offset = new Vector2();
+    }
+
+    public UIComponent setColor(int color) {
+        this.color = new Color(color);
+        return this;
+    }
+
+    public UIComponent setColor(Color color) {
+        this.color = color;
+        return this;
+    }
+
+    public Vector2 getAbsolutePosition() {
+        return Vector2.addVector(position, offset);
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void render(Graphics graphics) {
+    }
+
+    @Override
+    public void render(Screen screen) {
+    }
+
+    @Override
+    public void update() {
+    }
+
+    public void setOffset(Vector2 offset) {
+        this.offset = offset;
+    }
+}
