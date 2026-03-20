@@ -6,6 +6,10 @@ public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		createGame();
+	}
+	
+	private static void createGame() {
 	       var game = new Game("Rain");
 
 	        game.frame.setResizable(false);

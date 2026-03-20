@@ -53,8 +53,8 @@ public class PlayerUI {
 		uiHealthBar.setColor(0x6a6a6a);
 		uiHealthBar.setShadow(true);
 
-		var pos = new Vector2(componentPositionX * 25, height + (offsetHeight * 2));
-		UIButton button = new UIButton(pos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text",
+		var buttonPos = new Vector2(componentPositionX * 25, height + (offsetHeight * 2));
+		UIButton button = new UIButton(buttonPos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text",
 				new UIButtonActionListener());
 		button.setColor(new Color(0x64A108));
 		button.setTextColor(Color.BLACK);
@@ -62,6 +62,10 @@ public class PlayerUI {
 		mainPanel.addComponent(nameLabel);
 		mainPanel.addComponent(uiHealthBar);
 		mainPanel.addComponent(button);
+		
+		UIPanel inventoryPanel = new UIPanel(new Vector2(startPosition.getX(), height + offsetHeight * 3),
+				new Vector2(,barSize.getY() + 20),0xfff);
+		mainPanel.addComponent(inventoryPanel);
 
 		BufferedImage image = null, hoverImage = null;
 		Vector2 size = new Vector2(maxComponentWidth, maxComponentWidth);
@@ -82,6 +86,7 @@ public class PlayerUI {
 		imageButton.setButtonListener(new UIImageButtonListener(imageButton));
 		mainPanel.addComponent(imageButton);
 	}
+	
 
 	public void update() {
 		uiHealthBar.setProgress(player.getHealth() / player.getMaxHealth());

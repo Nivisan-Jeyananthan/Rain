@@ -12,7 +12,8 @@ import ch.nivisan.rain.game.input.Keyboard;
 import ch.nivisan.rain.game.input.Mouse;
 
 public class WindowScreen extends Canvas implements IEventListener {
-    private final Keyboard keyboard;
+    private static final long serialVersionUID = 1L;
+	private final Keyboard keyboard;
     private final Mouse mouse;
     private BufferStrategy bufferStrategy;
     private Graphics graphics;

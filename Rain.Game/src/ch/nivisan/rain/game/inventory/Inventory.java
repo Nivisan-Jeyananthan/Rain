@@ -4,8 +4,23 @@ import ch.nivisan.rain.game.item.Item;
 
 public class Inventory {
 	private final InventorySlot[] itemSlots;
+	private final int size;
+	
+	public Inventory(int size) {
+		itemSlots = new InventorySlot[size];
+		this.size = size;
+	}
 	
 	public void addItem(Item item, int count) {
-		// TODO: logic for adding items while adding to existing?
+
+	}
+	
+	private InventorySlot hasItem(Item item) {
+		for(int i = 0; i < itemSlots.length; i++) {
+			if(itemSlots[i].getItem() == item) {
+				return itemSlots[i];
+			}
+		}
+		return null;
 	}
 }
