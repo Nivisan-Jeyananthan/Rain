@@ -1,6 +1,8 @@
 package ch.nivisan.rain.game.common;
 
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -10,6 +12,7 @@ import java.util.List;
 import javax.swing.*;
 
 import ch.nivisan.rain.game.events.Event;
+import ch.nivisan.rain.game.events.keyboard.KeyPressedEvent;
 import ch.nivisan.rain.game.events.mouse.MouseMovedEvent;
 import ch.nivisan.rain.game.events.mouse.MousePressedEvent;
 import ch.nivisan.rain.game.events.mouse.MouseReleasedEvent;
@@ -69,6 +72,15 @@ public class GameWindow extends JFrame {
                 MouseMovedEvent event = new MouseMovedEvent(e.getX(), e.getY(), false);
                 onEvent(event);
             }
+        });
+        
+        windowScreen.addKeyListener(new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			KeyPressedEvent event = new KeyPressedEvent(e.getKeyCode());
+			onEvent(event);
+		}
+        
         });
     }
 

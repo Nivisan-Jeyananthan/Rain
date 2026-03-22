@@ -81,7 +81,7 @@ public abstract class Mob extends Entity {
     /**
      * Checks if any of the upcoming 4 tiles overlaps with our player which would cause a collision
      * when it would, returns true, making our player not able to walk past it
-     * Divides by 4 so it is in tile system not pixel
+     * Divides by 16 so it is in tile system not pixel
      *
      * @param xMovement
      * @param yMovement
