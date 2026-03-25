@@ -24,146 +24,124 @@ import java.io.File;
 
 public class MicRecorderToggle extends JFrame {
 
-    private static class DeviceInfo {
-        public final Mixer.Info mixerInfo;
-        public final AudioFormat format;
+	private static final long serialVersionUID = 1L;
 
-        DeviceInfo(Mixer.Info mixer, AudioFormat fmt) {
-            this.mixerInfo = mixer;
-            this.format = fmt;
-        }
+	private final JComboBox<DeviceInfo> combo;
+	private RecordingThread recordingThread = null;
 
-        @Override
-        public String toString() {
-            return mixerInfo.getName() + " (" +
-                    (int) format.getSampleRate() + " Hz, " +
-                    format.getChannels() + "-Kanal)";
-        }
-    }
+	public MicRecorderToggle() {
+		super("Mikrofon‑Aufnahme");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLayout(new FlowLayout());
 
-    private final JComboBox<DeviceInfo> combo;
-    private RecordingThread recordingThread = null;
+		List<DeviceInfo> devices = findAllMicrophones();
 
-    public MicRecorderToggle() {
-        super("Mikrofon‑Aufnahme");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
+		combo = new JComboBox<>(devices.toArray(new DeviceInfo[0]));
+		JButton toggleBtn = new JButton("Start");
+		toggleBtn.setPreferredSize(new Dimension(120, 30));
 
-        List<DeviceInfo> devices = findAllMicrophones();
+		add(combo);
+		add(toggleBtn);
 
-        combo = new JComboBox<>(devices.toArray(new DeviceInfo[0]));
-        JButton toggleBtn = new JButton("Start");
-        toggleBtn.setPreferredSize(new Dimension(120, 30));
+		combo.addActionListener(e -> {
+			if (recordingThread != null) {
+				switchToDevice((DeviceInfo) combo.getSelectedItem());
+			}
+		});
 
-        add(combo);
-        add(toggleBtn);
+		toggleBtn.addActionListener(e -> {
+			if (recordingThread == null) {
+				switchToDevice((DeviceInfo) combo.getSelectedItem());
+				toggleBtn.setText("Stop");
+			} else {
+				recordingThread.stopRecording();
+				recordingThread = null;
+				toggleBtn.setText("Start");
+			}
+		});
 
-        combo.addActionListener(e -> {
-            if (recordingThread != null) {
-                switchToDevice((DeviceInfo) combo.getSelectedItem());
-            }
-        });
+		pack();
+		setLocationRelativeTo(null);
+		setVisible(true);
+	}
 
-        toggleBtn.addActionListener(e -> {
-            if (recordingThread == null) {
-                switchToDevice((DeviceInfo) combo.getSelectedItem());
-                toggleBtn.setText("Stop");
-            } else {
-                recordingThread.stopRecording();
-                recordingThread = null;
-                toggleBtn.setText("Start");
-            }
-        });
+	private List<DeviceInfo> findAllMicrophones() {
+		List<DeviceInfo> list = new ArrayList<>();
 
-        pack();
-        setLocationRelativeTo(null); 
-        setVisible(true);
-    }
+		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
 
-    private List<DeviceInfo> findAllMicrophones() {
-        List<DeviceInfo> list = new ArrayList<>();
+		for (int i = 0; i < mixerInfos.length; i++) {
+			Mixer.Info mixerInfo = mixerInfos[i];
+			Mixer mixer = AudioSystem.getMixer(mixerInfo);
 
-        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+			DataLine.Info info = new DataLine.Info(TargetDataLine.class, null);
+			if (!mixer.isLineSupported(info)) {
+				continue;
+			}
 
-        for (int i = 0; i < mixerInfos.length; i++) {
-            Mixer.Info mixerInfo = mixerInfos[i];
-            Mixer mixer = AudioSystem.getMixer(mixerInfo);
+			try {
+				TargetDataLine targetLine = (TargetDataLine) mixer.getLine(info);
+				AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000.0f, 16, 1, 2, 48000.0f,
+						false);
 
-            DataLine.Info info = new DataLine.Info(TargetDataLine.class, null);
-            if (!mixer.isLineSupported(info)) {
-                continue;
-            }
+				targetLine.open(format);
+				targetLine.close();
+				list.add(new DeviceInfo(mixerInfo, format));
+			} catch (Exception e) {
+			}
+		}
 
-            try {
-                Line.Info[] targetLines = mixer.getTargetLineInfo();
-                for (Line.Info lineInfo : targetLines) {
-                    if (!(lineInfo instanceof DataLine.Info))
-                        continue;
+		return list;
+	}
 
-                    DataLine.Info dataLineInfo = (DataLine.Info) lineInfo;
-                    AudioFormat[] supportedFormats = dataLineInfo.getFormats();
-                    for (AudioFormat currentFormat : supportedFormats) {
-                        if (currentFormat.getSampleRate() > -1 && currentFormat.isBigEndian())
-                            list.add(new DeviceInfo(mixerInfo, currentFormat));
-                    }
+	private void switchToDevice(DeviceInfo dev) {
+		if (recordingThread != null) {
+			recordingThread.stopRecording();
+			recordingThread = null;
+		}
 
-                }
-            } catch (Exception e) {
-            }
-        }
+		try {
+			Mixer mixer = AudioSystem.getMixer(dev.mixerInfo);
+			DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class, dev.format);
 
-        return list;
-    }
+			TargetDataLine line = (TargetDataLine) mixer.getLine(lineInfo);
+			line.open(dev.format);
+			line.start();
 
-    private void switchToDevice(DeviceInfo dev) {
-        if (recordingThread != null) {
-            recordingThread.stopRecording();
-            recordingThread = null;
-        }
+			recordingThread = new RecordingThread(line);
+			recordingThread.start();
 
-        try {
-            Mixer mixer = AudioSystem.getMixer(dev.mixerInfo);
-            DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class, dev.format);
+			System.out.println("Aufnahme gestartet: " + dev.mixerInfo.getName());
+		} catch (LineUnavailableException ex) {
+			JOptionPane.showMessageDialog(this, "Gerät nicht verfügbar: " + dev.mixerInfo.getName(), "Fehler",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
-            TargetDataLine line = (TargetDataLine) mixer.getLine(lineInfo);
-            line.open(dev.format);
-            line.start();
+	private static class RecordingThread extends Thread {
+		private final TargetDataLine line;
 
-            recordingThread = new RecordingThread(line);
-            recordingThread.start();
+		RecordingThread(TargetDataLine line) {
+			this.line = line;
+		}
 
-            System.out.println("Aufnahme gestartet: " + dev.mixerInfo.getName());
-        } catch (LineUnavailableException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Gerät nicht verfügbar: " + dev.mixerInfo.getName(),
-                    "Fehler", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+		@Override
+		public void run() {
+			File wavFile = new File("aufnahme.wav");
+			try (AudioInputStream ais = new AudioInputStream(line)) {
+				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
-    private static class RecordingThread extends Thread {
-        private final TargetDataLine line;
+		void stopRecording() {
+			line.stop();
+			line.close();
+		}
+	}
 
-        RecordingThread(TargetDataLine line) {
-            this.line = line;
-        }
-
-        @Override
-        public void run() {
-            File wavFile = new File("aufnahme.wav");
-            try (AudioInputStream ais = new AudioInputStream(line)) {
-                AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        void stopRecording() {
-            line.stop();
-            line.close();
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MicRecorderToggle::new);
-    }
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(MicRecorderToggle::new);
+	}
 }
