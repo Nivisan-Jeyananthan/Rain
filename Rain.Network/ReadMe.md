@@ -77,3 +77,7 @@ Durch IV + Schlüssel werden gleiche Nachrichten unterschiedlich verschlüsselt 
 
 - Prüft Paketgrenzen (`lastIndexOf("/e/")`) bevor Kodierung/Entschlüsselung.
 - Gültigkeitsprüfungen verhindern Crash durch falsche Base64-Strings.
+
+
+# In Arbeit
+VoiceChat
