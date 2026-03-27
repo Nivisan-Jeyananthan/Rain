@@ -18,9 +18,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import ch.nivisan.raincloud.network.utilities.Audio;
+import ch.nivisan.raincloud.network.utilities.NetDriver;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
+import java.net.DatagramPacket;
 
 public class MicRecorderToggle extends JFrame {
 
@@ -119,23 +123,33 @@ public class MicRecorderToggle extends JFrame {
 	}
 
 	private static class RecordingThread extends Thread {
+		private final NetDriver netDriver;
 		private final TargetDataLine line;
+
 
 		RecordingThread(TargetDataLine line) {
 			this.line = line;
+			this.netDriver = new NetDriver("localhost", 50005);
 		}
 
 		@Override
 		public void run() {
-			File wavFile = new File("aufnahme.wav");
-			try (AudioInputStream ais = new AudioInputStream(line)) {
-				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			byte[] micBuffer = new byte[Audio.bufferSize];
+
+			line.read(micBuffer, 0, micBuffer.length);
+
+			netDriver.send(micBuffer);
+
+			// File wavFile = new File("aufnahme.wav");
+			// try (AudioInputStream ais = new AudioInputStream(line)) {
+			// AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
 		}
 
 		void stopRecording() {
+			this.netDriver.close();
 			line.stop();
 			line.close();
 		}
