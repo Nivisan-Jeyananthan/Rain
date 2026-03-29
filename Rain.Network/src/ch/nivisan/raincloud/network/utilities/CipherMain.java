@@ -20,16 +20,16 @@ public class CipherMain {
 		if (cipherText == null) {
 			return;
 		}
-		IO.println("The encrypted message is: " + cipherText);
+		System.out.println("The encrypted message is: " + cipherText);
 
 		String encodedString = StringCipher.encodeString(cipherText);
-		IO.println("The encoded message is: " + encodedString);
+		System.out.println("The encoded message is: " + encodedString);
 
 		byte[] decodedString = StringCipher.decodeString(encodedString);
-		IO.println("The decoded message is: " + decodedString);
+		System.out.println("The decoded message is: " + decodedString);
 
 		String originalMessage = StringCipher.decrypt(decodedString, symmetricKey, iv);
-		IO.println("The decrypted message is: " + originalMessage);
+		System.out.println("The decrypted message is: " + originalMessage);
 
 		KeyPair keyPair = StringCipher.generateRSAKey();
 		System.out.println("Bytes : " + StringCipher.encodeString(keyPair.getPublic().getEncoded()));
