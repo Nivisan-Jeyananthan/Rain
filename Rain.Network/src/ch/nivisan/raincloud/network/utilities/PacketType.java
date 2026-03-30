@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network.client;
+package ch.nivisan.raincloud.network.utilities;
 
 public class PacketType {
     public final static byte serverConnect = 1;

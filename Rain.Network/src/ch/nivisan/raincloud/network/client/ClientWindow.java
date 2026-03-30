@@ -24,7 +24,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-public class ClientWindow extends JFrame {
+import ch.nivisan.raincloud.network.utilities.PlaceholderTextField;
+
+class ClientWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private PlaceholderTextField messagTextField;
@@ -36,7 +38,7 @@ public class ClientWindow extends JFrame {
 
 	private boolean running;
 
-	public ClientWindow(final String name, final String address, final int port) {
+	ClientWindow(final String name, final String address, final int port) {
 		createWindow();
 		usersWindow = new OnlineUsersWindow();
 		writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);

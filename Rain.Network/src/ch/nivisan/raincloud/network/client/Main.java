@@ -2,9 +2,9 @@ package ch.nivisan.raincloud.network.client;
 
 import java.awt.EventQueue;
 
-public class Main {
+class Main {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {

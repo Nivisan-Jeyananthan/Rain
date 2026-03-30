@@ -3,12 +3,9 @@ package ch.nivisan.raincloud.network.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
@@ -23,17 +20,15 @@ import ch.nivisan.raincloud.network.utilities.NetDriver;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.io.File;
-import java.net.DatagramPacket;
 
-public class MicRecorderToggle extends JFrame {
+class MicRecorderToggle extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
 	private final JComboBox<DeviceInfo> combo;
 	private RecordingThread recordingThread = null;
 
-	public MicRecorderToggle() {
+	MicRecorderToggle() {
 		super("Mikrofon‑Aufnahme");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new FlowLayout());

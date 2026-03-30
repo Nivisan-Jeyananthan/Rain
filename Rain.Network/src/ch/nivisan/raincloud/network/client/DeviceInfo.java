@@ -3,11 +3,11 @@ package ch.nivisan.raincloud.network.client;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Mixer;
 
-public class DeviceInfo {
+ class DeviceInfo {
 	public final Mixer.Info mixerInfo;
 	public final AudioFormat format;
 
-	public DeviceInfo(Mixer.Info mixer, AudioFormat fmt) {
+	DeviceInfo(Mixer.Info mixer, AudioFormat fmt) {
 		this.mixerInfo = mixer;
 		this.format = fmt;
 	}

@@ -12,14 +12,16 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-public class Login extends JFrame {
+import ch.nivisan.raincloud.network.utilities.PlaceholderTextField;
+
+class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
 	private JTextField txtName;
 	private PlaceholderTextField txtIpAddress;
 	private PlaceholderTextField txtPort;
 
-	public Login() {
+	Login() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException

@@ -14,13 +14,13 @@ import javax.crypto.spec.IvParameterSpec;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
-public class Client {
+class Client {
 	private static final int MAX_PACKET_SIZE = 1024;
 
 	private DatagramSocket socket;
 	private InetAddress ip;
-	public final int port;
-	public final String name;
+	final int port;
+	final String name;
 	public final String address;
 	private KeyPair keyPair;
 	private SecretKey sessionKey;
@@ -32,7 +32,7 @@ public class Client {
 	private boolean connected;
 	private boolean handshakeComplete;
 
-	public Client(final String name, final String address, final int port) {
+	Client(final String name, final String address, final int port) {
 		this.name = name;
 		this.address = address;
 		this.port = port;
@@ -48,11 +48,11 @@ public class Client {
 		}
 	}
 
-	public boolean connected() {
+	boolean connected() {
 		return connected;
 	}
 
-	public boolean connect() {
+	boolean connect() {
 		if (ip == null || socket == null)
 			return false;
 
@@ -70,7 +70,7 @@ public class Client {
 		return connected;
 	}
 
-	public String getBytes() {
+	String getBytes() {
 		try {
 			socket.setSoTimeout(0);
 		} catch (SocketException e) {
@@ -151,12 +151,12 @@ public class Client {
 		return message;
 	}
 
-	public void sendText(String message) {
+	void sendText(String message) {
 		message = message.replaceAll("/\\w/", "");
 		sendEncrypted("/m/" + message + "/e/");
 	}
 
-	public void requestUsernames() {
+	void requestUsernames() {
 		sendEncrypted("/u/");
 	}
 

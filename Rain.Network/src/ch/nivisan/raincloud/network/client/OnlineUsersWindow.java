@@ -11,13 +11,13 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-public class OnlineUsersWindow extends JFrame {
+class OnlineUsersWindow extends JFrame {
 	private JPanel contentPanel;
 	private JList<String> usersList;
 
 	private static final long serialVersionUID = 1L;
 
-	public OnlineUsersWindow() {
+	OnlineUsersWindow() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -50,7 +50,7 @@ public class OnlineUsersWindow extends JFrame {
 		usersList.setFont(new Font("Verdana", 0, 15));
 	}
 
-	public void updateUsers(String[] users) {
+	void updateUsers(String[] users) {
 		usersList.setListData(users);
 	}
 
