@@ -1,6 +1,6 @@
 package ch.nivisan.raincloud.network.server;
 
-public enum ClientDisconnectType {
+enum ClientDisconnectType {
     Disconnect,
     Timeout,
     Kick

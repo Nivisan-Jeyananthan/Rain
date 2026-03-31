@@ -13,26 +13,25 @@ import java.util.Scanner;
 import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
-public class Server implements Runnable {
-	protected final List<ServerClient> clients = Collections.synchronizedList(new ArrayList<ServerClient>());
+class Server implements Runnable {
+	final List<ServerClient> clients = Collections.synchronizedList(new ArrayList<ServerClient>());
 
 	private final HashSet<Integer> clientResponses = new HashSet<Integer>();
 
 	private final int port;
-	protected DatagramSocket socket;
+	DatagramSocket socket;
 
 	private Thread serverThread;
 	private Thread manageThread;
 	private Thread recieveThread;
 	private Thread sendThread;
-	protected boolean running;
-	protected boolean raw;
+	boolean running;
+	boolean raw;
 
 	public Server(int port) {
 

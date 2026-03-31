@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network.client;
+package ch.nivisan.raincloud.network.mic;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,5 @@
 package ch.nivisan.raincloud.network.utilities;
 
-import java.io.BufferedOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

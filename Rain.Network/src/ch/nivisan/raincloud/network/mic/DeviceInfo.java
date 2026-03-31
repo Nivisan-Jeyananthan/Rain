@@ -1,4 +1,4 @@
-package ch.nivisan.raincloud.network.client;
+package ch.nivisan.raincloud.network.mic;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.Mixer;

@@ -1,6 +1,5 @@
 package ch.nivisan.raincloud.network.utilities;
 
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 
 import javax.crypto.SecretKey;
