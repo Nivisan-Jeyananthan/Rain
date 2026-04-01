@@ -10,6 +10,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
+
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,6 +27,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
+import ch.nivisan.raincloud.network.utilities.Audio;
+import ch.nivisan.raincloud.network.utilities.NetDriver;
 import ch.nivisan.raincloud.network.utilities.PlaceholderTextField;
 
 class ClientWindow extends JFrame {
@@ -33,14 +38,16 @@ class ClientWindow extends JFrame {
 	private JTextArea txtHistory;
 	private JPanel contentPanel;
 	private Thread recieveThread;
-	private Client client;
-	private OnlineUsersWindow usersWindow;
+	private final Client client;
+	private final OnlineUsersWindow usersWindow;
+	private final MicRecorderToggle settingsWindow;
 
 	private boolean running;
 
 	ClientWindow(final String name, final String address, final int port) {
 		createWindow();
 		usersWindow = new OnlineUsersWindow();
+		settingsWindow = new MicRecorderToggle(new NetDriver(address, port));
 		writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);
 		client = new Client(name, address, port);
 
@@ -80,7 +87,7 @@ class ClientWindow extends JFrame {
 		setContentPane(contentPanel);
 
 		GridBagLayout gblContentPanel = new GridBagLayout();
-		gblContentPanel.columnWidths = new int[] { 10, 850, 30, 10 };
+		gblContentPanel.columnWidths = new int[] { 10, 850, 30, 30, 10 };
 		gblContentPanel.rowHeights = new int[] { 35, 475, 40 };
 		contentPanel.setLayout(gblContentPanel);
 
@@ -117,18 +124,35 @@ class ClientWindow extends JFrame {
 
 		JButton btnSend = new JButton("Send");
 		GridBagConstraints gbcBtnSend = new GridBagConstraints();
-		gbcBtnSend.insets = new Insets(0, 0, 0, 5);
+		gbcBtnSend.insets = new Insets(0, 0, 0, 0);
 		gbcBtnSend.gridx = 2;
 		gbcBtnSend.gridy = 2;
 		gbcBtnSend.weightx = 0;
 		gbcBtnSend.weighty = 0;
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				running = false;
+				running = true;
 				sendMessage();
 			}
 		});
 		contentPanel.add(btnSend, gbcBtnSend);
+		
+		JButton btnRecord = new JButton("🎤︎︎");
+		GridBagConstraints gbcBtnRecord = new GridBagConstraints();
+		gbcBtnRecord.insets = new Insets(0, 0, 0, 5);
+		gbcBtnRecord.gridx = 3;
+		gbcBtnRecord.gridy = 2;
+		gbcBtnRecord.weightx = 0;
+		gbcBtnRecord.weighty = 0;
+		btnRecord.addActionListener(new ActionListener() {
+			// TODO: setup correct sending audio and stopping audio
+			public void actionPerformed(ActionEvent event) {
+				running = true;
+				client.sendAudio();
+				btnRecord.setText("Stop");
+			}
+		});
+		contentPanel.add(btnRecord, gbcBtnRecord);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
@@ -153,7 +177,7 @@ class ClientWindow extends JFrame {
 		gbcHistory.fill = GridBagConstraints.BOTH;
 		gbcHistory.gridx = 0;
 		gbcHistory.gridy = 0;
-		gbcHistory.gridwidth = 3;
+		gbcHistory.gridwidth = 4;
 		gbcHistory.gridheight = 2;
 		gbcHistory.weightx = 1;
 		gbcHistory.weighty = 1;
@@ -169,6 +193,16 @@ class ClientWindow extends JFrame {
 
 		JMenu menu = new JMenu("Window");
 		menuBar.add(menu);
+		
+		JMenuItem settings = new JMenuItem("Settings");
+		settings.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				settingsWindow.setVisible(true);
+			}
+		});
+		menu.add(settings);
 
 		JMenuItem onlineUsersItem = new JMenuItem("Online Users");
 		onlineUsersItem.addActionListener(new ActionListener() {
@@ -181,6 +215,8 @@ class ClientWindow extends JFrame {
 		});
 
 		menu.add(onlineUsersItem);
+		
+		
 
 	}
 
@@ -202,39 +238,39 @@ class ClientWindow extends JFrame {
 		recieveThread = new Thread("recieve") {
 			public void run() {
 				while (running) {
-			String message = client.getBytes();
-			if (message == null || message.isEmpty())
-				continue;
+					String message = client.getBytes();
+					if (message == null || message.isEmpty())
+						continue;
 
-			if (message.startsWith("/e/")) {
-				int endIndex = message.lastIndexOf("/e/");
-				if (endIndex > 3) {
-					message = message.substring(3, endIndex);
-				}
-			}
+					if (message.startsWith("/e/")) {
+						int endIndex = message.lastIndexOf("/e/");
+						if (endIndex > 3) {
+							message = message.substring(3, endIndex);
+						}
+					}
 
-			if (message.startsWith("/m/")) {
-				int endIndex = message.indexOf("/e/", 3);
-				if (endIndex > 3) {
-					writeConsole(message.substring(3, endIndex));
+					if (message.startsWith("/m/")) {
+						int endIndex = message.indexOf("/e/", 3);
+						if (endIndex > 3) {
+							writeConsole(message.substring(3, endIndex));
+						}
+					} else if (message.startsWith("/u/")) {
+						int endIndex = message.indexOf("/e/", 3);
+						if (endIndex < 0)
+							endIndex = message.length();
+						String payload = message.substring(3, endIndex);
+						if (payload.isBlank()) {
+							usersWindow.updateUsers(new String[0]);
+						} else {
+							String[] users = payload.split("/n/");
+							usersWindow.updateUsers(users);
+						}
+					} else if (message.startsWith("/d/")) {
+						dispose();
+						client.quit(true);
+						new Login();
+					}
 				}
-			} else if (message.startsWith("/u/")) {
-				int endIndex = message.indexOf("/e/", 3);
-				if (endIndex < 0)
-					endIndex = message.length();
-				String payload = message.substring(3, endIndex);
-				if (payload.isBlank()) {
-					usersWindow.updateUsers(new String[0]);
-				} else {
-					String[] users = payload.split("/n/");
-					usersWindow.updateUsers(users);
-				}
-			} else if (message.startsWith("/d/")) {
-				dispose();
-				client.quit(true);
-				new Login();
-			}
-		}
 			}
 		};
 		recieveThread.start();

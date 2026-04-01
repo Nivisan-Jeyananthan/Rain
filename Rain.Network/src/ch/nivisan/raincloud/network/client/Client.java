@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.client;
 
+import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -11,7 +12,11 @@ import java.util.Base64;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 
+import ch.nivisan.raincloud.network.utilities.Audio;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
 class Client {
@@ -20,6 +25,7 @@ class Client {
 	private DatagramSocket socket;
 	private InetAddress ip;
 	final int port;
+	
 	final String name;
 	public final String address;
 	private KeyPair keyPair;
@@ -154,6 +160,22 @@ class Client {
 	void sendText(String message) {
 		message = message.replaceAll("/\\w/", "");
 		sendEncrypted("/m/" + message + "/e/");
+	}
+	
+	void sendAudio() {
+		TargetDataLine dataLine = DeviceSettings.geTargetDataLine();
+		try {
+			dataLine.open(Audio.defaultFormat);
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		dataLine.start();
+		byte[] buffer = new byte[Audio.bufferSize];
+		dataLine.read(buffer, 0, buffer.length);
+	
+		
+		sendBytes(StringCipher.encodeString(buffer).getBytes());
 	}
 
 	void requestUsernames() {

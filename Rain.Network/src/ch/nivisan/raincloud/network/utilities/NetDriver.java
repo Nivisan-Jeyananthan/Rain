@@ -40,6 +40,7 @@ public class NetDriver {
 
     public void close() {
         if (socket != null && !socket.isClosed())
+        	socket.disconnect();
             socket.close();
     }
 
