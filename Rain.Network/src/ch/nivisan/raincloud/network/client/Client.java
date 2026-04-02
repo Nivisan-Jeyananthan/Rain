@@ -1,6 +1,5 @@
 package ch.nivisan.raincloud.network.client;
 
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,10 +8,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.util.Base64;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
@@ -25,7 +24,7 @@ class Client {
 	private DatagramSocket socket;
 	private InetAddress ip;
 	final int port;
-	
+
 	final String name;
 	public final String address;
 	private KeyPair keyPair;
@@ -34,9 +33,11 @@ class Client {
 	private int Id = -1;
 
 	private Thread sendThread;
-	private boolean running;
-	private boolean connected;
-	private boolean handshakeComplete;
+	private boolean running = false;
+	private AtomicBoolean micRunning = new AtomicBoolean(false);
+	private boolean connected = false;
+	private boolean handshakeComplete = false;
+	private MicRecorder micThread;
 
 	Client(final String name, final String address, final int port) {
 		this.name = name;
@@ -161,22 +162,6 @@ class Client {
 		message = message.replaceAll("/\\w/", "");
 		sendEncrypted("/m/" + message + "/e/");
 	}
-	
-	void sendAudio() {
-		TargetDataLine dataLine = DeviceSettings.geTargetDataLine();
-		try {
-			dataLine.open(Audio.defaultFormat);
-		} catch (LineUnavailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		dataLine.start();
-		byte[] buffer = new byte[Audio.bufferSize];
-		dataLine.read(buffer, 0, buffer.length);
-	
-		
-		sendBytes(StringCipher.encodeString(buffer).getBytes());
-	}
 
 	void requestUsernames() {
 		sendEncrypted("/u/");
@@ -236,5 +221,56 @@ class Client {
 				}
 			}
 		}).start();
+	}
+
+	public void sendAudio() {
+		if (!micRunning.get() && micThread == null) {
+			micThread = new MicRecorder();
+			micThread.start();
+		} else {
+			micThread.stopMic();
+			micThread = null;
+		}
+	}
+
+	boolean getMicRunning() {
+		System.out.println("Running mic: " + micRunning);
+		return micRunning.get();
+	}
+
+	class MicRecorder extends Thread {
+		TargetDataLine dataLine;
+
+		@Override
+		public void run() {
+			micRunning.set(true);
+
+			while (micRunning.get()) {
+				dataLine = DeviceSettings.geTargetDataLine();
+				if (dataLine == null)
+					return;
+
+				try {
+					dataLine.open(Audio.defaultFormat);
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+				}
+				dataLine.start();
+				byte[] buffer = new byte[Audio.bufferSize];
+				dataLine.read(buffer, 0, buffer.length);
+
+				sendBytes(StringCipher.encodeString(buffer).getBytes());
+				System.out.println("Send audio bytes");
+			}
+		}
+
+		void stopMic() {
+			micRunning.set(false);
+			if (dataLine != null) {
+				dataLine.stop();
+				dataLine.close();
+			}
+		}
+
 	}
 }

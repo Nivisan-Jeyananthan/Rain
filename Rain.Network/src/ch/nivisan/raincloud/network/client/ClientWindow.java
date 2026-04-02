@@ -9,10 +9,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +23,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-import ch.nivisan.raincloud.network.utilities.Audio;
 import ch.nivisan.raincloud.network.utilities.NetDriver;
 import ch.nivisan.raincloud.network.utilities.PlaceholderTextField;
 
@@ -136,8 +131,8 @@ class ClientWindow extends JFrame {
 			}
 		});
 		contentPanel.add(btnSend, gbcBtnSend);
-		
-		JButton btnRecord = new JButton("🎤︎︎");
+
+		JButton btnRecord = new JButton("၊၊||၊");
 		GridBagConstraints gbcBtnRecord = new GridBagConstraints();
 		gbcBtnRecord.insets = new Insets(0, 0, 0, 5);
 		gbcBtnRecord.gridx = 3;
@@ -149,7 +144,10 @@ class ClientWindow extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				running = true;
 				client.sendAudio();
-				btnRecord.setText("Stop");
+				if (client.getMicRunning())
+					btnRecord.setText("🔴");
+				else
+					btnRecord.setText("၊၊||၊");
 			}
 		});
 		contentPanel.add(btnRecord, gbcBtnRecord);
@@ -193,10 +191,10 @@ class ClientWindow extends JFrame {
 
 		JMenu menu = new JMenu("Window");
 		menuBar.add(menu);
-		
+
 		JMenuItem settings = new JMenuItem("Settings");
 		settings.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				settingsWindow.setVisible(true);
@@ -215,8 +213,6 @@ class ClientWindow extends JFrame {
 		});
 
 		menu.add(onlineUsersItem);
-		
-		
 
 	}
 
