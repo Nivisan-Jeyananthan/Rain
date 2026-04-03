@@ -140,10 +140,10 @@ class ClientWindow extends JFrame {
 		gbcBtnRecord.weightx = 0;
 		gbcBtnRecord.weighty = 0;
 		btnRecord.addActionListener(new ActionListener() {
-			// TODO: setup correct sending audio and stopping audio
 			public void actionPerformed(ActionEvent event) {
 				running = true;
 				client.sendAudio();
+			// TODO: setup correct sending audio and stopping audio
 				if (client.getMicRunning())
 					btnRecord.setText("🔴");
 				else

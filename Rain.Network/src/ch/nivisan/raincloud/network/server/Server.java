@@ -17,6 +17,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
+import ch.nivisan.raincloud.network.utilities.NetUtils;
 
 class Server implements Runnable {
 	final List<ServerClient> clients = Collections.synchronizedList(new ArrayList<ServerClient>());
@@ -82,7 +83,7 @@ class Server implements Runnable {
 		recieveThread = new Thread("Recieve") {
 			public void run() {
 				while (running) {
-					byte[] data = new byte[1024];
+					byte[] data = new byte[NetUtils.MAX_PACKET_SIZE];
 					DatagramPacket packet = new DatagramPacket(data, data.length);
 
 					try {
@@ -130,7 +131,11 @@ class Server implements Runnable {
 			} else {
 				sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
 			}
-		} else {
+		} 
+		else if (value.startsWith("/v/")){
+
+		}
+		else {
 			System.out.println(value);
 		}
 	}

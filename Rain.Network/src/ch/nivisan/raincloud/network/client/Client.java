@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -12,15 +13,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
 import ch.nivisan.raincloud.network.utilities.Audio;
+import ch.nivisan.raincloud.network.utilities.NetUtils;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
 class Client {
-	private static final int MAX_PACKET_SIZE = 1024;
-
 	private DatagramSocket socket;
 	private InetAddress ip;
 	final int port;
@@ -32,7 +35,6 @@ class Client {
 	private IvParameterSpec sessionIv;
 	private int Id = -1;
 
-	private Thread sendThread;
 	private boolean running = false;
 	private AtomicBoolean micRunning = new AtomicBoolean(false);
 	private boolean connected = false;
@@ -87,7 +89,7 @@ class Client {
 	}
 
 	private String receiveMessage() {
-		byte[] data = new byte[MAX_PACKET_SIZE];
+		byte[] data = new byte[NetUtils.MAX_PACKET_SIZE];
 		DatagramPacket packet = new DatagramPacket(data, data.length);
 
 		try {
@@ -155,6 +157,15 @@ class Client {
 			}
 		}
 
+		if (message.startsWith("/v/")) {
+			File wavFile = new File("aufnahme.wav");
+		// try (AudioInputStream ais = new AudioInputStream(line)) {
+		// 	AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
+		}
+
 		return message;
 	}
 
@@ -180,7 +191,7 @@ class Client {
 	}
 
 	private void sendBytes(final byte[] data) {
-		sendThread = new Thread("Send") {
+		final Thread sendThread = new Thread("Send") {
 			public void run() {
 				try {
 					if (!socket.isClosed()) {
@@ -259,7 +270,7 @@ class Client {
 				byte[] buffer = new byte[Audio.bufferSize];
 				dataLine.read(buffer, 0, buffer.length);
 
-				sendBytes(StringCipher.encodeString(buffer).getBytes());
+				sendEncrypted(("/v/" + StringCipher.encodeString(buffer)));
 				System.out.println("Send audio bytes");
 			}
 		}
@@ -267,6 +278,7 @@ class Client {
 		void stopMic() {
 			micRunning.set(false);
 			if (dataLine != null) {
+				dataLine.drain();
 				dataLine.stop();
 				dataLine.close();
 			}

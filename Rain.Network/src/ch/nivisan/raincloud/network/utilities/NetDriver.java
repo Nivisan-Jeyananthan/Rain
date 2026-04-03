@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.utilities;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -28,20 +29,26 @@ public class NetDriver {
     }
 
     public void send(byte[] data) {
-        try {
-            DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
-            socket.send(packet);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Thread sendThread = new Thread("Send") {
+            public void run() {
+                try {
+                    if (!socket.isClosed()) {
+                        DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+                        socket.send(packet);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        sendThread.start();
 
     }
 
     public void close() {
         if (socket != null && !socket.isClosed())
-        	socket.disconnect();
-            socket.close();
+            socket.disconnect();
+        socket.close();
     }
 
     public InetAddress getAddress() {
