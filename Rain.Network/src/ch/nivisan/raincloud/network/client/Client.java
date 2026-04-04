@@ -157,11 +157,11 @@ class Client {
 		// TODO: handle voice input/ output
 		if (message.startsWith("/v/")) {
 			File wavFile = new File("aufnahme.wav");
-		// try (AudioInputStream ais = new AudioInputStream(line)) {
-		// 	AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-		// } catch (Exception e) {
-		// 	e.printStackTrace();
-		// }
+			// try (AudioInputStream ais = new AudioInputStream(line)) {
+			// AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+			// } catch (Exception e) {
+			// e.printStackTrace();
+			// }
 		}
 
 		return message;
@@ -182,6 +182,7 @@ class Client {
 			if (encrypted != null) {
 				String encoded = Base64.getEncoder().encodeToString(encrypted);
 				sendBytes(("/e/" + encoded + "/e/").getBytes());
+				System.out.println(("/e/" + encoded + "/e/").getBytes().length);
 				return;
 			}
 		}
@@ -234,7 +235,7 @@ class Client {
 
 	public void sendAudio() {
 		if (!micRunning.get() && micThread == null) {
-			micThread = new MicRecorder();
+			micThread = new MicRecorder(Audio.getTargetDataLine());
 			micThread.start();
 		} else {
 			micThread.stopMic();
@@ -248,23 +249,17 @@ class Client {
 	}
 
 	class MicRecorder extends Thread {
-		TargetDataLine dataLine;
+		final TargetDataLine dataLine;
+
+		MicRecorder(TargetDataLine dataLine) {
+			this.dataLine = dataLine;
+		}
 
 		@Override
 		public void run() {
 			micRunning.set(true);
 
 			while (micRunning.get()) {
-				dataLine = Audio.getTargetDataLine();
-				if (dataLine == null)
-					return;
-
-				try {
-					dataLine.open(Audio.defaultFormat);
-				} catch (LineUnavailableException e) {
-					e.printStackTrace();
-				}
-				dataLine.start();
 				byte[] buffer = new byte[Audio.bufferSize];
 				dataLine.read(buffer, 0, buffer.length);
 

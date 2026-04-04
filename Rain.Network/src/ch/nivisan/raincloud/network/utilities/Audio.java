@@ -51,7 +51,7 @@ public class Audio {
                 e.printStackTrace();
             }
 
-            return;
+            clearLine(line);
         }
     }
 
@@ -72,14 +72,18 @@ public class Audio {
                     line.write(buffer, 0, bytesRead);
                 }
 
-                line.drain();
-                line.stop();
-                line.close();
+                clearLine(line);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void clearLine(DataLine line) {
+        line.drain();
+        line.stop();
+        line.close();
     }
 
     /**
@@ -125,7 +129,9 @@ public class Audio {
 
     /**
      * Gets the target dataline form the given DeviceInfo.
-     * @return a TargetDataLine which is a InputDevice interface, where the one can process AudioInput.
+     * 
+     * @return a TargetDataLine which is a InputDevice interface, where the one can
+     *         process AudioInput.
      */
     public static TargetDataLine getTargetDataLine(DeviceInfo microphone) {
         if (microphone == null)
