@@ -2,6 +2,7 @@ package ch.nivisan.raincloud.network.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -31,6 +32,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.lang.annotation.Target;
 import java.net.URL;
 
 class MicRecorderToggle extends JFrame {
@@ -38,8 +40,9 @@ class MicRecorderToggle extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private final JButton btnRecordInput;
+	private final JButton btnPlaybackAudio;
 	private final JComboBox<DeviceInfo> comboInputs;
-	private final JComboBox<DeviceInfo> comboOutputs;
+	private JComboBox<DeviceInfo> comboOutputs;
 
 	private RecordingThread recordingThread = null;
 	private PlaybackThread playbackThread = null;
@@ -59,7 +62,7 @@ class MicRecorderToggle extends JFrame {
 		setLayout(new FlowLayout());
 		setResizable(false);
 
-		List<DeviceInfo> inputDevices = findAllMicrophones();
+		List<DeviceInfo> inputDevices = findDevices(TargetDataLine.class);
 
 		comboInputs = new JComboBox<>(inputDevices.toArray(new DeviceInfo[0]));
 		btnRecordInput = new JButton("Start test");
@@ -84,10 +87,15 @@ class MicRecorderToggle extends JFrame {
 		});
 
 		btnRecordInput.addActionListener(e -> {
-			switchInputDevice();
+			System.out.println("Aufnahme gestartet: " + DeviceSettings.getMicrophone().mixerInfo.getName());
+
+			startFromDevice(DeviceSettings.getMicrophone(), TargetDataLine.class,
+					() -> new RecordingThread(Audio.geTargetDataLine()), btnRecordInput, "Start test",
+					"Stop test");
 		});
 
-		List<DeviceInfo> outputDevices = findOutputDevices();
+		btnPlaybackAudio = new JButton("Start playback");
+		List<DeviceInfo> outputDevices = findDevices(SourceDataLine.class);
 		comboOutputs = new JComboBox<>(outputDevices.toArray(new DeviceInfo[0]));
 
 		comboOutputs.addItemListener(new ItemListener() {
@@ -96,7 +104,7 @@ class MicRecorderToggle extends JFrame {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					if (playbackThread == null)
-						DeviceSettings.setSpeaker((DeviceInfo) comboInputs.getSelectedItem());
+						DeviceSettings.setSpeaker((DeviceInfo) comboOutputs.getSelectedItem());
 					else {
 						comboOutputs.setSelectedItem(DeviceSettings.getSpeaker());
 					}
@@ -105,11 +113,16 @@ class MicRecorderToggle extends JFrame {
 			}
 		});
 
-		btnRecordInput.addActionListener(e -> {
-			switchInputDevice();
+		btnPlaybackAudio.addActionListener(e -> {
+			System.out.println("Playback gestartet: " + DeviceSettings.getSpeaker().mixerInfo.getName());
+
+			startFromDevice(DeviceSettings.getSpeaker(), SourceDataLine.class,
+					() -> new PlaybackThread(Audio.getSourceDataLine()), btnPlaybackAudio, "Start playback",
+					"Stop playback");
 		});
 
 		add(comboOutputs);
+		add(btnPlaybackAudio);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
@@ -122,8 +135,7 @@ class MicRecorderToggle extends JFrame {
 		setVisible(true);
 	}
 
-	private List<DeviceInfo> findOutputDevices() {
-
+	private <T extends DataLine> List<DeviceInfo> findDevices(Class<T> lineClass) {
 		List<DeviceInfo> list = new ArrayList<>();
 
 		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
@@ -132,44 +144,24 @@ class MicRecorderToggle extends JFrame {
 			Mixer.Info mixerInfo = mixerInfos[i];
 			Mixer mixer = AudioSystem.getMixer(mixerInfo);
 
-			DataLine.Info info = new DataLine.Info(Clip.class, Audio.defaultFormat);
+			DataLine.Info info = new DataLine.Info(lineClass, Audio.defaultFormat);
 			if (!mixer.isLineSupported(info)) {
 				continue;
 			}
 
-			try {
-				Clip sourceLine = (Clip) mixer.getLine(info);
-
-				var data = FileService.getFromFile("aufnahme.wav");
-				sourceLine.open(Audio.defaultFormat, data, 0, data.length);
-				sourceLine.start();
-				sourceLine.close();
-				list.add(new DeviceInfo(mixerInfo, Audio.defaultFormat));
-			} catch (Exception e) {
-			}
-		}
-		return list;
-	}
-
-	private List<DeviceInfo> findAllMicrophones() {
-		List<DeviceInfo> list = new ArrayList<>();
-
-		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
-
-		for (int i = 0; i < mixerInfos.length; i++) {
-			Mixer.Info mixerInfo = mixerInfos[i];
-			Mixer mixer = AudioSystem.getMixer(mixerInfo);
-
-			DataLine.Info info = new DataLine.Info(TargetDataLine.class, null);
-			if (!mixer.isLineSupported(info)) {
+			if (!info.isFormatSupported(Audio.defaultFormat))
 				continue;
-			}
 
 			try {
-				TargetDataLine targetLine = (TargetDataLine) mixer.getLine(info);
+				T line = (T) mixer.getLine(info);
 
-				targetLine.open(Audio.defaultFormat);
-				targetLine.close();
+				if (line instanceof TargetDataLine lf)
+					lf.open(Audio.defaultFormat);
+				else {
+					line.open();
+				}
+
+				line.close();
 				list.add(new DeviceInfo(mixerInfo, Audio.defaultFormat));
 			} catch (Exception e) {
 			}
@@ -178,47 +170,70 @@ class MicRecorderToggle extends JFrame {
 		return list;
 	}
 
-	private void switchInputDevice() {
-		if (recordingThread != null) {
-			recordingThread.stopRecording();
-			recordingThread = null;
-			btnRecordInput.setText("Start test");
+	private Thread runningThread;
+
+	private Thread getRunningThread() {
+		return runningThread;
+	}
+
+	private void storeRunningThread(Thread t) {
+		runningThread = t;
+	}
+
+	private void stopThread(Thread thread, JButton btn, String startText) {
+		if (thread instanceof RecordingThread) {
+			((RecordingThread) thread).stopRecording();
+		} else if (thread instanceof PlaybackThread) {
+			((PlaybackThread) thread).stopPlayback();
+		}
+		runningThread = null;
+		btn.setText(startText);
+	}
+
+	private <T extends DataLine> void startFromDevice(DeviceInfo device, Class<T> lineClass,
+			Supplier<Thread> threadFactory, JButton btn, String startText, String stopText) {
+
+		Thread existing = getRunningThread();
+		if (existing != null) {
+			stopThread(existing, btn, startText);
 			return;
 		}
 
-		DeviceInfo device = DeviceSettings.getMicrophone();
 		if (device == null) {
-			btnRecordInput.setText("Start test");
-			JOptionPane.showMessageDialog(this, "Gerät nicht verfügbar: ", "Fehler",
-					JOptionPane.ERROR_MESSAGE);
+			btn.setText(startText);
+			JOptionPane.showMessageDialog(this, "Gerät nicht verfügbar: ", "Fehler", JOptionPane.ERROR_MESSAGE);
 			return;
-
 		}
 
 		try {
 			Mixer mixer = AudioSystem.getMixer(device.mixerInfo);
-			DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class, device.format);
+			DataLine.Info lineInfo = new DataLine.Info(lineClass, device.format);
 
-			TargetDataLine line = (TargetDataLine) mixer.getLine(lineInfo);
-			line.open(device.format);
+			T line = (T) mixer.getLine(lineInfo);
+			if (line instanceof TargetDataLine lf)
+				lf.open(device.format);
+			else {
+				line.open();
+			}
+
 			line.start();
 
-			recordingThread = new RecordingThread(line);
-			recordingThread.start();
-			btnRecordInput.setText("Stop test");
+			Thread thread = threadFactory.get();
+			storeRunningThread(thread);
 
-			System.out.println("Aufnahme gestartet: " + device.mixerInfo.getName());
+			thread.start();
+			btn.setText(stopText);
+
 		} catch (LineUnavailableException ex) {
 			JOptionPane.showMessageDialog(this, "Gerät nicht verfügbar: " + device.mixerInfo.getName(), "Fehler",
 					JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
 	private class PlaybackThread extends Thread {
 		private final SourceDataLine line;
-		static final String filepath = "aufnahme.wav";
 
 		public PlaybackThread(SourceDataLine line) {
 			this.line = line;
@@ -226,16 +241,11 @@ class MicRecorderToggle extends JFrame {
 
 		@Override
 		public void run() {
-			try {
-				URL url = this.getClass().getResource(filepath);
-				AudioInputStream ais = AudioSystem.getAudioInputStream(url);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Audio.playAudio(line, "aufnahme.wav");
 		}
 
-		void stopRecording() {
-			netDriver.close();
+		void stopPlayback() {
+			line.drain();
 			line.stop();
 			line.close();
 		}
@@ -250,22 +260,10 @@ class MicRecorderToggle extends JFrame {
 
 		@Override
 		public void run() {
-			byte[] micBuffer = new byte[Audio.bufferSize];
-
-			line.read(micBuffer, 0, micBuffer.length);
-
-			// netDriver.send(micBuffer);
-
-			File wavFile = new File("aufnahme.wav");
-			try (AudioInputStream ais = new AudioInputStream(line)) {
-				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Audio.recordAudio(line, "aufnahme.wav");
 		}
 
 		void stopRecording() {
-			netDriver.close();
 			line.stop();
 			line.close();
 		}

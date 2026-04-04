@@ -3,6 +3,7 @@ package ch.nivisan.raincloud.network.utilities;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -45,8 +46,10 @@ public class FileService {
         } catch (IOException e) {
             System.out.println("Not found file");
             e.printStackTrace();
-            return new byte[0];
-        }
+            return null;
+        } catch (Exception e) {
+			return null;
+		}
         return buffer;
     }
 
