@@ -23,7 +23,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 
-import ch.nivisan.raincloud.network.utilities.NetDriver;
 import ch.nivisan.raincloud.network.utilities.PlaceholderTextField;
 
 class ClientWindow extends JFrame {
@@ -42,7 +41,7 @@ class ClientWindow extends JFrame {
 	ClientWindow(final String name, final String address, final int port) {
 		createWindow();
 		usersWindow = new OnlineUsersWindow();
-		settingsWindow = new MicRecorderToggle(new NetDriver(address, port));
+		settingsWindow = new MicRecorderToggle();
 		writeConsole("Attempting to connect to: " + address + " on port " + port + " as " + name);
 		client = new Client(name, address, port);
 

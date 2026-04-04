@@ -11,8 +11,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
-import javax.xml.transform.Source;
-
 import ch.nivisan.raincloud.network.client.DeviceInfo;
 import ch.nivisan.raincloud.network.client.DeviceSettings;
 
@@ -67,7 +65,7 @@ public class Audio {
                 if (!line.isRunning())
                     line.start();
 
-                byte[] buffer = new byte[4096];
+                byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
                 int bytesRead = 0;
 
                 while ((bytesRead = ais.read(buffer, 0, buffer.length)) != -1) {

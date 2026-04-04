@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
@@ -22,18 +18,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import ch.nivisan.raincloud.network.utilities.Audio;
-import ch.nivisan.raincloud.network.utilities.FileService;
-import ch.nivisan.raincloud.network.utilities.NetDriver;
-
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.lang.annotation.Target;
-import java.net.URL;
 
 class MicRecorderToggle extends JFrame {
 
@@ -46,11 +34,9 @@ class MicRecorderToggle extends JFrame {
 
 	private RecordingThread recordingThread = null;
 	private PlaybackThread playbackThread = null;
-	private final NetDriver netDriver;
 
-	MicRecorderToggle(NetDriver netDriver) {
+	MicRecorderToggle() {
 		super("Mikrofon‑Aufnahme");
-		this.netDriver = netDriver;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -90,7 +76,7 @@ class MicRecorderToggle extends JFrame {
 			System.out.println("Aufnahme gestartet: " + DeviceSettings.getMicrophone().mixerInfo.getName());
 
 			startFromDevice(DeviceSettings.getMicrophone(), TargetDataLine.class,
-					() -> new RecordingThread(Audio.geTargetDataLine()), btnRecordInput, "Start test",
+					() -> new RecordingThread(Audio.getTargetDataLine()), btnRecordInput, "Start test",
 					"Stop test");
 		});
 
@@ -123,12 +109,6 @@ class MicRecorderToggle extends JFrame {
 
 		add(comboOutputs);
 		add(btnPlaybackAudio);
-
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent event) {
-				netDriver.close();
-			}
-		});
 
 		pack();
 		setLocationRelativeTo(null);

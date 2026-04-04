@@ -13,9 +13,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
 
@@ -157,6 +154,7 @@ class Client {
 			}
 		}
 
+		// TODO: handle voice input/ output
 		if (message.startsWith("/v/")) {
 			File wavFile = new File("aufnahme.wav");
 		// try (AudioInputStream ais = new AudioInputStream(line)) {
@@ -257,7 +255,7 @@ class Client {
 			micRunning.set(true);
 
 			while (micRunning.get()) {
-				dataLine = DeviceSettings.geTargetDataLine();
+				dataLine = Audio.getTargetDataLine();
 				if (dataLine == null)
 					return;
 
