@@ -37,30 +37,12 @@ jobs:
         echo "Main-Class: ch.nivisan.raincloud.network.client.Main" > MANIFEST.MF
         jar cfm Client.jar MANIFEST.MF -C bin .
     
-    - name: Install Python PIL
-      run: |
-        python3 -m pip install --user pillow
-      continue-on-error: true
-    
-    - name: Generate Icon
-      run: |
-        python3 create-icon.py
-      continue-on-error: true
-    
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: Client.jar
         path: Rain.Network/Client.jar
-        retention-days: 7
-    
-    - name: Upload Icon artifact (optional)
-      uses: actions/upload-artifact@v4
-      with:
-        name: icon.ico
-        path: Rain.Network/icon.ico
-        retention-days: 7
-      continue-on-error: true
+        retention-days: 5
 
   build-flatpak:
     name: Build Flatpak
@@ -94,20 +76,13 @@ jobs:
     - name: Build Flatpak
       working-directory: Rain.Network
       run: |
-        echo "=== Building Flatpak ==="
-        ls -la
-        flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json --verbose || echo "Flatpak build failed"
-        echo "=== Build directory contents ==="
-        ls -la build-dir/ || echo "No build-dir found"
+        flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
     
     - name: Create Flatpak Bundle
       working-directory: Rain.Network
       run: |
         if [ -d "build-dir" ]; then
-          echo "=== Creating bundle ==="
           flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
-          echo "=== Checking bundle ==="
-          ls -la rainchat.flatpak || echo "Bundle not created"
         else
           echo "Build directory not found, skipping bundle creation"
         fi
@@ -118,7 +93,7 @@ jobs:
       with:
         name: rainchat.flatpak
         path: Rain.Network/rainchat.flatpak
-        retention-days: 7
+        retention-days: 5
       continue-on-error: true
 
   build-windows-exe:
@@ -135,27 +110,11 @@ jobs:
         name: Client.jar
         path: Rain.Network/
     
-    - name: Download Icon artifact (if available)
-      uses: actions/download-artifact@v4
-      with:
-        name: icon.ico
-        path: Rain.Network/
-      continue-on-error: true
-    
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
         java-version: '25'
         distribution: 'oracle'
-    
-    - name: Install Python PIL
-      run: |
-        python -m pip install --user pillow
-      continue-on-error: true
-    
-    - name: Generate Icon
-      run: python create-icon.py
-      continue-on-error: true
     
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
@@ -172,7 +131,7 @@ jobs:
       working-directory: Rain.Network
       run: |
         if exist RainChat (
-          powershell Compress-Archive -Path RainChat -DestinationPath RainChat-Windows-Portable.zip
+          7z a -r RainChat-Windows-Portable.zip RainChat
         ) else (
           echo App-image directory not found
           dir
@@ -184,7 +143,7 @@ jobs:
       with:
         name: RainChat-Windows-Portable
         path: Rain.Network/RainChat-Windows-Portable.zip
-        retention-days: 7
+        retention-days: 5
 
   build-macos-dmg:
     name: Build macOS DMG
@@ -200,48 +159,20 @@ jobs:
         name: Client.jar
         path: Rain.Network/
     
-    - name: Download Icon artifact (if available)
-      uses: actions/download-artifact@v4
-      with:
-        name: icon.ico
-        path: Rain.Network/
-      continue-on-error: true
-    
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
         java-version: '25'
         distribution: 'oracle'
     
-    - name: Install system deps for Pillow
-      run: brew update &&
-       brew install pkg-config libjpeg libpng zlib freetype lcms2 openjpeg webp
-
-    - name: Upgrade pip & install dependencies
-      run: python3 -m pip install --upgrade pip setuptools wheel --break-system-packages &&
-          pip install pillow --break-system-packages
-      continue-on-error: true
-    
-    - name: Generate Icon
-      run: python3 create-icon.py
-      continue-on-error: true
-    
     - name: Convert ICO to ICNS for macOS
       working-directory: Rain.Network
       run: |
-        python3 << 'ENDOFPYTHON'
-        import os
-        if os.path.exists('icon.ico'):
-          try:
-            from PIL import Image
-            img = Image.open('icon.ico')
-            img.save('icon.icns')
-            print("✓ Icon converted to ICNS")
-          except Exception as e:
-            print(f"Icon conversion failed: {e}, will build without icon")
-        else:
-          print("No icon.ico found, will build without icon")
-        ENDOFPYTHON
+        if [ -f "icon.ico" ]; then
+          sips -s format icns icon.ico --out icon.icns 2>/dev/null && echo "✓ Icon converted to ICNS" || echo "Icon conversion failed, will build without icon"
+        else
+          echo "No icon.ico found, will build without icon"
+        fi
       shell: bash
       continue-on-error: true
     
@@ -261,14 +192,14 @@ jobs:
       with:
         name: RainChat-macOS-DMG
         path: Rain.Network/RainChat-*.dmg
-        retention-days: 7
+        retention-days: 5
 
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
     needs: [ build-jar, build-flatpak, build-windows-exe, build-macos-dmg ]
     environment: production
-    if: always() && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master')
+    if: always() && startsWith(github.ref, 'refs/tags/')
     
     steps:
     - uses: actions/checkout@v4
@@ -278,9 +209,8 @@ jobs:
       with:
         path: artifacts/
     
-    - name: Create Release (Tags)
+    - name: Create Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: |
@@ -289,19 +219,3 @@ jobs:
           artifacts/RainChat-Windows-Portable/*.zip
           artifacts/RainChat-macOS-DMG/*.dmg
         generate_release_notes: true
-    
-    - name: Create Draft Release (Master branch)
-      uses: softprops/action-gh-release@v1
-      if: github.ref == 'refs/heads/master'
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        draft: true
-        prerelease: true
-        files: |
-          artifacts/Client.jar/Client.jar
-          artifacts/rainchat.flatpak/rainchat.flatpak
-          artifacts/RainChat-Windows-Portable/*.zip
-          artifacts/RainChat-macOS-DMG/*.dmg
-        generate_release_notes: true
-        tag_name: latest-master
-        name: Latest Master Build
