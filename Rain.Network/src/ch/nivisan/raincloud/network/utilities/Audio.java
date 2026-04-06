@@ -34,14 +34,106 @@ public class Audio {
 	/**
 	 * Flag to indicate if the client should use legacy audio format.
 	 * When true, audio will be sent/received in oldFormat and resampled accordingly.
+	 * 
+	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format selection.
 	 */
+	@Deprecated
 	public static boolean useLegacyFormat = false;
 
 	/**
 	 * Flag to indicate if the client should use fallback audio format (44.1kHz).
 	 * When true, audio will be sent/received in fallbackFormat and resampled accordingly.
+	 * 
+	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format selection.
 	 */
+	@Deprecated
 	public static boolean useFallbackFormat = false;
+
+	/**
+	 * Helper method to determine if legacy format should be used based on DeviceSettings.
+	 * @return true if legacy format is selected
+	 */
+	public static boolean shouldUseLegacyFormat() {
+		try {
+			return DeviceSettings.getAudioFormat().isLegacy();
+		} catch (Exception e) {
+			return useLegacyFormat; // Fallback to deprecated flag
+		}
+	}
+
+	/**
+	 * Helper method to determine if fallback format should be used based on DeviceSettings.
+	 * @return true if fallback format is selected
+	 */
+	public static boolean shouldUseFallbackFormat() {
+		try {
+			return DeviceSettings.getAudioFormat().isFallback();
+		} catch (Exception e) {
+			return useFallbackFormat; // Fallback to deprecated flag
+		}
+	}
+
+	/**
+	 * Resamples audio data from the default format to the currently selected format.
+	 * Automatically handles resampling based on DeviceSettings.getAudioFormat().
+	 * @param audioData the audio data in defaultFormat
+	 * @return resampled audio data in the selected format
+	 */
+	public static byte[] resampleToSelectedFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+
+		try {
+			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getAudioFormat();
+			if (format.isLegacy()) {
+				return resampleToOldFormat(audioData);
+			} else if (format.isFallback()) {
+				return resampleToFallbackFormat(audioData);
+			}
+		} catch (Exception e) {
+			// Fallback to deprecated flags
+			if (shouldUseLegacyFormat()) {
+				return resampleToOldFormat(audioData);
+			} else if (shouldUseFallbackFormat()) {
+				return resampleToFallbackFormat(audioData);
+			}
+		}
+
+		// Return as-is for default format
+		return audioData;
+	}
+
+	/**
+	 * Resamples audio data from the currently selected format to the default format.
+	 * Automatically handles resampling based on DeviceSettings.getAudioFormat().
+	 * @param audioData the audio data in the selected format
+	 * @return resampled audio data in defaultFormat
+	 */
+	public static byte[] resampleFromSelectedFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+
+		try {
+			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getAudioFormat();
+			if (format.isLegacy()) {
+				return resampleFromOldFormat(audioData);
+			} else if (format.isFallback()) {
+				return resampleFromFallbackFormat(audioData);
+			}
+		} catch (Exception e) {
+			// Fallback to deprecated flags
+			if (shouldUseLegacyFormat()) {
+				return resampleFromOldFormat(audioData);
+			} else if (shouldUseFallbackFormat()) {
+				return resampleFromFallbackFormat(audioData);
+			}
+		}
+
+		// Return as-is for default format
+		return audioData;
+	}
 
 	/**
 	 * Resamples audio data from the old legacy format (16kHz, 8-bit, stereo) to the default format (48kHz, 16-bit, mono).

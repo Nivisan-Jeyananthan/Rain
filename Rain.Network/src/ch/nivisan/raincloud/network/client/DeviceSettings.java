@@ -3,6 +3,7 @@ package ch.nivisan.raincloud.network.client;
 public class DeviceSettings {
 	private static DeviceInfo microphone;
 	private static DeviceInfo speaker;
+	private static AudioFormatType audioFormat = AudioFormatType.STANDARD;
 
 	private DeviceSettings() {
 	}
@@ -22,5 +23,15 @@ public class DeviceSettings {
 
 	public static void setSpeaker(DeviceInfo speaker) {
 		DeviceSettings.speaker = speaker;
+	}
+
+	public static AudioFormatType getAudioFormat() {
+		return audioFormat;
+	}
+
+	public static void setAudioFormat(AudioFormatType format) {
+		if (format != null) {
+			DeviceSettings.audioFormat = format;
+		}
 	}
 }
