@@ -260,7 +260,8 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     needs: [ build-jar, build-flatpak, build-windows-exe, build-macos-dmg ]
-    if: startsWith(github.ref, 'refs/tags/')
+    environment: production
+    if: always() && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master')
     
     steps:
     - uses: actions/checkout@v4
@@ -270,8 +271,9 @@ jobs:
       with:
         path: artifacts/
     
-    - name: Create Release
+    - name: Create Release (Tags) or Draft (Master)
       uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           artifacts/Client.jar/Client.jar
@@ -279,5 +281,22 @@ jobs:
           artifacts/RainChat-Windows-Portable/*.zip
           artifacts/RainChat-macOS-DMG/*.dmg
         generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Create Draft Release (Master branch)
+      uses: softprops/action-gh-release@v1
+      if: github.ref == 'refs/heads/master'
+      with:
+        draft: true
+        prerelease: true
+        files: |
+          artifacts/Client.jar/Client.jar
+          artifacts/rainchat.flatpak/rainchat.flatpak
+          artifacts/RainChat-Windows-Portable/*.zip
+          artifacts/RainChat-macOS-DMG/*.dmg
+        generate_release_notes: true
+        tag_name: latest-master
+        name: Latest Master Build
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
