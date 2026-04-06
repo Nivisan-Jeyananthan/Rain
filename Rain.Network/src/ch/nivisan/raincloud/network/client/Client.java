@@ -219,6 +219,14 @@ class Client {
 		}
 
 		byte[] voiceData = StringCipher.decodeString(parts[1]);
+		
+		// Apply format-specific resampling for playback
+		if (Audio.useLegacyFormat) {
+			voiceData = Audio.resampleToOldFormat(voiceData);
+		} else if (Audio.useFallbackFormat) {
+			voiceData = Audio.resampleToFallbackFormat(voiceData);
+		}
+		
 		playVoice(voiceData);
 	}
 
@@ -316,7 +324,14 @@ class Client {
 			speakerLine = Audio.getSourceDataLine();
 			if (speakerLine != null && !speakerLine.isOpen()) {
 				try {
-					speakerLine.open();
+					// Open speaker line in appropriate format
+					AudioFormat speakerFormat = Audio.defaultFormat;
+					if (Audio.useLegacyFormat) {
+						speakerFormat = Audio.oldFormat;
+					} else if (Audio.useFallbackFormat) {
+						speakerFormat = Audio.fallbackFormat;
+					}
+					speakerLine.open(speakerFormat);
 				} catch (LineUnavailableException e) {
 					e.printStackTrace();
 				}
@@ -471,6 +486,13 @@ class Client {
 					// Resample if necessary
 					if (resampler != null && resampler.needsResampling()) {
 						voiceData = resampler.resample(voiceData);
+					}
+
+					// Apply format-specific resampling
+					if (Audio.useLegacyFormat) {
+						voiceData = Audio.resampleToOldFormat(voiceData);
+					} else if (Audio.useFallbackFormat) {
+						voiceData = Audio.resampleToFallbackFormat(voiceData);
 					}
 
 					if (voiceData.length > 0) {

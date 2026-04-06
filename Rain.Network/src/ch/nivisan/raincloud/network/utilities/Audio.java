@@ -29,8 +29,19 @@ public class Audio {
 	public final static AudioFormat fallbackFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f,
 			sampleSizeInBits, channels, frameSize, 44100.0f, false);
 
-	public final static	AudioFormat oldFormat = new AudioFormat(16000, 8, 2, true, true);
+	public final static AudioFormat oldFormat = new AudioFormat(16000, 8, 2, true, true);
 	
+	/**
+	 * Flag to indicate if the client should use legacy audio format.
+	 * When true, audio will be sent/received in oldFormat and resampled accordingly.
+	 */
+	public static boolean useLegacyFormat = false;
+
+	/**
+	 * Flag to indicate if the client should use fallback audio format (44.1kHz).
+	 * When true, audio will be sent/received in fallbackFormat and resampled accordingly.
+	 */
+	public static boolean useFallbackFormat = false;
 
 	/**
 	 * Resamples audio data from the old legacy format (16kHz, 8-bit, stereo) to the default format (48kHz, 16-bit, mono).
@@ -43,6 +54,34 @@ public class Audio {
 		}
 		
 		AudioResampler resampler = new AudioResampler(oldFormat, defaultFormat);
+		return resampler.resample(audioData);
+	}
+
+	/**
+	 * Resamples audio data from the fallback format (44.1kHz, 16-bit, mono) to the default format (48kHz, 16-bit, mono).
+	 * @param audioData the audio data in fallbackFormat
+	 * @return resampled audio data in defaultFormat
+	 */
+	public static byte[] resampleFromFallbackFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+		
+		AudioResampler resampler = new AudioResampler(fallbackFormat, defaultFormat);
+		return resampler.resample(audioData);
+	}
+
+	/**
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the fallback format (44.1kHz, 16-bit, mono).
+	 * @param audioData the audio data in defaultFormat
+	 * @return resampled audio data in fallbackFormat
+	 */
+	public static byte[] resampleToFallbackFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+		
+		AudioResampler resampler = new AudioResampler(defaultFormat, fallbackFormat);
 		return resampler.resample(audioData);
 	}
 
