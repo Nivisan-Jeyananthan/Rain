@@ -28,7 +28,23 @@ public class Audio {
 	
 	public final static AudioFormat fallbackFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f,
 			sampleSizeInBits, channels, frameSize, 44100.0f, false);
+
+	public final static	AudioFormat oldFormat = new AudioFormat(16000, 8, 2, true, true);
 	
+
+	/**
+	 * Resamples audio data from the old legacy format (16kHz, 8-bit, stereo) to the default format (48kHz, 16-bit, mono).
+	 * @param audioData the audio data in oldFormat
+	 * @return resampled audio data in defaultFormat
+	 */
+	public static byte[] resampleFromOldFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+		
+		AudioResampler resampler = new AudioResampler(oldFormat, defaultFormat);
+		return resampler.resample(audioData);
+	}
 
 	public static void recordAudio(TargetDataLine line, String filepath) {
 		if (line == null)

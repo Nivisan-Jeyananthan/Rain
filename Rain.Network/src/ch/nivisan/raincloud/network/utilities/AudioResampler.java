@@ -23,6 +23,7 @@ public class AudioResampler {
 	/**
 	 * Resample audio data from source format to target format.
 	 * Uses linear interpolation for smooth resampling.
+	 * Handles different sample sizes (8-bit/16-bit) and channel counts (mono/stereo).
 	 */
 	public byte[] resample(byte[] audioData) {
 		if (audioData == null || audioData.length == 0) {
@@ -34,28 +35,42 @@ public class AudioResampler {
 			return audioData;
 		}
 
-		int sampleSizeInBytes = sourceFormat.getSampleSizeInBits() / 8;
-		int sourceSampleCount = audioData.length / sampleSizeInBytes;
-		int targetSampleCount = (int) (sourceSampleCount * ratio);
+		int sourceSampleSizeInBytes = sourceFormat.getSampleSizeInBits() / 8;
+		int targetSampleSizeInBytes = targetFormat.getSampleSizeInBits() / 8;
+		int sourceChannels = sourceFormat.getChannels();
+		int targetChannels = targetFormat.getChannels();
 
-		byte[] resampled = new byte[targetSampleCount * sampleSizeInBytes];
+		// Calculate sample counts (per channel)
+		int sourceFrameSize = sourceSampleSizeInBytes * sourceChannels;
+		int targetFrameSize = targetSampleSizeInBytes * targetChannels;
+		int sourceFrameCount = audioData.length / sourceFrameSize;
+		int targetFrameCount = (int) (sourceFrameCount * ratio);
 
-		// Simple linear interpolation resampling
-		for (int i = 0; i < targetSampleCount; i++) {
+		byte[] resampled = new byte[targetFrameCount * targetFrameSize];
+
+		// Resampling with channel handling
+		for (int i = 0; i < targetFrameCount; i++) {
 			float sourcePosition = i / ratio;
-			int sourceSampleIndex = (int) sourcePosition;
-			float fraction = sourcePosition - sourceSampleIndex;
+			int sourceFrameIndex = (int) sourcePosition;
+			float fraction = sourcePosition - sourceFrameIndex;
 
-			if (sourceSampleIndex >= sourceSampleCount - 1) {
-				// Use last sample
-				int sourceByteIndex = (sourceSampleCount - 1) * sampleSizeInBytes;
-				System.arraycopy(audioData, sourceByteIndex, resampled, i * sampleSizeInBytes, sampleSizeInBytes);
+			if (sourceFrameIndex >= sourceFrameCount - 1) {
+				// Use last frame
+				for (int ch = 0; ch < targetChannels; ch++) {
+					int sourceCh = Math.min(ch, sourceChannels - 1); // Handle mono->stereo or stereo->mono
+					short sample = getSample(audioData, (sourceFrameCount - 1) * sourceChannels + sourceCh, sourceSampleSizeInBytes);
+					putSample(resampled, i * targetChannels + ch, sample, targetSampleSizeInBytes);
+				}
 			} else {
-				// Linear interpolation between two samples
-				short sample1 = getSample(audioData, sourceSampleIndex, sampleSizeInBytes);
-				short sample2 = getSample(audioData, sourceSampleIndex + 1, sampleSizeInBytes);
-				short interpolated = (short) (sample1 * (1.0f - fraction) + sample2 * fraction);
-				putSample(resampled, i, interpolated, sampleSizeInBytes);
+				// Linear interpolation between two frames
+				for (int ch = 0; ch < targetChannels; ch++) {
+					int sourceCh = Math.min(ch, sourceChannels - 1); // Handle mono->stereo or stereo->mono
+
+					short sample1 = getSample(audioData, sourceFrameIndex * sourceChannels + sourceCh, sourceSampleSizeInBytes);
+					short sample2 = getSample(audioData, (sourceFrameIndex + 1) * sourceChannels + sourceCh, sourceSampleSizeInBytes);
+					short interpolated = (short) (sample1 * (1.0f - fraction) + sample2 * fraction);
+					putSample(resampled, i * targetChannels + ch, interpolated, targetSampleSizeInBytes);
+				}
 			}
 		}
 
@@ -65,7 +80,16 @@ public class AudioResampler {
 	private short getSample(byte[] data, int sampleIndex, int sampleSizeInBytes) {
 		int byteIndex = sampleIndex * sampleSizeInBytes;
 		if (sampleSizeInBytes == 2) {
-			return (short) ((data[byteIndex + 1] & 0xFF) << 8 | (data[byteIndex] & 0xFF));
+			// 16-bit samples
+			if (sourceFormat.isBigEndian()) {
+				return (short) ((data[byteIndex] & 0xFF) << 8 | (data[byteIndex + 1] & 0xFF));
+			} else {
+				return (short) ((data[byteIndex + 1] & 0xFF) << 8 | (data[byteIndex] & 0xFF));
+			}
+		} else if (sampleSizeInBytes == 1) {
+			// 8-bit samples (convert to 16-bit)
+			byte sample8 = data[byteIndex];
+			return (short) (sample8 * 256); // Scale 8-bit to 16-bit range
 		}
 		return 0;
 	}
@@ -73,8 +97,17 @@ public class AudioResampler {
 	private void putSample(byte[] data, int sampleIndex, short sample, int sampleSizeInBytes) {
 		int byteIndex = sampleIndex * sampleSizeInBytes;
 		if (sampleSizeInBytes == 2) {
-			data[byteIndex] = (byte) (sample & 0xFF);
-			data[byteIndex + 1] = (byte) ((sample >> 8) & 0xFF);
+			// 16-bit samples
+			if (targetFormat.isBigEndian()) {
+				data[byteIndex] = (byte) ((sample >> 8) & 0xFF);
+				data[byteIndex + 1] = (byte) (sample & 0xFF);
+			} else {
+				data[byteIndex] = (byte) (sample & 0xFF);
+				data[byteIndex + 1] = (byte) ((sample >> 8) & 0xFF);
+			}
+		} else if (sampleSizeInBytes == 1) {
+			// 8-bit samples (convert from 16-bit)
+			data[byteIndex] = (byte) (sample / 256); // Scale 16-bit to 8-bit range
 		}
 	}
 
