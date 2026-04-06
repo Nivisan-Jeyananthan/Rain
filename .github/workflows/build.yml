@@ -36,7 +36,7 @@ jobs:
     
     - name: Install Python PIL
       run: |
-        python3 -m pip install pillow
+        python3 -m pip install --user pillow
       continue-on-error: true
     
     - name: Generate Icon
@@ -147,7 +147,7 @@ jobs:
     
     - name: Install Python PIL
       run: |
-        python -m pip install pillow
+        python -m pip install --user pillow
       continue-on-error: true
     
     - name: Generate Icon
@@ -158,10 +158,10 @@ jobs:
       working-directory: Rain.Network
       run: |
         if exist icon.ico (
-          jpackage --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan"
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan"
         ) else (
           echo Icon not found, building without icon...
-          jpackage --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
         )
       shell: cmd
     
@@ -212,7 +212,7 @@ jobs:
     
     - name: Install Python PIL
       run: |
-        python3 -m pip install pillow
+        python3 -m pip install --user pillow
       continue-on-error: true
     
     - name: Generate Icon
