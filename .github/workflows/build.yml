@@ -8,6 +8,9 @@ on:
     branches: [ master, main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-jar:
     name: Build JAR
@@ -271,23 +274,23 @@ jobs:
       with:
         path: artifacts/
     
-    - name: Create Release (Tags) or Draft (Master)
+    - name: Create Release (Tags)
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         files: |
           artifacts/Client.jar/Client.jar
           artifacts/rainchat.flatpak/rainchat.flatpak
           artifacts/RainChat-Windows-Portable/*.zip
           artifacts/RainChat-macOS-DMG/*.dmg
         generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Create Draft Release (Master branch)
       uses: softprops/action-gh-release@v1
       if: github.ref == 'refs/heads/master'
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         draft: true
         prerelease: true
         files: |
@@ -298,5 +301,3 @@ jobs:
         generate_release_notes: true
         tag_name: latest-master
         name: Latest Master Build
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
