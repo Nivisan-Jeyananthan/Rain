@@ -58,6 +58,20 @@ public class Audio {
 	}
 
 	/**
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the old legacy format (16kHz, 8-bit, stereo).
+	 * @param audioData the audio data in defaultFormat
+	 * @return resampled audio data in oldFormat
+	 */
+	public static byte[] resampleToOldFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+		
+		AudioResampler resampler = new AudioResampler(defaultFormat, oldFormat);
+		return resampler.resample(audioData);
+	}
+
+	/**
 	 * Resamples audio data from the fallback format (44.1kHz, 16-bit, mono) to the default format (48kHz, 16-bit, mono).
 	 * @param audioData the audio data in fallbackFormat
 	 * @return resampled audio data in defaultFormat
