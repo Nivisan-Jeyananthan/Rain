@@ -194,8 +194,8 @@ jobs:
         path: Rain.Network/RainChat-*.dmg
         retention-days: 5
 
-  create-release:
-    name: Create Release
+  create-release-tags:
+    name: Create Release (Tags)
     runs-on: ubuntu-latest
     needs: [ build-jar, build-flatpak, build-windows-exe, build-macos-dmg ]
     environment: production
@@ -219,3 +219,32 @@ jobs:
           artifacts/RainChat-Windows-Portable/*.zip
           artifacts/RainChat-macOS-DMG/*.dmg
         generate_release_notes: true
+
+  create-release-draft:
+    name: Create Draft Release (Master)
+    runs-on: ubuntu-latest
+    needs: [ build-jar, build-flatpak, build-windows-exe, build-macos-dmg ]
+    if: always() && github.ref == 'refs/heads/master'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts/
+    
+    - name: Create Draft Release
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: true
+        prerelease: true
+        files: |
+          artifacts/Client.jar/Client.jar
+          artifacts/rainchat.flatpak/rainchat.flatpak
+          artifacts/RainChat-Windows-Portable/*.zip
+          artifacts/RainChat-macOS-DMG/*.dmg
+        generate_release_notes: true
+        tag_name: latest-master
+        name: Latest Master Build
