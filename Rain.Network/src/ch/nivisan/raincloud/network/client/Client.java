@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 import ch.nivisan.raincloud.network.utilities.Audio;
@@ -37,6 +38,10 @@ class Client {
 	private boolean connected = false;
 	private boolean handshakeComplete = false;
 	private Thread micThread;
+	private TargetDataLine micLine;
+	private DeviceInfo currentMicrophone;
+	private SourceDataLine speakerLine;
+	private DeviceInfo currentSpeaker;
 
 	// TODO: remove
 	private AudioWav waveAudio;
@@ -164,11 +169,10 @@ class Client {
 		if (message.startsWith("/v/")) {
 
 			String[] messageData = message.split("/v/");
-
-			byte[] voiceData = StringCipher.decodeString(messageData[1]);
-			Audio.playAudio(Audio.getSourceDataLine(), voiceData);
-			// TODO: throws when targetdataline is closed
-			// waveAudio.append(voiceData);
+			if (messageData.length > 1) {
+				byte[] voiceData = StringCipher.decodeString(messageData[1]);
+				playVoice(voiceData);
+			}
 		}
 
 		return message;
@@ -242,18 +246,112 @@ class Client {
 	public void sendAudio() {
 		if (!micRunning.get() && micThread == null) {
 			micRunning.set(true);
-			micThread = new Thread(new MicRecorder(Audio.getTargetDataLine()));
+			micThread = new Thread(new MicRecorder());
 			micThread.start();
-		} else {
-			micThread = null;
+		} else if (micRunning.get()) {
+			refreshMicLine();
 		}
 	}
 
 	public void closeAudio() {
+		micRunning.set(false);
+		closeMicLine();
+		if (micThread != null) {
+			micThread = null;
+		}
 		// TODO: remove
 		waveAudio.close();
+	}
 
-		micRunning.set(false);
+	private void playVoice(byte[] voiceData) {
+		if (voiceData == null || voiceData.length == 0)
+			return;
+
+		DeviceInfo selectedSpeaker = DeviceSettings.getSpeaker();
+		if (!sameDevice(currentSpeaker, selectedSpeaker)) {
+			resetSpeakerLine(selectedSpeaker);
+		}
+
+		if (speakerLine != null) {
+			Audio.writeAudio(speakerLine, voiceData);
+		}
+	}
+
+	private boolean sameDevice(DeviceInfo a, DeviceInfo b) {
+		if (a == b)
+			return true;
+		if (a == null || b == null)
+			return false;
+		return a.equals(b);
+	}
+
+	private void resetSpeakerLine(DeviceInfo selectedSpeaker) {
+		if (speakerLine != null) {
+			speakerLine.drain();
+			speakerLine.stop();
+			speakerLine.close();
+			speakerLine = null;
+		}
+		currentSpeaker = selectedSpeaker;
+		if (currentSpeaker != null) {
+			speakerLine = Audio.getSourceDataLine(currentSpeaker);
+			if (speakerLine != null && !speakerLine.isOpen()) {
+				try {
+					speakerLine.open(currentSpeaker.format);
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+				}
+			}
+			if (speakerLine != null && !speakerLine.isRunning()) {
+				speakerLine.start();
+			}
+		}
+	}
+
+	private synchronized void refreshMicLine() {
+		DeviceInfo selectedMic = DeviceSettings.getMicrophone();
+		if (!sameDevice(currentMicrophone, selectedMic)) {
+			closeMicLine();
+			currentMicrophone = selectedMic;
+			if (currentMicrophone != null) {
+				micLine = Audio.getTargetDataLine(currentMicrophone);
+				if (micLine != null && !micLine.isOpen()) {
+					try {
+						micLine.open(currentMicrophone.format);
+						micLine.start();
+					} catch (LineUnavailableException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	private synchronized TargetDataLine ensureMicLine() {
+		DeviceInfo selectedMic = DeviceSettings.getMicrophone();
+		if (!sameDevice(currentMicrophone, selectedMic)) {
+			refreshMicLine();
+		}
+		if (micLine == null && currentMicrophone != null) {
+			micLine = Audio.getTargetDataLine(currentMicrophone);
+			if (micLine != null && !micLine.isOpen()) {
+				try {
+					micLine.open(currentMicrophone.format);
+					micLine.start();
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return micLine;
+	}
+
+	private synchronized void closeMicLine() {
+		if (micLine != null) {
+			micLine.stop();
+			micLine.close();
+			micLine = null;
+		}
 	}
 
 	boolean getMicRunning() {
@@ -262,45 +360,28 @@ class Client {
 	}
 
 	private class MicRecorder implements Runnable {
-		private final TargetDataLine dataLine;
-
-		MicRecorder(TargetDataLine dataLine) {
-			this.dataLine = dataLine;
-		}
-
 		@Override
 		public void run() {
-
-			try {
-				if (!dataLine.isOpen())
-					dataLine.open();
-				if (!dataLine.isRunning())
-					dataLine.start();
-			} catch (LineUnavailableException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			while (micRunning.get() && dataLine.isOpen()) {
+			while (micRunning.get()) {
+				TargetDataLine activeLine = ensureMicLine();
+				if (activeLine == null || !activeLine.isOpen()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					continue;
+				}
 
 				byte[] buffer = new byte[Audio.bufferSize];
-				int bytesRead = dataLine.read(buffer, 0, buffer.length);
+				int bytesRead = activeLine.read(buffer, 0, buffer.length);
 				if (bytesRead > 0) {
 					byte[] voiceData = new byte[bytesRead];
-
 					System.arraycopy(buffer, 0, voiceData, 0, bytesRead);
 					sendEncrypted(("/v/" + StringCipher.encodeString(voiceData) + "/v/"));
 				}
 			}
-			stopMic();
+			closeMicLine();
 		}
-
-		void stopMic() {
-			if (dataLine != null) {
-				dataLine.drain();
-				dataLine.stop();
-				dataLine.close();
-			}
-		}
-
 	}
 }

@@ -1,6 +1,5 @@
 package ch.nivisan.raincloud.network.utilities;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -55,23 +54,29 @@ public class Audio {
 		}
 	}
 
+	/**
+	 * Plays the given audio data on the SourceDataLine.
+	 * Does not close the line after playing, so it can be used continuously.
+	 * @param line
+	 * @param data
+	 */
 	public static void playAudio(SourceDataLine line, byte[] data) {
-		try {
-			if (line == null)
-				return;
+		writeAudio(line, data);
+	}
 
+	public static void writeAudio(SourceDataLine line, byte[] data) {
+		if (line == null || data == null || data.length == 0)
+			return;
+
+		try {
 			if (!line.isOpen()) {
 				line.open();
 			}
 
-			if (!line.isRunning())
-				line.start();
-			
-			
-			line.write(data, 0, data.length);
+		if (!line.isRunning())
+			line.start();
 
-			clearLine(line);
-
+		line.write(data, 0, data.length);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
