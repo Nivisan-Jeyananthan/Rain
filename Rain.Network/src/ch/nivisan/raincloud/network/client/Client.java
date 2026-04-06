@@ -14,11 +14,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 import ch.nivisan.raincloud.network.utilities.Audio;
+import ch.nivisan.raincloud.network.utilities.AudioResampler;
 import ch.nivisan.raincloud.network.utilities.NetUtils;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
@@ -434,6 +436,8 @@ class Client {
 
 	private class MicRecorder implements Runnable {
 		private final byte[] buffer = new byte[Audio.bufferSize];
+		private AudioResampler resampler = null;
+		private AudioFormat lastFormat = null;
 
 		@Override
 		public void run() {
@@ -448,11 +452,30 @@ class Client {
 					continue;
 				}
 
+				// Check if we need to update the resampler based on current microphone format
+				AudioFormat currentFormat = currentMicrophone != null ? currentMicrophone.format : Audio.defaultFormat;
+				if (!currentFormat.equals(lastFormat)) {
+					lastFormat = currentFormat;
+					if (!currentFormat.equals(Audio.defaultFormat)) {
+						resampler = new AudioResampler(currentFormat, Audio.defaultFormat);
+					} else {
+						resampler = null;
+					}
+				}
+
 				int bytesRead = activeLine.read(buffer, 0, buffer.length);
 				if (bytesRead > 0) {
 					byte[] voiceData = new byte[bytesRead];
 					System.arraycopy(buffer, 0, voiceData, 0, bytesRead);
-					sendEncrypted(CMD_VOICE + StringCipher.encodeString(voiceData) + CMD_VOICE);
+
+					// Resample if necessary
+					if (resampler != null && resampler.needsResampling()) {
+						voiceData = resampler.resample(voiceData);
+					}
+
+					if (voiceData.length > 0) {
+						sendEncrypted(CMD_VOICE + StringCipher.encodeString(voiceData) + CMD_VOICE);
+					}
 				}
 			}
 			closeMicLine();

@@ -151,11 +151,20 @@ class MicRecorderToggle extends JFrame {
 
 	private <T extends DataLine> List<DeviceInfo> findDevices(Class<T> lineClass) {
 		List<DeviceInfo> list = new ArrayList<>();
+		List<DeviceInfo> fallbackList = new ArrayList<>();
 
 		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
 
 		for (int i = 0; i < mixerInfos.length; i++) {
 			Mixer.Info mixerInfo = mixerInfos[i];
+			String mixerName = mixerInfo.getName();
+			
+			// Skip problematic plughw devices on Linux - they often don't support the exact format
+			if (mixerName.contains("plughw")) {
+				System.out.println("Skipping problematic mixer: " + mixerName);
+				continue;
+			}
+
 			Mixer mixer = AudioSystem.getMixer(mixerInfo);
 
 			DataLine.Info info = new DataLine.Info(lineClass, Audio.defaultFormat);
@@ -163,22 +172,64 @@ class MicRecorderToggle extends JFrame {
 				continue;
 			}
 
-			if (!info.isFormatSupported(Audio.defaultFormat))
-				continue;
+			// Try with default format first
+			if (info.isFormatSupported(Audio.defaultFormat)) {
+				try {
+					T line = (T) mixer.getLine(info);
 
-			try {
-				T line = (T) mixer.getLine(info);
+					if (line instanceof TargetDataLine lf)
+						lf.open(Audio.defaultFormat);
+					else {
+						line.open();
+					}
 
-				if (line instanceof TargetDataLine lf)
-					lf.open(Audio.defaultFormat);
-				else {
-					line.open();
+					line.close();
+					// Prefer default devices
+					if (mixerName.contains("default") || mixerName.contains("[hw:")) {
+						list.add(0, new DeviceInfo(mixerInfo, Audio.defaultFormat));
+					} else {
+						list.add(new DeviceInfo(mixerInfo, Audio.defaultFormat));
+					}
+					continue;
+				} catch (Exception e) {
+					System.err.println("Failed with default format: " + mixerName + " - " + e.getMessage());
 				}
-
-				line.close();
-				list.add(new DeviceInfo(mixerInfo, Audio.defaultFormat));
-			} catch (Exception e) {
 			}
+
+			// Try with fallback format (44100 Hz) if default fails
+			AudioFormat fallbackFormat = new AudioFormat(
+				AudioFormat.Encoding.PCM_SIGNED,
+				44100.0f,
+				16,
+				1,
+				2,
+				44100.0f,
+				false
+			);
+
+			DataLine.Info fallbackInfo = new DataLine.Info(lineClass, fallbackFormat);
+			if (mixer.isLineSupported(fallbackInfo) && fallbackInfo.isFormatSupported(fallbackFormat)) {
+				try {
+					T line = (T) mixer.getLine(fallbackInfo);
+
+					if (line instanceof TargetDataLine lf)
+						lf.open(fallbackFormat);
+					else {
+						line.open();
+					}
+
+					line.close();
+					System.out.println("Using fallback format (44100 Hz) for: " + mixerName);
+					fallbackList.add(new DeviceInfo(mixerInfo, fallbackFormat));
+				} catch (Exception e) {
+					System.err.println("Failed with fallback format: " + mixerName + " - " + e.getMessage());
+				}
+			}
+		}
+
+		// Add fallback devices if no default format devices were found
+		if (list.isEmpty()) {
+			list.addAll(fallbackList);
 		}
 
 		return list;

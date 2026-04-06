@@ -26,6 +26,9 @@ public class Audio {
 	public final static AudioFormat defaultFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate,
 			sampleSizeInBits, channels, frameSize, sampleRate, false);
 	
+	public final static AudioFormat fallbackFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f,
+			sampleSizeInBits, channels, frameSize, 44100.0f, false);
+	
 
 	public static void recordAudio(TargetDataLine line, String filepath) {
 		if (line == null)
