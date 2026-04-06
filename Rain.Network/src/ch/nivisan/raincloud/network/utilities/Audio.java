@@ -1,5 +1,6 @@
 package ch.nivisan.raincloud.network.utilities;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -15,138 +16,159 @@ import ch.nivisan.raincloud.network.client.DeviceInfo;
 import ch.nivisan.raincloud.network.client.DeviceSettings;
 
 public class Audio {
-    public final static float sampleRate = 48000.0f;
-    public final static int sampleSizeInBits = 16;
-    public final static int channels = 1;
-    public final static int frameSize = sampleSizeInBits / 8;
-    public final static int sendRateInMs = 10;
-    public final static int secondsInMs = 1000;
-    public final static int bufferSize = (int) ((sampleRate * frameSize * sendRateInMs) / secondsInMs);
+	public final static float sampleRate = 48000.0f;
+	public final static int sampleSizeInBits = 16;
+	public final static int channels = 1;
+	public final static int frameSize = sampleSizeInBits / 8;
+	public final static int sendRateInMs = 10;
+	public final static int secondsInMs = 1000;
+	public final static int bufferSize = (int) ((sampleRate * frameSize * sendRateInMs) / secondsInMs);
 
-    public final static AudioFormat defaultFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-            sampleRate, sampleSizeInBits, channels, frameSize,
-            sampleRate,
-            false);
+	public final static AudioFormat defaultFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate,
+			sampleSizeInBits, channels, frameSize, sampleRate, false);
+	
 
-    public static void recordAudio(TargetDataLine line, String filepath) {
-        if (line == null)
-            return;
+	public static void recordAudio(TargetDataLine line, String filepath) {
+		if (line == null)
+			return;
 
-        if (!line.isOpen()) {
-            try {
-                line.open();
-            } catch (LineUnavailableException e) {
-                e.printStackTrace();
-            }
-        }
+		if (!line.isOpen()) {
+			try {
+				line.open(defaultFormat);
+			} catch (LineUnavailableException e) {
+				e.printStackTrace();
+			}
+		}
 
-        if (!line.isRunning())
-            line.start();
+		if (!line.isRunning())
+			line.start();
 
-        if (!filepath.isEmpty()) {
-            File wavFile = new File("aufnahme.wav");
-            try (AudioInputStream ais = new AudioInputStream(line)) {
-                AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+		if (!filepath.isEmpty()) {
+			File wavFile = new File(filepath);
+			try (AudioInputStream ais = new AudioInputStream(line)) {
+				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, wavFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 
-            clearLine(line);
-        }
-    }
+			clearLine(line);
+		}
+	}
 
-    public static void playAudio(SourceDataLine line, String filepath) {
-        try {
-            File file = new File(filepath);
-            AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+	public static void playAudio(SourceDataLine line, byte[] data) {
+		try {
+			if (line == null)
+				return;
 
-            if (line != null && !line.isOpen()) {
-                line.open();
-                if (!line.isRunning())
-                    line.start();
+			if (!line.isOpen()) {
+				line.open();
+			}
 
-                byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
-                int bytesRead = 0;
+			if (!line.isRunning())
+				line.start();
+			
+			
+			line.write(data, 0, data.length);
 
-                while ((bytesRead = ais.read(buffer, 0, buffer.length)) != -1) {
-                    line.write(buffer, 0, bytesRead);
-                }
+			clearLine(line);
 
-                clearLine(line);
-            }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public static void playAudio(SourceDataLine line, String filepath) {
+		try {
+			File file = new File(filepath);
+			AudioInputStream ais = AudioSystem.getAudioInputStream(file);
 
-    private static void clearLine(DataLine line) {
-        line.drain();
-        line.stop();
-        line.close();
-    }
+			if (line != null && !line.isOpen()) {
+				line.open();
+				if (!line.isRunning())
+					line.start();
 
-    /**
-     * Gets the sourcedataline also known as speaker device from given deviceinfo
-     * 
-     * @param speaker
-     * @return the SourceDataLine which allows playing back audio data from a device
-     */
-    public static SourceDataLine getSourceDataLine(DeviceInfo speaker) {
-        if (speaker == null)
-            return null;
+				byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
+				int bytesRead = 0;
 
-        try {
-            Mixer mixer = AudioSystem.getMixer(speaker.mixerInfo);
-            DataLine.Info lineInfo = new DataLine.Info(SourceDataLine.class, speaker.format);
+				while ((bytesRead = ais.read(buffer, 0, buffer.length)) != -1) {
+					line.write(buffer, 0, bytesRead);
+				}
 
-            return (SourceDataLine) mixer.getLine(lineInfo);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+				clearLine(line);
+			}
 
-    /**
-     * Gets the sourcedataline also known as speaker device from the DeviceSettings
-     * This is set when the MicRecorderToggle Window appears.
-     * 
-     * @param speaker
-     * @return the SourceDataLine which allows playing back audio data from a device
-     */
-    public static SourceDataLine getSourceDataLine() {
-        return getSourceDataLine(DeviceSettings.getSpeaker());
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    /**
-     * Gets the target dataline form the DeviceSettings
-     * 
-     * @return
-     */
-    public static TargetDataLine getTargetDataLine() {
-        return getTargetDataLine(DeviceSettings.getMicrophone());
-    }
+	public static void clearLine(DataLine line) {
+		line.drain();
+		line.stop();
+		line.close();
+	}
 
-    /**
-     * Gets the target dataline form the given DeviceInfo.
-     * 
-     * @return a TargetDataLine which is a InputDevice interface, where the one can
-     *         process AudioInput.
-     */
-    public static TargetDataLine getTargetDataLine(DeviceInfo microphone) {
-        if (microphone == null)
-            return null;
+	/**
+	 * Gets the sourcedataline also known as speaker device from given deviceinfo
+	 * 
+	 * @param speaker
+	 * @return the SourceDataLine which allows playing back audio data from a device
+	 */
+	public static SourceDataLine getSourceDataLine(DeviceInfo speaker) {
+		if (speaker == null)
+			return null;
 
-        try {
-            Mixer mixer = AudioSystem.getMixer(microphone.mixerInfo);
-            DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class, microphone.format);
+		try {
+			Mixer mixer = AudioSystem.getMixer(speaker.mixerInfo);
+			DataLine.Info lineInfo = new DataLine.Info(SourceDataLine.class, speaker.format);
 
-            return (TargetDataLine) mixer.getLine(lineInfo);
-        } catch (LineUnavailableException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+			return (SourceDataLine) mixer.getLine(lineInfo);
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-        }
-        return null;
-    }
+	/**
+	 * Gets the sourcedataline also known as speaker device from the DeviceSettings
+	 * This is set when the MicRecorderToggle Window appears.
+	 * 
+	 * @param speaker
+	 * @return the SourceDataLine which allows playing back audio data from a device
+	 */
+	public static SourceDataLine getSourceDataLine() {
+		return getSourceDataLine(DeviceSettings.getSpeaker());
+	}
+
+	/**
+	 * Gets the target dataline form the DeviceSettings
+	 * 
+	 * @return
+	 */
+	public static TargetDataLine getTargetDataLine() {
+		return getTargetDataLine(DeviceSettings.getMicrophone());
+	}
+
+	/**
+	 * Gets the target dataline form the given DeviceInfo.
+	 * 
+	 * @return a TargetDataLine which is a InputDevice interface, where the one can
+	 *         process AudioInput.
+	 */
+	public static TargetDataLine getTargetDataLine(DeviceInfo microphone) {
+		if (microphone == null)
+			return null;
+
+		try {
+			Mixer mixer = AudioSystem.getMixer(microphone.mixerInfo);
+			DataLine.Info lineInfo = new DataLine.Info(TargetDataLine.class, microphone.format);
+
+			return (TargetDataLine) mixer.getLine(lineInfo);
+		} catch (LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		return null;
+	}
 }

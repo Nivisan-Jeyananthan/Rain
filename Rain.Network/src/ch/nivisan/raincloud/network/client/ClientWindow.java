@@ -141,12 +141,13 @@ class ClientWindow extends JFrame {
 		btnRecord.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				running = true;
-				client.sendAudio();
-			// TODO: setup correct sending audio and stopping audio
-				if (client.getMicRunning())
+				if (!client.getMicRunning()) {
+					client.sendAudio();
 					btnRecord.setText("🔴");
-				else
+				} else {
 					btnRecord.setText("၊၊||၊");
+					client.closeAudio();
+				}
 			}
 		});
 		contentPanel.add(btnRecord, gbcBtnRecord);
@@ -154,6 +155,7 @@ class ClientWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
 				running = false;
+				client.closeAudio();
 				client.quit(false);
 			}
 		});

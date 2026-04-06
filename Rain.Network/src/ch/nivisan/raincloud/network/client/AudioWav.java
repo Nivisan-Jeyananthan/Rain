@@ -7,12 +7,11 @@ import java.io.RandomAccessFile;
 
 public class AudioWav {
 	private RandomAccessFile raf;
-	private long dataSize = 0; // Bytes im Daten‑Chunk
+	private long dataSize = 0; 
 	private final int sampleRate = 48000;
 	private final short channels = 1;
 	private final short bitsPerSample = 16;
 
-	// ------------------------------------------------------------
 	public AudioWav(File file) {
 		try {
 			raf = new RandomAccessFile(file, "rw");
@@ -25,19 +24,31 @@ public class AudioWav {
 		}
 	}
 
-	// ------------------------------------------------------------
+	/**
+	 * Writes the header entry for the file.
+	 * 1. Clears the file 
+	 * 2. Sets ChunkIDs as RIFF
+	 * 3. Sets ChunkSize as 0
+	 * 4. Sets Format as Wave
+	 * 5. Sets SubChunk1ID
+	 * 6. Sets SubChunk1Size as pcm
+	 * 7. Sets AudioFormat as pcm
+	 * 8. Begins with the datachunk
+	 * 8. Sets SubChunk2ID called data
+	 * 9. Sets SubChunk2Size as 0
+	 */
 	private void writeHeaderPlaceholder() {
 		try {
 			raf.setLength(0);
 
-			raf.writeBytes("RIFF"); // ChunkID
-			writeLEInt(raf, 0); // ChunkSize (noch 0)
-			raf.writeBytes("WAVE"); // Format
+			raf.writeBytes("RIFF");
+			writeLEInt(raf, 0); 
+			raf.writeBytes("WAVE"); 
 
 			// fmt‑Chunk
-			raf.writeBytes("fmt "); // Subchunk1ID
-			writeLEInt(raf, 16); // Subchunk1Size (PCM)
-			writeLEShort(raf, (short) 1); // AudioFormat = PCM
+			raf.writeBytes("fmt ");
+			writeLEInt(raf, 16); 
+			writeLEShort(raf, (short) 1);
 			writeLEShort(raf, channels);
 			writeLEInt(raf, sampleRate);
 
@@ -48,31 +59,26 @@ public class AudioWav {
 			writeLEShort(raf, blockAlign);
 			writeLEShort(raf, bitsPerSample);
 
-			// data‑Chunk
-			raf.writeBytes("data"); // Subchunk2ID
-			writeLEInt(raf, 0); // Subchunk2Size (noch 0)
+			raf.writeBytes("data"); 
+			writeLEInt(raf, 0); 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	// ------------------------------------------------------------
 	public synchronized void append(byte[] data) {
 		try {
 			raf.seek(raf.length());
 			raf.write(data);
 			dataSize += data.length;
 
-			updateHeader(); // Header patchen
+			updateHeader(); 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // ans Ende
+		} 
 
 	}
 
-	// ------------------------------------------------------------
 	private void updateHeader() {
 
 		try {
@@ -99,7 +105,11 @@ public class AudioWav {
 		}
 	}
 
-	// ------------------------------------------------------------
+	/**
+	 * Writes the value of a int or intlike value into the file as byte using little endian
+	 * @param raf
+	 * @param value
+	 */
 	private static void writeLEInt(RandomAccessFile raf, int value) {
 		try {
 			raf.write(value & 0xFF);
@@ -107,19 +117,21 @@ public class AudioWav {
 			raf.write((value >> 16) & 0xFF);
 			raf.write((value >> 24) & 0xFF);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Writes the value of a short into the file as byte using little endian
+	 * @param raf
+	 * @param value
+	 */
 	private static void writeLEShort(RandomAccessFile raf, short value) {
-
 		try {
 			raf.write(value & 0xFF);
 			raf.write((value >> 8) & 0xFF);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

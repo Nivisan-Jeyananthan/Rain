@@ -1,12 +1,5 @@
 package ch.nivisan.raincloud.network.client;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
-
 public class DeviceSettings {
 	private static DeviceInfo microphone;
 	private static DeviceInfo speaker;
