@@ -218,8 +218,8 @@ jobs:
        brew install pkg-config libjpeg libpng zlib freetype lcms2 openjpeg webp
 
     - name: Upgrade pip & install dependencies
-      run: python3 -m pip install --upgrade pip setuptools wheel &&
-          pip install pillow
+      run: python3 -m pip install --upgrade pip setuptools wheel --break-system-packages &&
+          pip install pillow --break-system-packages
       continue-on-error: true
     
     - name: Generate Icon
