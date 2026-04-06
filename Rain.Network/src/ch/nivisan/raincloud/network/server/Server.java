@@ -132,9 +132,6 @@ class Server implements Runnable {
 				sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
 			}
 		} 
-		else if (value.startsWith("/v/")){
-
-		}
 		else {
 			System.out.println(value);
 		}
@@ -386,7 +383,11 @@ class Server implements Runnable {
 			clientResponses.add(id);
 		} else if (value.startsWith("/u/")) {
 			sendToClient(getOnlineUsers(), client);
-		} else {
+		}
+		else if (value.startsWith("/v/")){
+			relayMessage(value);
+		}
+		else {
 			System.out.println("Server decrypted command: " + value);
 		}
 	}
