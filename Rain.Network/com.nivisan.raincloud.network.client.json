@@ -1,0 +1,50 @@
+{
+    "app-id": "ch.nivisan.raincloud.network.client",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "23.08",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "rainchat",
+    "finish-args": [
+        "--share=network",
+        "--device=all",
+        "--socket=pulseaudio",
+        "--socket=fallback-x11",
+        "--socket=wayland",
+        "--filesystem=xdg-run/pulse:ro"
+    ],
+    "modules": [
+        {
+            "name": "openjdk",
+            "buildsystem": "simple",
+            "build-commands": [
+                "mkdir -p /app/jdk",
+                "tar -xf openjdk-25.tar.gz -C /app/jdk --strip-components=1"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.java.net/java/GA/jdk25/19/GPL/openjdk-25_linux-x64_bin.tar.gz",
+                    "sha256": "e8e4c59787b8d0a0b5e5c9b5d2e7ff7e5f8c8d8d8d8d8d8d8d8d8d8d8d8d8d8"
+                }
+            ]
+        },
+        {
+            "name": "rainchat",
+            "buildsystem": "simple",
+            "build-commands": [
+                "mkdir -p /app/bin",
+                "cp Client.jar /app/bin/",
+                "echo '#!/bin/bash' > /app/bin/rainchat",
+                "echo 'cd /app/bin' >> /app/bin/rainchat",
+                "echo 'exec /app/jdk/bin/java -jar Client.jar' >> /app/bin/rainchat",
+                "chmod +x /app/bin/rainchat"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "Client.jar"
+                }
+            ]
+        }
+    ]
+}
