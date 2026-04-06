@@ -213,9 +213,13 @@ jobs:
         java-version: '25'
         distribution: 'oracle'
     
-    - name: Install Python PIL
-      run: |
-        python3 -m pip install --user pillow
+    - name: Install system deps for Pillow
+      run: brew update &&
+       brew install pkg-config libjpeg libpng zlib freetype lcms2 openjpeg webp
+
+    - name: Upgrade pip & install dependencies
+      run: python3 -m pip install --upgrade pip setuptools wheel &&
+          pip install pillow
       continue-on-error: true
     
     - name: Generate Icon
