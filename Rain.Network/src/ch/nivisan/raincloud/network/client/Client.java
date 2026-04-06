@@ -1,6 +1,5 @@
 package ch.nivisan.raincloud.network.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -22,6 +21,15 @@ import ch.nivisan.raincloud.network.utilities.NetUtils;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
 class Client {
+	private static final String CMD_CONNECT = "/c/";
+	private static final String CMD_KEY_SYNC = "/ks/";
+	private static final String CMD_ENCRYPTED = "/e/";
+	private static final String CMD_KEEP_ALIVE = "/i/";
+	private static final String CMD_VOICE = "/v/";
+	private static final String CMD_MESSAGE = "/m/";
+	private static final String CMD_USERS = "/u/";
+	private static final String CMD_DISCONNECT = "/d/";
+
 	private DatagramSocket socket;
 	private InetAddress ip;
 	final int port;
@@ -33,7 +41,6 @@ class Client {
 	private IvParameterSpec sessionIv;
 	private int Id = -1;
 
-	private boolean running = false;
 	private AtomicBoolean micRunning = new AtomicBoolean(false);
 	private boolean connected = false;
 	private boolean handshakeComplete = false;
@@ -42,9 +49,6 @@ class Client {
 	private DeviceInfo currentMicrophone;
 	private SourceDataLine speakerLine;
 	private DeviceInfo currentSpeaker;
-
-	// TODO: remove
-	private AudioWav waveAudio;
 
 	Client(final String name, final String address, final int port) {
 		this.name = name;
@@ -60,10 +64,6 @@ class Client {
 			ip = null;
 			socket = null;
 		}
-
-		// TODO: remove
-		waveAudio = new AudioWav(new File("audio.wav"));
-
 	}
 
 	boolean connected() {
@@ -98,93 +98,131 @@ class Client {
 	}
 
 	private String receiveMessage() {
-		byte[] data = new byte[NetUtils.MAX_PACKET_SIZE];
-		DatagramPacket packet = new DatagramPacket(data, data.length);
-
-		try {
-			if (!socket.isClosed())
-				socket.receive(packet);
-		} catch (IOException e) {
-			e.printStackTrace();
+		String message = receivePacket();
+		if (message.isEmpty()) {
 			return "";
 		}
 
-		String message = new String(packet.getData(), 0, packet.getLength());
-
-		if (message.startsWith("/e/")) {
-			int endIndex = message.lastIndexOf("/e/");
-			if (endIndex <= 3)
-				return "";
-			String encoded = message.substring(3, endIndex);
-			try {
-				byte[] cipherText = Base64.getDecoder().decode(encoded);
-				String plain = StringCipher.decrypt(cipherText, sessionKey, sessionIv);
-				message = plain == null ? "" : plain;
-			} catch (Exception e) {
+		if (message.startsWith(CMD_ENCRYPTED)) {
+			message = decryptMessage(message);
+			if (message == null || message.isEmpty()) {
 				return "";
 			}
 		}
 
-		if (message.startsWith("/c/")) {
-			String[] parts = message.split("/c/|/e/");
-			if (parts.length > 1) {
-				Id = Integer.parseInt(parts[1]);
-				connected = true;
-				running = true;
-			}
+		if (message.startsWith(CMD_CONNECT)) {
+			handleConnectResponse(message);
 			return message;
 		}
 
-		if (message.startsWith("/ks/")) {
-			int endIndex = message.indexOf("/e/");
-			if (endIndex <= 4)
-				return "";
-			String payload = message.substring(4, endIndex);
-			try {
-				byte[] encrypted = Base64.getUrlDecoder().decode(payload);
-				String decrypted = StringCipher.decryptRSA(encrypted, keyPair.getPrivate());
-				if (decrypted != null && decrypted.startsWith("SYMMETRIC:")) {
-					String[] token = decrypted.split(":", 4);
-					if (token.length == 4) {
-						Id = Integer.parseInt(token[1]);
-						sessionKey = StringCipher.decodeSecretKeyFromBase64(token[2]);
-						sessionIv = new IvParameterSpec(StringCipher.decodeString(token[3]));
-						handshakeComplete = true;
-						connected = true;
-						running = true;
-					}
-				}
-			} catch (Exception e) {
-				return "";
-			}
+		if (message.startsWith(CMD_KEY_SYNC)) {
+			handleKeySync(message);
 			return "";
 		}
 
-		if (message.startsWith("/i/")) {
-			if (Id >= 0) {
-				sendBytes(("/i/" + Id + "/e/").getBytes());
-			}
+		if (message.startsWith(CMD_KEEP_ALIVE)) {
+			handleKeepAlive();
+			return "";
 		}
 
-		if (message.startsWith("/v/")) {
-
-			String[] messageData = message.split("/v/");
-			if (messageData.length > 1) {
-				byte[] voiceData = StringCipher.decodeString(messageData[1]);
-				playVoice(voiceData);
-			}
+		if (message.startsWith(CMD_VOICE)) {
+			handleVoicePacket(message);
 		}
 
 		return message;
 	}
 
+	private String receivePacket() {
+		byte[] data = new byte[NetUtils.MAX_PACKET_SIZE];
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+
+		try {
+			if (!socket.isClosed()) {
+				socket.receive(packet);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+
+		return new String(packet.getData(), 0, packet.getLength());
+	}
+
+	private String decryptMessage(String message) {
+		int endIndex = message.lastIndexOf(CMD_ENCRYPTED);
+		if (endIndex <= CMD_ENCRYPTED.length()) {
+			return "";
+		}
+
+		String encoded = message.substring(CMD_ENCRYPTED.length(), endIndex);
+		try {
+			byte[] cipherText = Base64.getDecoder().decode(encoded);
+			return StringCipher.decrypt(cipherText, sessionKey, sessionIv);
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	private void handleConnectResponse(String message) {
+		String[] parts = message.split(CMD_CONNECT + "|" + CMD_ENCRYPTED);
+		if (parts.length > 1) {
+			Id = Integer.parseInt(parts[1]);
+			connected = true;
+		}
+	}
+
+	private void handleKeySync(String message) {
+		int endIndex = message.indexOf(CMD_ENCRYPTED);
+		if (endIndex <= CMD_KEY_SYNC.length()) {
+			return;
+		}
+
+		String payload = message.substring(CMD_KEY_SYNC.length(), endIndex);
+		try {
+			byte[] encrypted = Base64.getUrlDecoder().decode(payload);
+			String decrypted = StringCipher.decryptRSA(encrypted, keyPair.getPrivate());
+			if (decrypted == null || !decrypted.startsWith("SYMMETRIC:")) {
+				return;
+			}
+
+			String[] token = decrypted.split(":", 4);
+			if (token.length != 4) {
+				return;
+			}
+
+			Id = Integer.parseInt(token[1]);
+			sessionKey = StringCipher.decodeSecretKeyFromBase64(token[2]);
+			sessionIv = new IvParameterSpec(StringCipher.decodeString(token[3]));
+			handshakeComplete = true;
+			connected = true;
+		} catch (Exception e) {
+			// ignore invalid handshake packet
+		}
+	}
+
+	private void handleKeepAlive() {
+		if (Id >= 0) {
+			sendBytes((CMD_KEEP_ALIVE + Id + CMD_ENCRYPTED).getBytes());
+		}
+	}
+
+	private void handleVoicePacket(String message) {
+		String[] parts = message.split(CMD_VOICE);
+		if (parts.length <= 1) {
+			return;
+		}
+
+		byte[] voiceData = StringCipher.decodeString(parts[1]);
+		playVoice(voiceData);
+	}
+
 	void sendText(String message) {
 		message = message.replaceAll("/\\w/", "");
-		sendEncrypted("/m/" + message + "/e/");
+		sendEncrypted(CMD_MESSAGE + message + CMD_ENCRYPTED);
 	}
 
 	void requestUsernames() {
-		sendEncrypted("/u/");
+		sendEncrypted(CMD_USERS);
 	}
 
 	private void sendEncrypted(String payload) {
@@ -192,7 +230,7 @@ class Client {
 			byte[] encrypted = StringCipher.encrypt(payload, sessionKey, sessionIv);
 			if (encrypted != null) {
 				String encoded = Base64.getEncoder().encodeToString(encrypted);
-				sendBytes(("/e/" + encoded + "/e/").getBytes());
+				sendBytes((CMD_ENCRYPTED + encoded + CMD_ENCRYPTED).getBytes());
 				return;
 			}
 		}
@@ -200,19 +238,15 @@ class Client {
 	}
 
 	private void sendBytes(final byte[] data) {
-		final Thread sendThread = new Thread("Send") {
-			public void run() {
-				try {
-					if (!socket.isClosed()) {
-						DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
-						socket.send(packet);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+		new Thread(() -> {
+			try {
+				if (!socket.isClosed()) {
+					socket.send(new DatagramPacket(data, data.length, ip, port));
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		};
-		sendThread.start();
+		}, "Send").start();
 	}
 
 	public void setId(int Id) {
@@ -228,7 +262,7 @@ class Client {
 			return;
 
 		if (!kicked) {
-			sendEncrypted("/d/" + Id + "/e/");
+			sendEncrypted(CMD_DISCONNECT + Id + CMD_ENCRYPTED);
 		}
 
 		new Thread(() -> {
@@ -244,23 +278,22 @@ class Client {
 	}
 
 	public void sendAudio() {
-		if (!micRunning.get() && micThread == null) {
-			micRunning.set(true);
-			micThread = new Thread(new MicRecorder());
-			micThread.start();
-		} else if (micRunning.get()) {
-			refreshMicLine();
+		if (micRunning.compareAndSet(false, true)) {
+			startMicRecorder();
+			return;
 		}
+		refreshMicLine();
+	}
+
+	private void startMicRecorder() {
+		micThread = new Thread(new MicRecorder(), "MicRecorder");
+		micThread.start();
 	}
 
 	public void closeAudio() {
 		micRunning.set(false);
 		closeMicLine();
-		if (micThread != null) {
-			micThread = null;
-		}
-		// TODO: remove
-		waveAudio.close();
+		micThread = null;
 	}
 
 	private void playVoice(byte[] voiceData) {
@@ -286,25 +319,42 @@ class Client {
 	}
 
 	private void resetSpeakerLine(DeviceInfo selectedSpeaker) {
+		closeSpeakerLine();
+		currentSpeaker = selectedSpeaker;
+		speakerLine = createSpeakerLine(currentSpeaker);
+	}
+
+	private SourceDataLine createSpeakerLine(DeviceInfo speaker) {
+		if (speaker == null) {
+			return null;
+		}
+
+		SourceDataLine line = Audio.getSourceDataLine(speaker);
+		if (line == null) {
+			return null;
+		}
+
+		try {
+			if (!line.isOpen()) {
+				line.open(speaker.format);
+			}
+			if (!line.isRunning()) {
+				line.start();
+			}
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return line;
+	}
+
+	private void closeSpeakerLine() {
 		if (speakerLine != null) {
 			speakerLine.drain();
 			speakerLine.stop();
 			speakerLine.close();
 			speakerLine = null;
-		}
-		currentSpeaker = selectedSpeaker;
-		if (currentSpeaker != null) {
-			speakerLine = Audio.getSourceDataLine(currentSpeaker);
-			if (speakerLine != null && !speakerLine.isOpen()) {
-				try {
-					speakerLine.open(currentSpeaker.format);
-				} catch (LineUnavailableException e) {
-					e.printStackTrace();
-				}
-			}
-			if (speakerLine != null && !speakerLine.isRunning()) {
-				speakerLine.start();
-			}
 		}
 	}
 
@@ -313,17 +363,7 @@ class Client {
 		if (!sameDevice(currentMicrophone, selectedMic)) {
 			closeMicLine();
 			currentMicrophone = selectedMic;
-			if (currentMicrophone != null) {
-				micLine = Audio.getTargetDataLine(currentMicrophone);
-				if (micLine != null && !micLine.isOpen()) {
-					try {
-						micLine.open(currentMicrophone.format);
-						micLine.start();
-					} catch (LineUnavailableException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+			micLine = createMicLine(currentMicrophone);
 		}
 	}
 
@@ -332,18 +372,37 @@ class Client {
 		if (!sameDevice(currentMicrophone, selectedMic)) {
 			refreshMicLine();
 		}
+
 		if (micLine == null && currentMicrophone != null) {
-			micLine = Audio.getTargetDataLine(currentMicrophone);
-			if (micLine != null && !micLine.isOpen()) {
-				try {
-					micLine.open(currentMicrophone.format);
-					micLine.start();
-				} catch (LineUnavailableException e) {
-					e.printStackTrace();
-				}
-			}
+			micLine = createMicLine(currentMicrophone);
 		}
+
 		return micLine;
+	}
+
+	private TargetDataLine createMicLine(DeviceInfo microphone) {
+		if (microphone == null) {
+			return null;
+		}
+
+		TargetDataLine line = Audio.getTargetDataLine(microphone);
+		if (line == null) {
+			return null;
+		}
+
+		try {
+			if (!line.isOpen()) {
+				line.open(microphone.format);
+			}
+			if (!line.isRunning()) {
+				line.start();
+			}
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return line;
 	}
 
 	private synchronized void closeMicLine() {
