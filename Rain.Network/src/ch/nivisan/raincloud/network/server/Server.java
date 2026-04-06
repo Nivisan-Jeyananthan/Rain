@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import javax.crypto.SecretKey;
@@ -30,9 +32,10 @@ class Server implements Runnable {
 	private Thread serverThread;
 	private Thread manageThread;
 	private Thread recieveThread;
-	private Thread sendThread;
 	boolean running;
 	boolean raw;
+
+	private final ExecutorService executor = Executors.newCachedThreadPool();
 
 	public Server(int port) {
 
@@ -77,14 +80,16 @@ class Server implements Runnable {
 			ServerCommands.read(text, this, scanner);
 		}
 		scanner.close();
+		executor.shutdown();
 	}
 
 	private void recieveBytes() {
 		recieveThread = new Thread("Recieve") {
+			private final byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
+
 			public void run() {
 				while (running) {
-					byte[] data = new byte[NetUtils.MAX_PACKET_SIZE];
-					DatagramPacket packet = new DatagramPacket(data, data.length);
+					DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
 					try {
 						if (!socket.isClosed())
@@ -401,19 +406,16 @@ class Server implements Runnable {
 	}
 
 	private void sendBytes(final byte[] data, final InetAddress clientAddress, final int clientPort) {
-		sendThread = new Thread("Send") {
-			public void run() {
-				DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
+		executor.submit(() -> {
+			DatagramPacket packet = new DatagramPacket(data, data.length, clientAddress, clientPort);
 
-				try {
-					if (!socket.isClosed())
-						socket.send(packet);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if (!socket.isClosed())
+					socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		};
-		sendThread.start();
+		});
 	}
 
 }

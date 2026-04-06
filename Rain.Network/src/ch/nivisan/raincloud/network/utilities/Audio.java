@@ -19,7 +19,7 @@ public class Audio {
 	public final static int sampleSizeInBits = 16;
 	public final static int channels = 1;
 	public final static int frameSize = sampleSizeInBits / 8;
-	public final static int sendRateInMs = 10;
+	public final static int sendRateInMs = 5;
 	public final static int secondsInMs = 1000;
 	public final static int bufferSize = (int) ((sampleRate * frameSize * sendRateInMs) / secondsInMs);
 

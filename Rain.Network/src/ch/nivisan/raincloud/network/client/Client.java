@@ -8,6 +8,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.util.Base64;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.crypto.SecretKey;
@@ -49,6 +51,8 @@ class Client {
 	private DeviceInfo currentMicrophone;
 	private SourceDataLine speakerLine;
 	private DeviceInfo currentSpeaker;
+
+	private final ExecutorService executor = Executors.newCachedThreadPool();
 
 	Client(final String name, final String address, final int port) {
 		this.name = name;
@@ -238,7 +242,7 @@ class Client {
 	}
 
 	private void sendBytes(final byte[] data) {
-		new Thread(() -> {
+		executor.submit(() -> {
 			try {
 				if (!socket.isClosed()) {
 					socket.send(new DatagramPacket(data, data.length, ip, port));
@@ -246,7 +250,7 @@ class Client {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}, "Send").start();
+		});
 	}
 
 	public void setId(int Id) {
@@ -274,6 +278,7 @@ class Client {
 					System.out.println("Not closed socket system");
 				}
 			}
+			executor.shutdown();
 		}).start();
 	}
 
@@ -414,11 +419,12 @@ class Client {
 	}
 
 	boolean getMicRunning() {
-		System.out.println("Running mic: " + micRunning);
 		return micRunning.get();
 	}
 
 	private class MicRecorder implements Runnable {
+		private final byte[] buffer = new byte[Audio.bufferSize];
+
 		@Override
 		public void run() {
 			while (micRunning.get()) {
@@ -432,12 +438,11 @@ class Client {
 					continue;
 				}
 
-				byte[] buffer = new byte[Audio.bufferSize];
 				int bytesRead = activeLine.read(buffer, 0, buffer.length);
 				if (bytesRead > 0) {
 					byte[] voiceData = new byte[bytesRead];
 					System.arraycopy(buffer, 0, voiceData, 0, bytesRead);
-					sendEncrypted(("/v/" + StringCipher.encodeString(voiceData) + "/v/"));
+					sendEncrypted(CMD_VOICE + StringCipher.encodeString(voiceData) + CMD_VOICE);
 				}
 			}
 			closeMicLine();
