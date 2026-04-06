@@ -40,4 +40,17 @@ public class ServerClient {
 	public int getId() {
 		return Id;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		ServerClient that = (ServerClient) obj;
+		return Id == that.Id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(Id);
+	}
 }

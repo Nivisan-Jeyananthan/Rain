@@ -1,5 +1,7 @@
 package ch.nivisan.raincloud.network.client;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -22,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 class MicRecorderToggle extends JFrame {
 
@@ -34,9 +38,16 @@ class MicRecorderToggle extends JFrame {
 
 	private RecordingThread recordingThread = null;
 	private PlaybackThread playbackThread = null;
+	private final File tempAudioFile;
 
 	MicRecorderToggle() {
 		super("Mikrofon‑Aufnahme");
+		try {
+			tempAudioFile = File.createTempFile("rain-audio-test-", ".wav");
+			tempAudioFile.deleteOnExit();
+		} catch (IOException e) {
+			throw new RuntimeException("Konnte temporäre Audio-Datei nicht erstellen", e);
+		}
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -112,6 +123,13 @@ class MicRecorderToggle extends JFrame {
 
 		pack();
 		setLocationRelativeTo(null);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				stopRunningThread();
+				deleteTempAudioFile();
+			}
+		});
 		setVisible(true);
 	}
 
@@ -151,6 +169,24 @@ class MicRecorderToggle extends JFrame {
 	}
 
 	private Thread runningThread;
+
+	private void deleteTempAudioFile() {
+		if (tempAudioFile != null && tempAudioFile.exists()) {
+			tempAudioFile.delete();
+		}
+	}
+
+	private void stopRunningThread() {
+		Thread thread = getRunningThread();
+		if (thread != null) {
+			if (thread instanceof RecordingThread) {
+				((RecordingThread) thread).stopRecording();
+			} else if (thread instanceof PlaybackThread) {
+				((PlaybackThread) thread).stopPlayback();
+			}
+			runningThread = null;
+		}
+	}
 
 	private Thread getRunningThread() {
 		return runningThread;
@@ -221,7 +257,7 @@ class MicRecorderToggle extends JFrame {
 
 		@Override
 		public void run() {
-			Audio.playAudio(line, "aufnahme.wav");
+			Audio.playAudio(line, tempAudioFile.getAbsolutePath());
 		}
 
 		void stopPlayback() {
@@ -240,7 +276,7 @@ class MicRecorderToggle extends JFrame {
 
 		@Override
 		public void run() {
-			Audio.recordAudio(line, "aufnahme.wav");
+			Audio.recordAudio(line, tempAudioFile.getAbsolutePath());
 		}
 
 		void stopRecording() {

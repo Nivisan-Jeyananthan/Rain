@@ -302,6 +302,10 @@ class Server implements Runnable {
 		handleClientAction(client -> true, client -> sendToClient(message, client));
 	}
 
+	protected void relayMessageExcept(String message, ServerClient excludeClient) {
+		handleClientAction(client -> !client.equals(excludeClient), client -> sendToClient(message, client));
+	}
+
 	protected void sendToClient(String message, ServerClient client) {
 		if (client.handshakeComplete && client.sessionKey != null && client.sessionIv != null) {
 			byte[] encrypted = StringCipher.encrypt(message, client.sessionKey, client.sessionIv);
@@ -390,7 +394,7 @@ class Server implements Runnable {
 			sendToClient(getOnlineUsers(), client);
 		}
 		else if (value.startsWith("/v/")){
-			relayMessage(value);
+			relayMessageExcept(value, client);
 		}
 		else {
 			System.out.println("Server decrypted command: " + value);
