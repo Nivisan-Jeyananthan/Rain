@@ -39,10 +39,11 @@ cd Rain.Network
 # Erstellt: rainchat.flatpak
 ```
 
-### Lokal auf Windows (EXE):
+### Lokal auf Windows (Portable ZIP):
 ```cmd
 cd Rain.Network
-jpackage --input . --type exe --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico
+jpackage --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico
+powershell Compress-Archive -Path RainChat -DestinationPath RainChat-Windows-Portable.zip
 ```
 
 ### Lokal auf macOS (DMG):
@@ -76,7 +77,7 @@ git push origin v2.0.0
 2. GitHub Actions baut automatisch und erstellt ein Release mit:
    - `Client.jar`
    - `rainchat.flatpak` (Linux)
-   - `RainChat-2.0.exe` (Windows)
+   - `RainChat-Windows-Portable.zip` (Windows - portable App)
    - `RainChat-2.0.dmg` (macOS)
 
 ## Troubleshooting

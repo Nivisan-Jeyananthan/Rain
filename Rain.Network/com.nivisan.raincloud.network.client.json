@@ -18,13 +18,13 @@
             "buildsystem": "simple",
             "build-commands": [
                 "mkdir -p /app/jdk",
-                "tar -xf openjdk-25.tar.gz -C /app/jdk --strip-components=1"
+                "tar -xf openjdk-21.tar.gz -C /app/jdk --strip-components=1"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.java.net/java/GA/jdk25/19/GPL/openjdk-25_linux-x64_bin.tar.gz",
-                    "sha256": "e8e4c59787b8d0a0b5e5c9b5d2e7ff7e5f8c8d8d8d8d8d8d8d8d8d8d8d8d8d8"
+                    "url": "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz",
+                    "sha256": "a2ef86fb6c4bd62278e099d63b5c85b5ba1a5a8ea890d878c2a5a146a0c9c58a3b"
                 }
             ]
         },

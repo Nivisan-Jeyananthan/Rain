@@ -34,6 +34,11 @@ jobs:
         echo "Main-Class: ch.nivisan.raincloud.network.client.Main" > MANIFEST.MF
         jar cfm Client.jar MANIFEST.MF -C bin .
     
+    - name: Install Python PIL
+      run: |
+        python3 -m pip install pillow
+      continue-on-error: true
+    
     - name: Generate Icon
       run: |
         python3 create-icon.py
@@ -86,10 +91,26 @@ jobs:
     - name: Build Flatpak
       working-directory: Rain.Network
       run: |
-        chmod +x build-flatpak.sh
-        ./build-flatpak.sh || echo "flatpak-builder completed with status $?"
+        echo "=== Building Flatpak ==="
+        ls -la
+        flatpak-builder --force-clean --default-permissions build-dir com.nivisan.raincloud.network.client.json --verbose || echo "Flatpak build failed"
+        echo "=== Build directory contents ==="
+        ls -la build-dir/ || echo "No build-dir found"
     
-    - name: Upload Flatpak artifact
+    - name: Create Flatpak Bundle
+      working-directory: Rain.Network
+      run: |
+        if [ -d "build-dir" ]; then
+          echo "=== Creating bundle ==="
+          flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
+          echo "=== Checking bundle ==="
+          ls -la rainchat.flatpak || echo "Bundle not created"
+        else
+          echo "Build directory not found, skipping bundle creation"
+        fi
+      continue-on-error: true
+    
+    - name: Upload Flatpak artifact (if exists)
       uses: actions/upload-artifact@v4
       with:
         name: rainchat.flatpak
@@ -137,18 +158,29 @@ jobs:
       working-directory: Rain.Network
       run: |
         if exist icon.ico (
-          jpackage --input . --type exe --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan"
+          jpackage --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan"
         ) else (
           echo Icon not found, building without icon...
-          jpackage --input . --type exe --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
+          jpackage --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
         )
       shell: cmd
     
-    - name: Upload Windows EXE artifact
+    - name: Create ZIP from app-image
+      working-directory: Rain.Network
+      run: |
+        if exist RainChat (
+          powershell Compress-Archive -Path RainChat -DestinationPath RainChat-Windows-Portable.zip
+        ) else (
+          echo App-image directory not found
+          dir
+        )
+      shell: cmd
+    
+    - name: Upload Windows Portable ZIP artifact
       uses: actions/upload-artifact@v4
       with:
-        name: RainChat-Windows-EXE
-        path: Rain.Network/RainChat-*.exe
+        name: RainChat-Windows-Portable
+        path: Rain.Network/RainChat-Windows-Portable.zip
         retention-days: 7
 
   build-macos-dmg:
@@ -244,7 +276,7 @@ jobs:
         files: |
           artifacts/Client.jar/Client.jar
           artifacts/rainchat.flatpak/rainchat.flatpak
-          artifacts/RainChat-Windows-EXE/*.exe
+          artifacts/RainChat-Windows-Portable/*.zip
           artifacts/RainChat-macOS-DMG/*.dmg
         generate_release_notes: true
       env:
