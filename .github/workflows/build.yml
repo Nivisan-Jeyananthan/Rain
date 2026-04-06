@@ -96,7 +96,7 @@ jobs:
       run: |
         echo "=== Building Flatpak ==="
         ls -la
-        flatpak-builder --force-clean --default-permissions build-dir com.nivisan.raincloud.network.client.json --verbose || echo "Flatpak build failed"
+        flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json --verbose || echo "Flatpak build failed"
         echo "=== Build directory contents ==="
         ls -la build-dir/ || echo "No build-dir found"
     
