@@ -120,8 +120,9 @@ public class Audio {
 	 * @return the SourceDataLine which allows playing back audio data from a device
 	 */
 	public static SourceDataLine getSourceDataLine(DeviceInfo speaker) {
-		if (speaker == null)
-			return null;
+		if (speaker == null) {
+			return getDefaultSourceDataLine();
+		}
 
 		try {
 			Mixer mixer = AudioSystem.getMixer(speaker.mixerInfo);
@@ -132,6 +133,28 @@ public class Audio {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static SourceDataLine getDefaultSourceDataLine() {
+		for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+			try {
+				Mixer mixer = AudioSystem.getMixer(mixerInfo);
+				DataLine.Info info = new DataLine.Info(SourceDataLine.class, defaultFormat);
+				if (!mixer.isLineSupported(info)) {
+					continue;
+				}
+				return (SourceDataLine) mixer.getLine(info);
+			} catch (Exception e) {
+				// ignore mixer if unavailable
+			}
+		}
+
+		try {
+			DataLine.Info info = new DataLine.Info(SourceDataLine.class, defaultFormat);
+			return (SourceDataLine) AudioSystem.getLine(info);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
@@ -161,8 +184,9 @@ public class Audio {
 	 *         process AudioInput.
 	 */
 	public static TargetDataLine getTargetDataLine(DeviceInfo microphone) {
-		if (microphone == null)
-			return null;
+		if (microphone == null) {
+			return getDefaultTargetDataLine();
+		}
 
 		try {
 			Mixer mixer = AudioSystem.getMixer(microphone.mixerInfo);
@@ -175,5 +199,27 @@ public class Audio {
 
 		}
 		return null;
+	}
+
+	public static TargetDataLine getDefaultTargetDataLine() {
+		for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+			try {
+				Mixer mixer = AudioSystem.getMixer(mixerInfo);
+				DataLine.Info info = new DataLine.Info(TargetDataLine.class, defaultFormat);
+				if (!mixer.isLineSupported(info)) {
+					continue;
+				}
+				return (TargetDataLine) mixer.getLine(info);
+			} catch (Exception e) {
+				// ignore mixer if unavailable
+			}
+		}
+
+		try {
+			DataLine.Info info = new DataLine.Info(TargetDataLine.class, defaultFormat);
+			return (TargetDataLine) AudioSystem.getLine(info);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

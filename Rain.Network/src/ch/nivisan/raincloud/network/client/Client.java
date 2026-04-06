@@ -310,6 +310,20 @@ class Client {
 			resetSpeakerLine(selectedSpeaker);
 		}
 
+		if (speakerLine == null) {
+			speakerLine = Audio.getSourceDataLine();
+			if (speakerLine != null && !speakerLine.isOpen()) {
+				try {
+					speakerLine.open();
+				} catch (LineUnavailableException e) {
+					e.printStackTrace();
+				}
+			}
+			if (speakerLine != null && !speakerLine.isRunning()) {
+				speakerLine.start();
+			}
+		}
+
 		if (speakerLine != null) {
 			Audio.writeAudio(speakerLine, voiceData);
 		}
@@ -330,10 +344,6 @@ class Client {
 	}
 
 	private SourceDataLine createSpeakerLine(DeviceInfo speaker) {
-		if (speaker == null) {
-			return null;
-		}
-
 		SourceDataLine line = Audio.getSourceDataLine(speaker);
 		if (line == null) {
 			return null;
@@ -341,7 +351,7 @@ class Client {
 
 		try {
 			if (!line.isOpen()) {
-				line.open(speaker.format);
+				line.open();
 			}
 			if (!line.isRunning()) {
 				line.start();

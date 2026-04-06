@@ -62,6 +62,9 @@ class MicRecorderToggle extends JFrame {
 		List<DeviceInfo> inputDevices = findDevices(TargetDataLine.class);
 
 		comboInputs = new JComboBox<>(inputDevices.toArray(new DeviceInfo[0]));
+		if (comboInputs.getItemCount() > 0) {
+			DeviceSettings.setMicrophone(comboInputs.getItemAt(0));
+		}
 		btnRecordInput = new JButton("Start test");
 		btnRecordInput.setPreferredSize(new Dimension(120, 30));
 
@@ -84,16 +87,24 @@ class MicRecorderToggle extends JFrame {
 		});
 
 		btnRecordInput.addActionListener(e -> {
-			System.out.println("Aufnahme gestartet: " + DeviceSettings.getMicrophone().mixerInfo.getName());
+			DeviceInfo mic = DeviceSettings.getMicrophone();
+			if (mic == null) {
+				JOptionPane.showMessageDialog(this, "Kein Mikrofon ausgewählt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			System.out.println("Aufnahme gestartet: " + mic.mixerInfo.getName());
 
-			startFromDevice(DeviceSettings.getMicrophone(), TargetDataLine.class,
-					() -> new RecordingThread(Audio.getTargetDataLine()), btnRecordInput, "Start test",
+			startFromDevice(mic, TargetDataLine.class,
+					() -> new RecordingThread(Audio.getTargetDataLine(mic)), btnRecordInput, "Start test",
 					"Stop test");
 		});
 
 		btnPlaybackAudio = new JButton("Start playback");
 		List<DeviceInfo> outputDevices = findDevices(SourceDataLine.class);
 		comboOutputs = new JComboBox<>(outputDevices.toArray(new DeviceInfo[0]));
+		if (comboOutputs.getItemCount() > 0) {
+			DeviceSettings.setSpeaker(comboOutputs.getItemAt(0));
+		}
 
 		comboOutputs.addItemListener(new ItemListener() {
 
@@ -111,10 +122,15 @@ class MicRecorderToggle extends JFrame {
 		});
 
 		btnPlaybackAudio.addActionListener(e -> {
-			System.out.println("Playback gestartet: " + DeviceSettings.getSpeaker().mixerInfo.getName());
+			DeviceInfo speaker = DeviceSettings.getSpeaker();
+			if (speaker == null) {
+				JOptionPane.showMessageDialog(this, "Keinen Lautsprecher ausgewählt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			System.out.println("Playback gestartet: " + speaker.mixerInfo.getName());
 
-			startFromDevice(DeviceSettings.getSpeaker(), SourceDataLine.class,
-					() -> new PlaybackThread(Audio.getSourceDataLine()), btnPlaybackAudio, "Start playback",
+			startFromDevice(speaker, SourceDataLine.class,
+					() -> new PlaybackThread(Audio.getSourceDataLine(speaker)), btnPlaybackAudio, "Start playback",
 					"Stop playback");
 		});
 
