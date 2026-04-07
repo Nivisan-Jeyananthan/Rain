@@ -225,6 +225,8 @@ class Client {
 			voiceData = Audio.resampleToOldFormat(voiceData);
 		} else if (Audio.useFallbackFormat) {
 			voiceData = Audio.resampleToFallbackFormat(voiceData);
+		} else if (Audio.useHigherSampleRate) {
+			voiceData = Audio.resampleToHigherSampleRate(voiceData);
 		}
 		
 		playVoice(voiceData);
@@ -324,12 +326,35 @@ class Client {
 			speakerLine = Audio.getSourceDataLine();
 			if (speakerLine != null && !speakerLine.isOpen()) {
 				try {
-					// Open speaker line in appropriate format
+					// Open speaker line in appropriate format with fallbacks
 					AudioFormat speakerFormat = Audio.defaultFormat;
 					if (Audio.useLegacyFormat) {
 						speakerFormat = Audio.oldFormat;
 					} else if (Audio.useFallbackFormat) {
 						speakerFormat = Audio.fallbackFormat;
+					} else if (Audio.useHigherSampleRate) {
+						speakerFormat = Audio.higherFormat;
+					} else {
+						// Try best available format with fallbacks
+						try {
+							speakerLine.open(Audio.defaultFormatStereo);
+							speakerLine.start();
+							return;
+						} catch (LineUnavailableException e1) {
+							try {
+								speakerLine.open(Audio.compatFormatStereo);
+								speakerLine.start();
+								return;
+							} catch (LineUnavailableException e2) {
+								try {
+									speakerLine.open(Audio.fallbackFormatStereo);
+									speakerLine.start();
+									return;
+								} catch (LineUnavailableException e3) {
+									// Fall through to mono format
+								}
+							}
+						}
 					}
 					speakerLine.open(speakerFormat);
 				} catch (LineUnavailableException e) {
@@ -368,7 +393,21 @@ class Client {
 
 		try {
 			if (!line.isOpen()) {
-				line.open();
+				// Try to open with best available format (with fallbacks)
+				try {
+					line.open(Audio.defaultFormatStereo);
+				} catch (LineUnavailableException e1) {
+					try {
+						line.open(Audio.compatFormatStereo);
+					} catch (LineUnavailableException e2) {
+						try {
+							line.open(Audio.fallbackFormatStereo);
+						} catch (LineUnavailableException e3) {
+							// Fallback to mono format
+							line.open(Audio.defaultFormat);
+						}
+					}
+				}
 			}
 			if (!line.isRunning()) {
 				line.start();
@@ -424,7 +463,27 @@ class Client {
 
 		try {
 			if (!line.isOpen()) {
-				line.open(microphone.format);
+				// Try to open with microphone's format, fall back to best detected format if not available
+				AudioFormat formatToUse = microphone.format;
+				try {
+					line.open(formatToUse);
+				} catch (LineUnavailableException e1) {
+					// Fallback: try stereo versions of common formats
+					try {
+						line.open(Audio.defaultFormatStereo);
+					} catch (LineUnavailableException e2) {
+						try {
+							line.open(Audio.compatFormatStereo);
+						} catch (LineUnavailableException e3) {
+							try {
+								line.open(Audio.fallbackFormatStereo);
+							} catch (LineUnavailableException e4) {
+								// Final fallback to mono default format
+								line.open(Audio.defaultFormat);
+							}
+						}
+					}
+				}
 			}
 			if (!line.isRunning()) {
 				line.start();
@@ -493,11 +552,8 @@ class Client {
 						voiceData = Audio.resampleToOldFormat(voiceData);
 					} else if (Audio.useFallbackFormat) {
 						voiceData = Audio.resampleToFallbackFormat(voiceData);
-					}
-
-					if (voiceData.length > 0) {
-						sendEncrypted(CMD_VOICE + StringCipher.encodeString(voiceData) + CMD_VOICE);
-					}
+				} else if (Audio.useHigherSampleRate) {
+					voiceData = Audio.resampleToHigherSampleRate(voiceData);
 				}
 			}
 			closeMicLine();
