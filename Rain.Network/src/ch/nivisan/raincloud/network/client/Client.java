@@ -219,7 +219,7 @@ class Client {
 		}
 
 		byte[] voiceData = StringCipher.decodeString(parts[1]);
-		
+
 		// Apply format-specific resampling for playback
 		if (Audio.useLegacyFormat) {
 			voiceData = Audio.resampleToOldFormat(voiceData);
@@ -228,7 +228,7 @@ class Client {
 		} else if (Audio.useHigherSampleRate) {
 			voiceData = Audio.resampleToHigherSampleRate(voiceData);
 		}
-		
+
 		playVoice(voiceData);
 	}
 
@@ -463,7 +463,8 @@ class Client {
 
 		try {
 			if (!line.isOpen()) {
-				// Try to open with microphone's format, fall back to best detected format if not available
+				// Try to open with microphone's format, fall back to best detected format if
+				// not available
 				AudioFormat formatToUse = microphone.format;
 				try {
 					line.open(formatToUse);
@@ -552,11 +553,13 @@ class Client {
 						voiceData = Audio.resampleToOldFormat(voiceData);
 					} else if (Audio.useFallbackFormat) {
 						voiceData = Audio.resampleToFallbackFormat(voiceData);
-				} else if (Audio.useHigherSampleRate) {
-					voiceData = Audio.resampleToHigherSampleRate(voiceData);
+					} else if (Audio.useHigherSampleRate) {
+						voiceData = Audio.resampleToHigherSampleRate(voiceData);
+					}
 				}
+				closeMicLine();
 			}
-			closeMicLine();
 		}
 	}
+
 }

@@ -71,8 +71,10 @@ class MicRecorderToggle extends JFrame {
 		add(comboFormats);
 
 		// Initialize device lists for the selected format
-		List<DeviceInfo> inputDevices = findDevicesForFormat(TargetDataLine.class, (AudioFormatType) comboFormats.getSelectedItem());
-		List<DeviceInfo> outputDevices = findDevicesForFormat(SourceDataLine.class, (AudioFormatType) comboFormats.getSelectedItem());
+		List<DeviceInfo> inputDevices = findDevicesForFormat(TargetDataLine.class,
+				(AudioFormatType) comboFormats.getSelectedItem());
+		List<DeviceInfo> outputDevices = findDevicesForFormat(SourceDataLine.class,
+				(AudioFormatType) comboFormats.getSelectedItem());
 
 		comboInputs = new JComboBox<>(inputDevices.toArray(new DeviceInfo[0]));
 		if (comboInputs.getItemCount() > 0) {
@@ -84,7 +86,6 @@ class MicRecorderToggle extends JFrame {
 		add(comboInputs);
 		add(btnRecordInput);
 
-		// Format change listener - updates device lists
 		comboFormats.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -92,14 +93,12 @@ class MicRecorderToggle extends JFrame {
 					AudioFormatType selectedFormat = (AudioFormatType) comboFormats.getSelectedItem();
 					DeviceSettings.setAudioFormat(selectedFormat);
 
-					// Stop any running recording/playback before changing format
 					if (recordingThread != null || playbackThread != null) {
 						stopRunningThread();
 						btnRecordInput.setText("Start test");
 						btnPlaybackAudio.setText("Start playback");
 					}
 
-					// Update input devices
 					List<DeviceInfo> newInputDevices = findDevicesForFormat(TargetDataLine.class, selectedFormat);
 					comboInputs.removeAllItems();
 					for (DeviceInfo device : newInputDevices) {
@@ -178,7 +177,8 @@ class MicRecorderToggle extends JFrame {
 		btnPlaybackAudio.addActionListener(e -> {
 			DeviceInfo speaker = DeviceSettings.getSpeaker();
 			if (speaker == null) {
-				JOptionPane.showMessageDialog(this, "Keinen Lautsprecher ausgewählt.", "Fehler", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Keinen Lautsprecher ausgewählt.", "Fehler",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			System.out.println("Playback gestartet: " + speaker.mixerInfo.getName());
@@ -215,20 +215,16 @@ class MicRecorderToggle extends JFrame {
 	@SuppressWarnings("unchecked")
 	private <T extends DataLine> List<DeviceInfo> findDevicesForFormat(Class<T> lineClass, AudioFormatType formatType) {
 		List<DeviceInfo> primaryList = new ArrayList<>();
-		List<DeviceInfo> fallbackList = new ArrayList<>();
-		List<DeviceInfo> legacyList = new ArrayList<>();
-
 		AudioFormat primaryFormat = formatType.getFormat();
-		AudioFormat secondaryFormat = Audio.fallbackFormat;
-		AudioFormat tertiaryFormat = Audio.oldFormat;
 
 		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
 
 		for (int i = 0; i < mixerInfos.length; i++) {
 			Mixer.Info mixerInfo = mixerInfos[i];
 			String mixerName = mixerInfo.getName();
-			
-			// Skip problematic plughw devices on Linux - they often don't support the exact format
+
+			// Skip problematic plughw devices on Linux - they often don't support the exact
+			// format
 			if (mixerName.contains("plughw")) {
 				System.out.println("Skipping problematic mixer: " + mixerName);
 				continue;
@@ -257,71 +253,16 @@ class MicRecorderToggle extends JFrame {
 					}
 					continue;
 				} catch (Exception e) {
-					System.err.println("Failed with format " + formatType.getDisplayName() + ": " + mixerName + " - " + e.getMessage());
+					System.err.println("Failed with format " + formatType.getDisplayName() + ": " + mixerName + " - "
+							+ e.getMessage());
 				}
 			}
 
-			// Try with fallback format (44.1kHz) if primary format fails
-			DataLine.Info fallbackInfo = new DataLine.Info(lineClass, secondaryFormat);
-			if (mixer.isLineSupported(fallbackInfo) && fallbackInfo.isFormatSupported(secondaryFormat)) {
-				try {
-					T line = (T) mixer.getLine(fallbackInfo);
-
-					if (line instanceof TargetDataLine) {
-						((TargetDataLine) line).open(secondaryFormat);
-					} else {
-						line.open();
-					}
-
-					line.close();
-					System.out.println("Using fallback format (44.1 kHz) for: " + mixerName + " (requested: " + formatType.getDisplayName() + ")");
-					fallbackList.add(new DeviceInfo(mixerInfo, secondaryFormat));
-					continue;
-				} catch (Exception e) {
-					System.err.println("Failed with fallback format: " + mixerName + " - " + e.getMessage());
-				}
-			}
-
-			// Try with legacy format (16kHz, 8-bit, stereo) as last resort
-			DataLine.Info legacyInfo = new DataLine.Info(lineClass, tertiaryFormat);
-			if (mixer.isLineSupported(legacyInfo) && legacyInfo.isFormatSupported(tertiaryFormat)) {
-				try {
-					T line = (T) mixer.getLine(legacyInfo);
-
-					if (line instanceof TargetDataLine) {
-						((TargetDataLine) line).open(tertiaryFormat);
-					} else {
-						line.open();
-					}
-
-					line.close();
-					System.out.println("Using legacy format (16 kHz) for: " + mixerName + " (requested: " + formatType.getDisplayName() + ")");
-					legacyList.add(new DeviceInfo(mixerInfo, tertiaryFormat));
-				} catch (Exception e) {
-					System.err.println("Failed with legacy format: " + mixerName + " - " + e.getMessage());
-				}
-			}
 		}
-
-		// Return in order of preference: primary > fallback > legacy
-		// Always return at least one option to ensure user can always record/playback
-		if (!primaryList.isEmpty()) {
-			return primaryList;
-		}
-		if (!fallbackList.isEmpty()) {
-			System.out.println("No devices found for primary format. Using fallback format devices.");
-			return fallbackList;
-		}
-		if (!legacyList.isEmpty()) {
-			System.out.println("No devices found for fallback format. Using legacy format devices.");
-			return legacyList;
-		}
-
 		// If no devices found with any format, log error and return empty list
 		System.err.println("CRITICAL: No audio devices found for any format!");
-		return new ArrayList<>();
+		return primaryList;
 	}
-
 
 	private Thread runningThread;
 

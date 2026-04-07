@@ -8,20 +8,23 @@ import ch.nivisan.raincloud.network.utilities.Audio;
  * Allows users to choose between standard, fallback, and legacy audio formats.
  */
 public enum AudioFormatType {
-	STANDARD("Standard (48 kHz, 16-bit, Mono)", Audio.defaultFormat, false, false),
-	FALLBACK("Fallback (44.1 kHz, 16-bit, Mono)", Audio.fallbackFormat, false, true),
-	LEGACY("Legacy (16 kHz, 8-bit, Stereo)", Audio.oldFormat, true, false);
+	STANDARD("Standard (48 kHz, 16-bit, Mono)", Audio.defaultFormat, false, false, false),
+	FALLBACK("Fallback (44.1 kHz, 16-bit, Mono)", Audio.fallbackFormat, false, true, false),
+	LEGACY("Legacy (16 kHz, 8-bit, Stereo)", Audio.oldFormat, true, false, false),
+	HIGHER("Higher 96 kHz, 16-bit Mono", Audio.higherFormat, false, false, true);
 
 	private final String displayName;
 	private final AudioFormat format;
 	private final boolean isLegacy;
 	private final boolean isFallback;
+	private final boolean isHigher;
 
-	AudioFormatType(String displayName, AudioFormat format, boolean isLegacy, boolean isFallback) {
+	AudioFormatType(String displayName, AudioFormat format, boolean isLegacy, boolean isFallback, boolean isHigher) {
 		this.displayName = displayName;
 		this.format = format;
 		this.isLegacy = isLegacy;
 		this.isFallback = isFallback;
+		this.isHigher = isHigher;
 	}
 
 	public String getDisplayName() {
@@ -38,6 +41,10 @@ public enum AudioFormatType {
 
 	public boolean isFallback() {
 		return isFallback;
+	}
+
+	public boolean isHigher(){
+		return isHigher;
 	}
 
 	@Override

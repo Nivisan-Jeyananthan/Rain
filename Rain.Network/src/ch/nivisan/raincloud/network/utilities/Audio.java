@@ -17,55 +17,55 @@ import ch.nivisan.raincloud.network.client.DeviceSettings;
 public class Audio {
 	public final static float sampleRate = 48000.0f;
 	public final static int sampleSizeInBits = 16;
-	public final static int channels = 1; // Mono for network transmission
-	public final static int stereoChannels = 2; // Stereo for device compatibility
+	public final static int channels = 1;
+	public final static int stereoChannels = 2;
 	public final static int frameSize = sampleSizeInBits / 8;
 	public final static int sendRateInMs = 15;
 	public final static int secondsInMs = 1000;
 	public final static int bufferSize = (int) ((sampleRate * frameSize * sendRateInMs) / secondsInMs);
 
-	// === Network Primary Format (48kHz, 16-bit, Mono, Little-Endian) ===
-	// Used for transmission over network (optimal bandwidth)
+	// Network Primary Format (48kHz, 16-bit, Mono, Little-Endian) used for
+	// transmission over network (optimal bandwidth)
 	public final static AudioFormat defaultFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate,
 			sampleSizeInBits, channels, frameSize, sampleRate, false);
-	
-	// === Device Recording/Playback Formats (Stereo for better hardware compatibility) ===
+
+	// Device Recording/Playback Formats (Stereo for better hardware compatibility)
 	// These are optimized for recording/playback on various devices
 	public final static AudioFormat defaultFormatStereo = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, sampleRate,
 			sampleSizeInBits, stereoChannels, frameSize * stereoChannels, sampleRate, false);
-	
-	// === Standard Fallback Formats ===
-	// 44.1kHz: CD-quality, widely supported
+
+	// Standard Fallback Formats 44.1kHz: CD-quality, widely supported
 	public final static AudioFormat fallbackFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f,
 			sampleSizeInBits, channels, frameSize, 44100.0f, false);
-	
+
 	public final static AudioFormat fallbackFormatStereo = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100.0f,
 			sampleSizeInBits, stereoChannels, frameSize * stereoChannels, 44100.0f, false);
-	
+
 	// 32kHz: Best compatibility for older Windows and embedded devices
 	public final static AudioFormat compatFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 32000.0f,
 			sampleSizeInBits, channels, frameSize, 32000.0f, false);
-	
+
 	public final static AudioFormat compatFormatStereo = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 32000.0f,
 			sampleSizeInBits, stereoChannels, frameSize * stereoChannels, 32000.0f, false);
 
-	// === Higher Quality Format ===
-	// 96kHz: HiFi audio for high-end devices
+	// Higher Quality Format 96kHz: HiFi audio for high-end devices
 	public final static AudioFormat higherFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 96000.0f,
 			sampleSizeInBits, channels, frameSize, 96000.0f, false);
 
 	public final static AudioFormat higherFormatStereo = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 96000.0f,
 			sampleSizeInBits, stereoChannels, frameSize * stereoChannels, 96000.0f, false);
 
-	// === Legacy Format (Very Old Hardware) ===
-	// 16kHz, 8-bit, Stereo, Little-Endian (improved: now little-endian by default)
+	// Legacy Format (Very Old Hardware) 16kHz, 8-bit, Stereo, Little-Endian
+	// (improved: now little-endian by default)
 	@Deprecated
 	public final static AudioFormat oldFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 16000,
-			8, 2, 2, 16000, false); // Little-endian for compatibility
-	
+			8, 2, 2, 16000, false);
+
 	/**
 	 * Detects the best compatible audio format for the current device.
-	 * Tries formats in order of compatibility, falling back to more compatible ones.
+	 * Tries formats in order of compatibility, falling back to more compatible
+	 * ones.
+	 * 
 	 * @return an AudioFormat that the device is likely to support
 	 */
 	public static AudioFormat detectBestFormat() {
@@ -73,7 +73,7 @@ public class Audio {
 		for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
 			try {
 				Mixer mixer = AudioSystem.getMixer(mixerInfo);
-				
+
 				// Check for stereo 48kHz support
 				DataLine.Info info = new DataLine.Info(TargetDataLine.class, defaultFormatStereo);
 				if (mixer.isLineSupported(info)) {
@@ -85,7 +85,7 @@ public class Audio {
 				if (mixer.isLineSupported(info)) {
 					return compatFormatStereo; // Good: 32kHz Stereo
 				}
-				
+
 				// Check for 44.1kHz stereo
 				info = new DataLine.Info(TargetDataLine.class, fallbackFormatStereo);
 				if (mixer.isLineSupported(info)) {
@@ -95,7 +95,7 @@ public class Audio {
 				// Ignore unsupported mixer
 			}
 		}
-		
+
 		// If no device-specific format works, return sensible defaults
 		try {
 			DataLine.Info info = new DataLine.Info(TargetDataLine.class, compatFormat);
@@ -105,50 +105,71 @@ public class Audio {
 		} catch (Exception e) {
 			// Continue to final fallback
 		}
-		
+
 		return defaultFormat; // Final fallback: 48kHz Mono (standard)
 	}
 
 	/**
 	 * Flag to indicate if the client should use legacy audio format.
-	 * When true, audio will be sent/received in oldFormat and resampled accordingly.
+	 * When true, audio will be sent/received in oldFormat and resampled
+	 * accordingly.
 	 * 
-	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format selection.
+	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format
+	 *             selection.
 	 */
-	@Deprecated
 	public static boolean useLegacyFormat = false;
 
 	/**
 	 * Flag to indicate if the client should use fallback audio format (44.1kHz).
-	 * When true, audio will be sent/received in fallbackFormat and resampled accordingly.
+	 * When true, audio will be sent/received in fallbackFormat and resampled
+	 * accordingly.
 	 * 
-	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format selection.
+	 * @deprecated Use DeviceSettings.getAudioFormat() instead for dynamic format
+	 *             selection.
 	 */
-	@Deprecated
 	public static boolean useFallbackFormat = false;
 
 	/**
 	 * Flag to indicate if the client should use higher audio format (96kHz).
-	 * When true, audio will be sent in higher format and resampled to defaultFormat (48kHz) for transmission.
+	 * When true, audio will be sent in higher format and resampled to defaultFormat
+	 * (48kHz) for transmission.
 	 * Received audio will be resampled back to higher format for playback.
 	 */
 	public static boolean useHigherSampleRate = false;
 
 	/**
-	 * Helper method to determine if fallback format should be used based on DeviceSettings.
+	 * Helper method to determine if fallback format should be used based on
+	 * DeviceSettings.
+	 * 
 	 * @return true if fallback format is selected
 	 */
 	public static boolean shouldUseFallbackFormat() {
 		try {
 			return DeviceSettings.getAudioFormat().isFallback();
 		} catch (Exception e) {
-			return useFallbackFormat; // Fallback to deprecated flag
+			return useFallbackFormat;
 		}
 	}
 
 	/**
-	 * Resamples audio data from the default format to the currently selected format.
+	 * Helper method to determine if fallback format should be used based on
+	 * DeviceSettings.
+	 * 
+	 * @return true if fallback format is selected
+	 */
+	public static boolean shouldUseLegacyFormat() {
+		try {
+			return DeviceSettings.getAudioFormat().isLegacy();
+		} catch (Exception e) {
+			return useLegacyFormat;
+		}
+	}
+
+	/**
+	 * Resamples audio data from the default format to the currently selected
+	 * format.
 	 * Automatically handles resampling based on DeviceSettings.getAudioFormat().
+	 * 
 	 * @param audioData the audio data in defaultFormat
 	 * @return resampled audio data in the selected format
 	 */
@@ -178,8 +199,10 @@ public class Audio {
 	}
 
 	/**
-	 * Resamples audio data from the currently selected format to the default format.
+	 * Resamples audio data from the currently selected format to the default
+	 * format.
 	 * Automatically handles resampling based on DeviceSettings.getAudioFormat().
+	 * 
 	 * @param audioData the audio data in the selected format
 	 * @return resampled audio data in defaultFormat
 	 */
@@ -209,7 +232,9 @@ public class Audio {
 	}
 
 	/**
-	 * Resamples audio data from the old legacy format (16kHz, 8-bit, stereo) to the default format (48kHz, 16-bit, mono).
+	 * Resamples audio data from the old legacy format (16kHz, 8-bit, stereo) to the
+	 * default format (48kHz, 16-bit, mono).
+	 * 
 	 * @param audioData the audio data in oldFormat
 	 * @return resampled audio data in defaultFormat
 	 */
@@ -217,13 +242,15 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(oldFormat, defaultFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the old legacy format (16kHz, 8-bit, stereo).
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the old
+	 * legacy format (16kHz, 8-bit, stereo).
+	 * 
 	 * @param audioData the audio data in defaultFormat
 	 * @return resampled audio data in oldFormat
 	 */
@@ -231,13 +258,15 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(defaultFormat, oldFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the fallback format (44.1kHz, 16-bit, mono) to the default format (48kHz, 16-bit, mono).
+	 * Resamples audio data from the fallback format (44.1kHz, 16-bit, mono) to the
+	 * default format (48kHz, 16-bit, mono).
+	 * 
 	 * @param audioData the audio data in fallbackFormat
 	 * @return resampled audio data in defaultFormat
 	 */
@@ -245,13 +274,15 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(fallbackFormat, defaultFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the fallback format (44.1kHz, 16-bit, mono).
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the
+	 * fallback format (44.1kHz, 16-bit, mono).
+	 * 
 	 * @param audioData the audio data in defaultFormat
 	 * @return resampled audio data in fallbackFormat
 	 */
@@ -259,13 +290,15 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(defaultFormat, fallbackFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the higher format (96kHz, 16-bit, mono) to the default format (48kHz, 16-bit, mono).
+	 * Resamples audio data from the higher format (96kHz, 16-bit, mono) to the
+	 * default format (48kHz, 16-bit, mono).
+	 * 
 	 * @param audioData the audio data in higherFormat
 	 * @return resampled audio data in defaultFormat
 	 */
@@ -273,13 +306,15 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(higherFormat, defaultFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the higher format (96kHz, 16-bit, mono).
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the
+	 * higher format (96kHz, 16-bit, mono).
+	 * 
 	 * @param audioData the audio data in defaultFormat
 	 * @return resampled audio data in higherFormat
 	 */
@@ -287,14 +322,16 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(defaultFormat, higherFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the compatibility format (32kHz, 16-bit, mono) to the default format (48kHz, 16-bit, mono).
+	 * Resamples audio data from the compatibility format (32kHz, 16-bit, mono) to
+	 * the default format (48kHz, 16-bit, mono).
 	 * Used for older Windows systems and embedded devices.
+	 * 
 	 * @param audioData the audio data in compatFormat
 	 * @return resampled audio data in defaultFormat
 	 */
@@ -302,14 +339,16 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(compatFormat, defaultFormat);
 		return resampler.resample(audioData);
 	}
 
 	/**
-	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the compatibility format (32kHz, 16-bit, mono).
+	 * Resamples audio data from the default format (48kHz, 16-bit, mono) to the
+	 * compatibility format (32kHz, 16-bit, mono).
 	 * Used for older Windows systems and embedded devices.
+	 * 
 	 * @param audioData the audio data in defaultFormat
 	 * @return resampled audio data in compatFormat
 	 */
@@ -317,7 +356,7 @@ public class Audio {
 		if (audioData == null || audioData.length == 0) {
 			return audioData;
 		}
-		
+
 		AudioResampler resampler = new AudioResampler(defaultFormat, compatFormat);
 		return resampler.resample(audioData);
 	}
@@ -352,6 +391,7 @@ public class Audio {
 	/**
 	 * Plays the given audio data on the SourceDataLine.
 	 * Does not close the line after playing, so it can be used continuously.
+	 * 
 	 * @param line
 	 * @param data
 	 */
@@ -368,10 +408,10 @@ public class Audio {
 				line.open();
 			}
 
-		if (!line.isRunning())
-			line.start();
+			if (!line.isRunning())
+				line.start();
 
-		line.write(data, 0, data.length);
+			line.write(data, 0, data.length);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -431,15 +471,16 @@ public class Audio {
 	}
 
 	public static SourceDataLine getDefaultSourceDataLine() {
-		// Try formats in order of preference: Stereo formats first (better device compatibility), then Mono
+		// Try formats in order of preference: Stereo formats first (better device
+		// compatibility), then Mono
 		AudioFormat[] formatsTryOrder = new AudioFormat[] {
-			defaultFormatStereo,  // 48kHz Stereo (primary)
-			compatFormatStereo,   // 32kHz Stereo (better for old hardware)
-			fallbackFormatStereo, // 44.1kHz Stereo (CD quality)
-			higherFormatStereo,   // 96kHz Stereo (HiFi)
-			defaultFormat,        // 48kHz Mono (fallback)
-			fallbackFormat,       // 44.1kHz Mono (fallback)
-			compatFormat          // 32kHz Mono (final fallback)
+				defaultFormatStereo, // 48kHz Stereo (primary)
+				compatFormatStereo, // 32kHz Stereo (better for old hardware)
+				fallbackFormatStereo, // 44.1kHz Stereo (CD quality)
+				higherFormatStereo, // 96kHz Stereo (HiFi)
+				defaultFormat, // 48kHz Mono (fallback)
+				fallbackFormat, // 44.1kHz Mono (fallback)
+				compatFormat // 32kHz Mono (final fallback)
 		};
 
 		for (AudioFormat format : formatsTryOrder) {
@@ -514,15 +555,16 @@ public class Audio {
 	}
 
 	public static TargetDataLine getDefaultTargetDataLine() {
-		// Try formats in order of preference: Stereo formats first (better device compatibility), then Mono
+		// Try formats in order of preference: Stereo formats first (better device
+		// compatibility), then Mono
 		AudioFormat[] formatsTryOrder = new AudioFormat[] {
-			defaultFormatStereo,  // 48kHz Stereo (primary)
-			compatFormatStereo,   // 32kHz Stereo (better for old hardware)
-			fallbackFormatStereo, // 44.1kHz Stereo (CD quality)
-			higherFormatStereo,   // 96kHz Stereo (HiFi)
-			defaultFormat,        // 48kHz Mono (fallback)
-			fallbackFormat,       // 44.1kHz Mono (fallback)
-			compatFormat          // 32kHz Mono (final fallback)
+				defaultFormatStereo, // 48kHz Stereo (primary)
+				higherFormatStereo, // 96kHz Stereo (HiFi)
+				compatFormatStereo, // 32kHz Stereo (better for old hardware)
+				fallbackFormatStereo, // 44.1kHz Stereo (CD quality)
+				defaultFormat, // 48kHz Mono (fallback)
+				fallbackFormat, // 44.1kHz Mono (fallback)
+				compatFormat // 32kHz Mono (final fallback)
 		};
 
 		for (AudioFormat format : formatsTryOrder) {
