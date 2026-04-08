@@ -145,7 +145,7 @@ public class Audio {
 	 */
 	public static boolean shouldUseFallbackFormat() {
 		try {
-			return DeviceSettings.getAudioFormat().isFallback();
+			return DeviceSettings.getInputFormat().isFallback();
 		} catch (Exception e) {
 			return useFallbackFormat;
 		}
@@ -159,7 +159,7 @@ public class Audio {
 	 */
 	public static boolean shouldUseLegacyFormat() {
 		try {
-			return DeviceSettings.getAudioFormat().isLegacy();
+			return DeviceSettings.getInputFormat().isLegacy();
 		} catch (Exception e) {
 			return useLegacyFormat;
 		}
@@ -179,7 +179,7 @@ public class Audio {
 		}
 
 		try {
-			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getAudioFormat();
+			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getInputFormat();
 			if (format.isLegacy()) {
 				return resampleToOldFormat(audioData);
 			} else if (format.isFallback()) {
@@ -212,7 +212,7 @@ public class Audio {
 		}
 
 		try {
-			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getAudioFormat();
+			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getInputFormat();
 			if (format.isLegacy()) {
 				return resampleFromOldFormat(audioData);
 			} else if (format.isFallback()) {

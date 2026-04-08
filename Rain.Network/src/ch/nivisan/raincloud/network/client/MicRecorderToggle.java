@@ -36,8 +36,9 @@ class MicRecorderToggle extends JFrame {
 	private final JButton btnRecordInput;
 	private final JButton btnPlaybackAudio;
 	private final JComboBox<DeviceInfo> comboInputs;
-	private JComboBox<DeviceInfo> comboOutputs;
-	private JComboBox<AudioFormatType> comboFormats;
+	private final JComboBox<DeviceInfo> comboOutputs;
+	private final JComboBox<AudioFormatType> comboInputFormats = new JComboBox<>(AudioFormatType.values());
+	private final JComboBox<AudioFormatType> comboOutputFormats = new JComboBox<>(AudioFormatType.values());
 
 	private RecordingThread recordingThread = null;
 	private PlaybackThread playbackThread = null;
@@ -66,15 +67,14 @@ class MicRecorderToggle extends JFrame {
 		JLabel formatLabel = new JLabel("Audio-Format:");
 		add(formatLabel);
 
-		comboFormats = new JComboBox<>(AudioFormatType.values());
-		comboFormats.setSelectedItem(DeviceSettings.getAudioFormat());
-		add(comboFormats);
+		comboInputFormats.setSelectedItem(DeviceSettings.getInputFormat());
+		add(comboInputFormats);
 
 		// Initialize device lists for the selected format
 		List<DeviceInfo> inputDevices = findDevicesForFormat(TargetDataLine.class,
-				(AudioFormatType) comboFormats.getSelectedItem());
+				(AudioFormatType) comboInputFormats.getSelectedItem());
 		List<DeviceInfo> outputDevices = findDevicesForFormat(SourceDataLine.class,
-				(AudioFormatType) comboFormats.getSelectedItem());
+				(AudioFormatType) comboInputFormats.getSelectedItem());
 
 		comboInputs = new JComboBox<>(inputDevices.toArray(new DeviceInfo[0]));
 		if (comboInputs.getItemCount() > 0) {
@@ -86,12 +86,12 @@ class MicRecorderToggle extends JFrame {
 		add(comboInputs);
 		add(btnRecordInput);
 
-		comboFormats.addItemListener(new ItemListener() {
+		comboInputFormats.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					AudioFormatType selectedFormat = (AudioFormatType) comboFormats.getSelectedItem();
-					DeviceSettings.setAudioFormat(selectedFormat);
+					AudioFormatType selectedFormat = (AudioFormatType) comboInputFormats.getSelectedItem();
+					DeviceSettings.setInputFormat(selectedFormat);
 
 					if (recordingThread != null || playbackThread != null) {
 						stopRunningThread();
@@ -204,11 +204,9 @@ class MicRecorderToggle extends JFrame {
 	}
 
 	/**
-	 * Finds audio devices that support the specified format.
-	 * Tries the format in this order:
-	 * 1. The specified format
-	 * 2. Fallback format (44.1kHz) if the specified format fails
-	 * 3. Legacy format (16kHz) as last resort
+	 * Finds audio devices that support the specified format. Tries the format in
+	 * this order: 1. The specified format 2. Fallback format (44.1kHz) if the
+	 * specified format fails 3. Legacy format (16kHz) as last resort
 	 * 
 	 * This ensures the user always has a working audio device available.
 	 */
