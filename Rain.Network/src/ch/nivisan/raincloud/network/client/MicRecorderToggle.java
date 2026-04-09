@@ -64,7 +64,7 @@ class MicRecorderToggle extends JFrame {
 		setResizable(false);
 
 		// Add format selector
-		JLabel formatLabel = new JLabel("Audio-Format:");
+		JLabel formatLabel = new JLabel("Input-Audio-Format:");
 		add(formatLabel);
 
 		comboInputFormats.setSelectedItem(DeviceSettings.getInputFormat());
@@ -109,17 +109,6 @@ class MicRecorderToggle extends JFrame {
 						DeviceSettings.setMicrophone(comboInputs.getItemAt(0));
 					}
 
-					// Update output devices
-					List<DeviceInfo> newOutputDevices = findDevicesForFormat(SourceDataLine.class, selectedFormat);
-					comboOutputs.removeAllItems();
-					for (DeviceInfo device : newOutputDevices) {
-						comboOutputs.addItem(device);
-					}
-					if (comboOutputs.getItemCount() > 0) {
-						comboOutputs.setSelectedIndex(0);
-						DeviceSettings.setSpeaker(comboOutputs.getItemAt(0));
-					}
-
 					System.out.println("Audio-Format geändert zu: " + selectedFormat.getDisplayName());
 				}
 			}
@@ -154,6 +143,11 @@ class MicRecorderToggle extends JFrame {
 		});
 
 		btnPlaybackAudio = new JButton("Start playback");
+		JLabel outputFormatLabel = new JLabel("Output-Audio-Format:");
+		add(outputFormatLabel);
+
+		comboOutputFormats.setSelectedItem(DeviceSettings.getOutputFormat());
+		add(comboOutputFormats);
 		comboOutputs = new JComboBox<>(outputDevices.toArray(new DeviceInfo[0]));
 		if (comboOutputs.getItemCount() > 0) {
 			DeviceSettings.setSpeaker(comboOutputs.getItemAt(0));
@@ -190,6 +184,32 @@ class MicRecorderToggle extends JFrame {
 
 		add(comboOutputs);
 		add(btnPlaybackAudio);
+
+		comboOutputFormats.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					if (recordingThread != null || playbackThread != null) {
+						stopRunningThread();
+						btnRecordInput.setText("Start test");
+						btnPlaybackAudio.setText("Start playback");
+					}
+
+					AudioFormatType selectedFormat = (AudioFormatType) comboOutputFormats.getSelectedItem();
+					DeviceSettings.setOutputFormat(selectedFormat);
+					List<DeviceInfo> newOutputDevices = findDevicesForFormat(SourceDataLine.class,
+							selectedFormat);
+					comboOutputs.removeAllItems();
+					for (DeviceInfo device : newOutputDevices) {
+						comboOutputs.addItem(device);
+					}
+					if (comboOutputs.getItemCount() > 0) {
+						comboOutputs.setSelectedIndex(0);
+						DeviceSettings.setSpeaker(comboOutputs.getItemAt(0));
+					}
+				}
+			}
+		});
 
 		pack();
 		setLocationRelativeTo(null);
