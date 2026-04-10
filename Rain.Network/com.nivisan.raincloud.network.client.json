@@ -18,7 +18,7 @@
             "buildsystem": "simple",
             "build-commands": [
                 "mkdir -p /app/jdk",
-                "tar -xf openjdk-25.tar.gz -C /app/jdk --strip-components=1"
+                "tar -xf openjdk-25_linux-x64_bin.tar.gz -C /app/jdk --strip-components=1"
             ],
             "sources": [
                 {
