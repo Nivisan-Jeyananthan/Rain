@@ -76,7 +76,7 @@ jobs:
     
     - name: Install Flatpak Runtime (system-wide)
       run: |
-        sudo flatpak install --system -y flathub org.freedesktop.Platform//23.08 org.freedesktop.Sdk//23.08 || true
+        sudo flatpak install --system -y flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08 || true
       continue-on-error: true
     
     - name: Build Flatpak
