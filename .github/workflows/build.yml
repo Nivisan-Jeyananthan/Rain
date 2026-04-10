@@ -65,13 +65,19 @@ jobs:
     
     - name: Add Flathub Repository (with --user flag)
       run: |
-        flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
       continue-on-error: true
     
     - name: Install Flatpak Runtime (system-wide)
       run: |
         sudo flatpak install --system -y flathub org.freedesktop.Platform//23.08 org.freedesktop.Sdk//23.08 || true
       continue-on-error: true
+
+    - name: Update Flatpak Metadata
+      working-directory: Rain.Network
+      run: |
+        sudo flatpak remote-modify --enable flathub && 
+        sudo flatpak update
     
     - name: Build Flatpak
       working-directory: Rain.Network
