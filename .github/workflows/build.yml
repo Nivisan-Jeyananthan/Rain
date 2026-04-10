@@ -65,7 +65,7 @@ jobs:
     
     - name: Add Flathub Repository (with --user flag)
       run: |
-        flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
+        sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo || true
       continue-on-error: true
 
     - name: Update Flatpak Metadata
@@ -82,13 +82,13 @@ jobs:
     - name: Build Flatpak
       working-directory: Rain.Network
       run: |
-        flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
+        sudo flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
     
     - name: Create Flatpak Bundle
       working-directory: Rain.Network
       run: |
         if [ -d "build-dir" ]; then
-          flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
+          sudo flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
         else
           echo "Build directory not found, skipping bundle creation"
         fi
