@@ -88,7 +88,7 @@ jobs:
       working-directory: Rain.Network
       run: |
         if [ -d "build-dir" ]; then
-          sudo flatpak build-bundle /app/bin/ rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
+          sudo flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
         else
           echo "Build directory not found, skipping bundle creation"
         fi
