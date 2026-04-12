@@ -56,7 +56,7 @@ sequenceDiagram
 RSA ist stark, aber für den Dauerbetrieb nicht ideal:
 
 1. RSA ist viel langsamer als AES. Für jede Chatnachricht wäre es ineffizient.
-2. RSA sollte nicht zum Verschlüsseln großer oder häufiger Datenmengen verwendet werden.
+2. RSA sollte nicht zum Verschlüsseln grosser oder häufiger Datenmengen verwendet werden.
 3. Mit RSA allein kann ein Angreifer bei Neukeys Replay oder CPU-Angriffe forcieren.
 
 Darum nutzen wir eine hybride Verschlüsselung:
@@ -78,6 +78,11 @@ Durch IV + Schlüssel werden gleiche Nachrichten unterschiedlich verschlüsselt 
 - Prüft Paketgrenzen (`lastIndexOf("/e/")`) bevor Kodierung/Entschlüsselung.
 - Gültigkeitsprüfungen verhindern Crash durch falsche Base64-Strings.
 
+# VoiceChat
+Der VoiceChat ist eine weitere Art zu komminuzieren mit anderen Clients.
+Die Audiodaten werden wie gewöhnliche Nachrichten behandelt und auf die gleiche weise Verschlüsselt.
+Für einen nicht kommerziellen Client ist das mehr als genug -  
+es sollte jedoch nicht in der Praxis dieselbe Verschlüsselung verwendet werden für Nachrichten als auch Audio.
 
 # In Arbeit
-VoiceChat
+VoiceChat windows.
