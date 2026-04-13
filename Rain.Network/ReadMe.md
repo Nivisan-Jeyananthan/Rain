@@ -81,8 +81,13 @@ Durch IV + Schlüssel werden gleiche Nachrichten unterschiedlich verschlüsselt 
 # VoiceChat
 Der VoiceChat ist eine weitere Art zu komminuzieren mit anderen Clients.
 Die Audiodaten werden wie gewöhnliche Nachrichten behandelt und auf die gleiche weise Verschlüsselt.
-Für einen nicht kommerziellen Client ist das mehr als genug -  
+Für einen nicht kommerziellen Client ist das mehr als genug -   
 es sollte jedoch nicht in der Praxis dieselbe Verschlüsselung verwendet werden für Nachrichten als auch Audio.
+
+# Releases
+Zurzeit gibt es für die 3 Hauptbetriebssysteme jeweils 1 Release pro Commit auf dem Master branch.   
+Derzeit sind Fehler beim Flatpak vorhanden, welches die Erstellung vom Release für Linux distros verhindert.  
+Macos- sowie Windowsbuilds funktionieren.  
 
 # In Arbeit
 VoiceChat windows.
