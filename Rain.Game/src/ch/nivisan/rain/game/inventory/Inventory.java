@@ -12,7 +12,11 @@ public class Inventory {
 	}
 	
 	public void addItem(Item item, int count) {
-
+		InventorySlot slot = hasItem(item);
+		if(slot == null)
+			return;
+		
+		
 	}
 	
 	private InventorySlot hasItem(Item item) {

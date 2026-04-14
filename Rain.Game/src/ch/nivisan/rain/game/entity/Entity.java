@@ -5,7 +5,7 @@ import java.util.Random;
 import ch.nivisan.rain.game.graphics.Screen;
 import ch.nivisan.rain.game.level.Level;
 
-//Entites do not have sprites, they can be anything from time itself to monsters
+//Entites do not have sprites, they can be anything from timer itself to monsters
 public abstract class Entity {
  protected static final Random random = new Random();
  protected float x, y;
