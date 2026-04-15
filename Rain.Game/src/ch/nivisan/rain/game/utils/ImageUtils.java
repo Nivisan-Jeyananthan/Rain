@@ -1,7 +1,5 @@
 package ch.nivisan.rain.game.utils;
 
-
-
 import static ch.nivisan.rain.game.utils.MathUtils.clamp;
 
 import java.awt.Graphics2D;

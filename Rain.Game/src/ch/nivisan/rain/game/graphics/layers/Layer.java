@@ -7,16 +7,12 @@ import ch.nivisan.rain.game.events.IEventListener;
 import ch.nivisan.rain.game.graphics.Screen;
 
 public abstract class Layer implements IEventListener {
-    @Override
-    public void onEvent(Event event) {
-    }
+	
+    public abstract void onEvent(Event event);
 
-    public void update() {
-    }
+    public abstract void update();
 
-    public void onRender(Graphics graphics) {
-    }
+    public void onRender(Graphics graphics) {}
 
-    public void render(Screen screen) {
-    }
+    public abstract void render(Screen screen);
 }

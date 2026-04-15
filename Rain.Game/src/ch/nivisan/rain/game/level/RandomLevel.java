@@ -17,4 +17,10 @@ public class RandomLevel extends Level {
             }
         }
     }
+
+
+	@Override
+	protected void loadLevel(String path) {
+		return;
+	}	
 }

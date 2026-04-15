@@ -16,7 +16,7 @@ import ch.nivisan.rain.game.level.tile.Tile;
 import ch.nivisan.rain.game.utils.Node;
 import ch.nivisan.rain.game.utils.Vector2;
 
-public class Level extends Layer {
+public abstract class Level extends Layer {
 
     public static Level spawn = new SpawnLevel("../assets/levels/spawn2.png");
     private final List<Entity> entities = new ArrayList<Entity>();
@@ -40,7 +40,10 @@ public class Level extends Layer {
     }
 
 
-    // load from file
+    /**
+     * Load from file
+     * @param path
+     */
     public Level(String path) {
         loadLevel(path);
         generateLevel();
@@ -205,11 +208,9 @@ public class Level extends Layer {
         }
     }
 
-    protected void generateLevel() {
-    }
+    protected abstract void generateLevel();
 
-    protected void loadLevel(String path) {
-    }
+    protected abstract void loadLevel(String path);
 
     @Override
     public void onEvent(Event event) {

@@ -12,20 +12,23 @@ public class Item {
 	private final String name;
 	private final Sprite sprite;
 	private final int maxStack;
+	public final Gold price;
 	
-	public static Item stone = new Item("Stone", Sprite.itemStaff);
+	public static Item stone = new Item("Stone", Sprite.itemStaff, new Gold(50));
 	
 	
-	private Item(String name ,int maxStackSize, Sprite sprite) {
+	private Item(String name ,int maxStackSize, Sprite sprite, Gold price) {
 		this.name = name;
 		this.maxStack = maxStackSize;
 		this.sprite = sprite;
+		this.price = price;
 	}
 	
-	private Item(String name, Sprite sprite) {
+	private Item(String name, Sprite sprite, Gold price) {
 		this.name = name;
 		this.maxStack = 100;
 		this.sprite = sprite;
+		this.price = price;
 	}
 	
 	

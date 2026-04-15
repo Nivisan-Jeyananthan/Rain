@@ -8,6 +8,7 @@ import java.util.Random;
 
 import ch.nivisan.rain.game.events.*;
 import ch.nivisan.rain.game.events.mouse.*;
+import ch.nivisan.rain.game.graphics.Screen;
 
 public class ExampleLayer extends Layer {
 
@@ -82,5 +83,20 @@ public class ExampleLayer extends Layer {
         graphics.setColor(Color.white);
         graphics.drawString(name, box.x + 5, box.y + 10);
     }
+
+    
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render(Screen screen) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+    
 }
 

@@ -2,9 +2,9 @@ package ch.nivisan.rain.game.inventory;
 
 import ch.nivisan.rain.game.item.Item;
 
-public class Inventory {
-	private final InventorySlot[] itemSlots;
-	private final int size;
+public abstract class Inventory {
+	protected final InventorySlot[] itemSlots;
+	protected final int size;
 	
 	public Inventory(int size) {
 		itemSlots = new InventorySlot[size];
@@ -15,8 +15,6 @@ public class Inventory {
 		InventorySlot slot = hasItem(item);
 		if(slot == null)
 			return;
-		
-		
 	}
 	
 	private InventorySlot hasItem(Item item) {
