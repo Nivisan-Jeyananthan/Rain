@@ -23,7 +23,7 @@ public class InventoryGUI extends UIPanel {
         for (int i = 0; i < numSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5), position.getY() + 10 + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(10 + col * (slotSize + 5), 10 + row * (slotSize + 5));
             slotUIs[i] = new InventorySlotUI(slotPos, slotSize, inventory.getSlot(i));
             addComponent(slotUIs[i]);
         }
@@ -31,7 +31,7 @@ public class InventoryGUI extends UIPanel {
 
     public void updateSlots() {
         for (int i = 0; i < slotUIs.length; i++) {
-            slotUIs[i] = new InventorySlotUI(slotUIs[i].getAbsolutePosition(), slotSize, inventory.getSlot(i));
+            slotUIs[i].setSlot(inventory.getSlot(i));
         }
     }
 }

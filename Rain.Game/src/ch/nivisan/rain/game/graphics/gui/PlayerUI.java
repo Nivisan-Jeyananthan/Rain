@@ -63,9 +63,9 @@ public class PlayerUI {
 		mainPanel.addComponent(uiHealthBar);
 		mainPanel.addComponent(button);
 		
-		UIPanel inventoryPanel = new UIPanel(new Vector2(startPosition.getX(), height + offsetHeight * 3),
-				new Vector2(componentPositionX,barSize.getY() + 20),0xfff);
-		mainPanel.addComponent(inventoryPanel);
+		InventoryGUI inventoryGUI = new InventoryGUI(new Vector2(startPosition.getX(), height + offsetHeight * 3),
+				new Vector2(Math.max(componentPositionX, 250), 220), player.getInventory());
+		mainPanel.addComponent(inventoryGUI);
 
 		BufferedImage image = null, hoverImage = null;
 		Vector2 size = new Vector2(maxComponentWidth, maxComponentWidth);

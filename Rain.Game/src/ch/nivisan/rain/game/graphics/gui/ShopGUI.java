@@ -27,8 +27,7 @@ public class ShopGUI extends UIPanel {
     }
 
     private void initializeShop() {
-        UILabel nameLabel = new UILabel(new Vector2(position.getX() + 10, position.getY() + 10),
-                "Shop: " + merchant.getName());
+        UILabel nameLabel = new UILabel(new Vector2(10, 10), "Shop: " + merchant.getName());
         addComponent(nameLabel);
 
         int numMerchantSlots = merchant.getInventory().getSize();
@@ -36,12 +35,10 @@ public class ShopGUI extends UIPanel {
         for (int i = 0; i < numMerchantSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5),
-                    position.getY() + 40 + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(10 + col * (slotSize + 5), 40 + row * (slotSize + 5));
             merchantSlotUIs[i] = new InventorySlotUI(slotPos, slotSize, merchant.getInventory().getSlot(i));
             addComponent(merchantSlotUIs[i]);
 
-            // Add buy button for each slot
             if (!merchant.getInventory().getSlot(i).isEmpty()) {
                 UIButton buyButton = new UIButton(new Vector2(slotPos.getX(), slotPos.getY() + slotSize),
                         new Vector2(slotSize, 20), "Buy",
@@ -50,18 +47,16 @@ public class ShopGUI extends UIPanel {
             }
         }
 
-        // Player inventory slots for selling
         int numPlayerSlots = player.getInventory().getSize();
         playerSlotUIs = new InventorySlotUI[numPlayerSlots];
-        int startY = position.getY() + 40 + (numMerchantSlots / slotsPerRow + 1) * (slotSize + 5) + 20;
+        int startY = 40 + (numMerchantSlots / slotsPerRow + 1) * (slotSize + 5) + 20;
         for (int i = 0; i < numPlayerSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5), startY + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(10 + col * (slotSize + 5), startY + row * (slotSize + 5));
             playerSlotUIs[i] = new InventorySlotUI(slotPos, slotSize, player.getInventory().getSlot(i));
             addComponent(playerSlotUIs[i]);
 
-            // Add sell button for each slot
             if (!player.getInventory().getSlot(i).isEmpty()) {
                 UIButton sellButton = new UIButton(new Vector2(slotPos.getX(), slotPos.getY() + slotSize),
                         new Vector2(slotSize, 20), "Sell",
@@ -100,15 +95,11 @@ public class ShopGUI extends UIPanel {
     }
 
     public void updateSlots() {
-        // Update merchant slots
         for (int i = 0; i < merchantSlotUIs.length; i++) {
-            merchantSlotUIs[i] = new InventorySlotUI(merchantSlotUIs[i].getAbsolutePosition(), slotSize,
-                    merchant.getInventory().getSlot(i));
+            merchantSlotUIs[i].setSlot(merchant.getInventory().getSlot(i));
         }
-        // Update player slots
         for (int i = 0; i < playerSlotUIs.length; i++) {
-            playerSlotUIs[i] = new InventorySlotUI(playerSlotUIs[i].getAbsolutePosition(), slotSize,
-                    player.getInventory().getSlot(i));
+            playerSlotUIs[i].setSlot(player.getInventory().getSlot(i));
         }
     }
 }

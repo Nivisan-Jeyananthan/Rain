@@ -17,27 +17,33 @@ public class InventorySlotUI extends UIComponent {
 
     @Override
     public void render(Graphics graphics) {
+        Vector2 absolutePosition = getAbsolutePosition();
+        int x = absolutePosition.getX();
+        int y = absolutePosition.getY();
+
         // Draw slot background
         graphics.setColor(new java.awt.Color(0x333333));
-        graphics.fillRect(position.getX(), position.getY(), size, size);
+        graphics.fillRect(x, y, size, size);
         graphics.setColor(new java.awt.Color(0x666666));
-        graphics.drawRect(position.getX(), position.getY(), size, size);
+        graphics.drawRect(x, y, size, size);
 
         if (slot != null && !slot.isEmpty()) {
-            // For now, just draw a placeholder
             graphics.setColor(new java.awt.Color(0xAAAAAA));
-            graphics.fillRect(position.getX() + 2, position.getY() + 2, size - 4, size - 4);
+            graphics.fillRect(x + 2, y + 2, size - 4, size - 4);
 
             // Draw count if >1
             if (slot.getCount() > 1) {
                 graphics.setColor(java.awt.Color.WHITE);
-                graphics.drawString(String.valueOf(slot.getCount()), position.getX() + size - 15,
-                        position.getY() + size - 5);
+                graphics.drawString(String.valueOf(slot.getCount()), x + size - 15, y + size - 5);
             }
         }
     }
 
     public InventorySlot getSlot() {
         return slot;
+    }
+
+    public void setSlot(InventorySlot slot) {
+        this.slot = slot;
     }
 }
