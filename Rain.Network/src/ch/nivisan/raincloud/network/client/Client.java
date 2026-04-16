@@ -225,6 +225,11 @@ class Client {
 		playVoice(voiceData);
 	}
 
+	void sendText(String message) {
+		message = message.replaceAll("/\\w/", "");
+		sendEncrypted(CMD_MESSAGE + message + CMD_ENCRYPTED);
+	}
+
 	void requestUsernames() {
 		sendEncrypted(CMD_USERS);
 	}

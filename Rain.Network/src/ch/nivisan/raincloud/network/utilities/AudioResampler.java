@@ -1,8 +1,6 @@
 package ch.nivisan.raincloud.network.utilities;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import java.io.ByteArrayInputStream;
 
 /**
  * Handles audio resampling between different sample rates.

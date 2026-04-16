@@ -253,7 +253,11 @@ class MicRecorderToggle extends JFrame {
 
 				try {
 					T line = (T) mixer.getLine(info);
-					line.open(candidate);
+					if (line instanceof TargetDataLine) {
+						((TargetDataLine) line).open(candidate);
+					} else {
+						line.open();
+					}
 					line.close();
 
 					DeviceInfo deviceInfo = new DeviceInfo(mixerInfo, candidate);
@@ -266,7 +270,7 @@ class MicRecorderToggle extends JFrame {
 					}
 				} catch (Exception e) {
 					System.err.println("Failed with format " + formatType.getDisplayName() + ": " + mixerName
-						+ " - " + e.getMessage());
+							+ " - " + e.getMessage());
 				}
 			}
 			if (!primaryList.isEmpty()) {
@@ -283,26 +287,26 @@ class MicRecorderToggle extends JFrame {
 	private AudioFormat[] getCandidateFormats(AudioFormatType selected) {
 		if (selected == null) {
 			return new AudioFormat[] { Audio.defaultFormatStereo, Audio.compatFormatStereo, Audio.fallbackFormatStereo,
-				Audio.defaultFormat, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
+					Audio.defaultFormat, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
 		}
 
 		if (selected.isLegacy()) {
 			return new AudioFormat[] { Audio.oldFormat, Audio.compatFormatStereo, Audio.fallbackFormatStereo,
-				Audio.defaultFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.defaultFormat };
+					Audio.defaultFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.defaultFormat };
 		} else if (selected.isFallback()) {
 			return new AudioFormat[] { Audio.fallbackFormat, Audio.fallbackFormatStereo, Audio.defaultFormatStereo,
-				Audio.compatFormatStereo, Audio.defaultFormat, Audio.compatFormat, Audio.oldFormat };
+					Audio.compatFormatStereo, Audio.defaultFormat, Audio.compatFormat, Audio.oldFormat };
 		} else if (selected.isCompat()) {
 			return new AudioFormat[] { Audio.compatFormat, Audio.compatFormatStereo, Audio.defaultFormatStereo,
-				Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.fallbackFormat, Audio.oldFormat };
+					Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.fallbackFormat, Audio.oldFormat };
 		} else if (selected.isHigher()) {
 			return new AudioFormat[] { Audio.higherFormat, Audio.higherFormatStereo, Audio.defaultFormatStereo,
-				Audio.compatFormatStereo, Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.compatFormat };
+					Audio.compatFormatStereo, Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.compatFormat };
 		}
 
 		// Standard
 		return new AudioFormat[] { Audio.defaultFormat, Audio.defaultFormatStereo, Audio.compatFormatStereo,
-			Audio.fallbackFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
+				Audio.fallbackFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
 	}
 
 	private void deleteTempAudioFile() {
@@ -310,6 +314,8 @@ class MicRecorderToggle extends JFrame {
 			tempAudioFile.delete();
 		}
 	}
+
+	private Thread runningThread;
 
 	private void stopRunningThread() {
 		Thread thread = getRunningThread();
