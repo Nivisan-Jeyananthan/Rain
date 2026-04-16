@@ -16,6 +16,7 @@ import ch.nivisan.rain.game.graphics.gui.PlayerUI;
 import ch.nivisan.rain.game.input.Keyboard;
 import ch.nivisan.rain.game.input.Mouse;
 import ch.nivisan.rain.game.input.MouseButton;
+import ch.nivisan.rain.game.inventory.PlayerInventory;
 import ch.nivisan.rain.game.level.Level;
 import ch.nivisan.rain.game.utils.Debug;
 
@@ -27,6 +28,8 @@ public class Player extends Mob implements IEventListener {
     private final Keyboard input;
     private final String name;
     private final PlayerUI playerUI;
+    private final PlayerInventory inventory;
+    private final InteractionManager interactionManager;
     int time = 0;
     private float fireRate = 0;
     private boolean shooting = false;
@@ -44,6 +47,8 @@ public class Player extends Mob implements IEventListener {
         maxHealth = 100;
 
         playerUI = new PlayerUI(this);
+        inventory = new PlayerInventory(20);
+        interactionManager = new InteractionManager(input);
     }
 
     public String getName() {
@@ -59,6 +64,7 @@ public class Player extends Mob implements IEventListener {
 
     @Override
     public void update() {
+        interactionManager.update();
         playerUI.update();
 
         time++;
@@ -146,5 +152,13 @@ public class Player extends Mob implements IEventListener {
 
         Debug.drawRectangle(screen, 20 << 4, 60 << 4, 100, 40, 0xff000, true);
         screen.renderMob((int) xCenter, (int) yCenter, animatedSprite.getSprite(), FlipState.None);
+    }
+
+    public PlayerInventory getInventory() {
+        return inventory;
+    }
+
+    public void registerMerchant(Merchant merchant) {
+        interactionManager.registerMerchant(merchant, this);
     }
 }

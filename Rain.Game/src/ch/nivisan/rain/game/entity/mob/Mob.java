@@ -128,6 +128,14 @@ public abstract class Mob extends Entity {
         return sprite;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     public abstract void update();
 
     public void render(Screen screen) {

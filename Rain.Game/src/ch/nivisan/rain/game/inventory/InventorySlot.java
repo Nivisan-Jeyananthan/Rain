@@ -6,7 +6,29 @@ public class InventorySlot {
 	private int count;
 	private Item item;
 	
-	public void addItem(Item item) {
+	public InventorySlot() {
+		this.count = 0;
+		this.item = null;
+	}
+	
+	public void addItem(Item item, int amount) {
+		if (this.item == null) {
+			this.item = item;
+			this.count = amount;
+		} else if (this.item == item) {
+			this.count += amount;
+		}
+	}
+	
+	public boolean removeItem(int amount) {
+		if (this.item != null && this.count >= amount) {
+			this.count -= amount;
+			if (this.count == 0) {
+				this.item = null;
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	public int getCount() {
@@ -15,5 +37,9 @@ public class InventorySlot {
 	
 	public Item getItem() {
 		return item;
+	}
+	
+	public boolean isEmpty() {
+		return item == null || count == 0;
 	}
 }

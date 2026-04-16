@@ -26,6 +26,10 @@ public class UIManager implements IRenderable {
         panels.add(panel);
     }
 
+    public void removePanel(UIPanel panel) {
+        panels.remove(panel);
+    }
+
     @Override
     public void update() {
         for (UIPanel panel : panels) {

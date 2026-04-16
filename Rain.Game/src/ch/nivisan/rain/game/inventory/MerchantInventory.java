@@ -9,10 +9,18 @@ public class MerchantInventory extends Inventory {
 		super(size);
 	}
 
-	public Item exchange(Gold gold, Item selectedItem) {
-		if (selectedItem.price.getValue() <= gold.getValue())
-			return selectedItem;
-		return null;
+	public boolean canSell(Item item, int count) {
+		for (InventorySlot slot : itemSlots) {
+			if (isInStock(slot, item, count)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
+	private boolean isInStock(InventorySlot slot, Item item, int count) {
+		return !slot.isEmpty() && slot.getItem() == item && slot.getCount() >= count;
+	}
+
+	// TODO: add method for exchange with questline
 }

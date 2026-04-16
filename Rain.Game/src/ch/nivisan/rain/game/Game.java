@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import ch.nivisan.rain.game.entity.mob.Player;
+import ch.nivisan.rain.game.entity.mob.Merchant;
 import ch.nivisan.rain.game.events.Event;
 import ch.nivisan.rain.game.events.IEventListener;
 import ch.nivisan.rain.game.graphics.Screen;
@@ -71,6 +72,12 @@ public class Game extends Canvas implements Runnable, IEventListener {
 		addLayer(level);
 		player = new Player("Mambo", 20 << 4, 60 << 4, keyboard, level);
 		level.addEntity(player);
+		
+		// Example: Add a merchant shop
+		Merchant merchant = new Merchant("Bob's Shop", 30 << 4, 60 << 4, level);
+		level.addEntity(merchant);
+		player.registerMerchant(merchant);
+		
 		NetPlayer netplayer = new NetPlayer(level, 22 << 4, 60 << 4);
 		level.addPlayer(netplayer);
 	}
