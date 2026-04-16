@@ -27,7 +27,8 @@ public class ShopGUI extends UIPanel {
     }
 
     private void initializeShop() {
-        UILabel nameLabel = new UILabel(new Vector2(position.x + 10, position.y + 10), "Shop: " + merchant.getName());
+        UILabel nameLabel = new UILabel(new Vector2(position.getX() + 10, position.getY() + 10),
+                "Shop: " + merchant.getName());
         addComponent(nameLabel);
 
         int numMerchantSlots = merchant.getInventory().getSize();
@@ -35,14 +36,16 @@ public class ShopGUI extends UIPanel {
         for (int i = 0; i < numMerchantSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.x + 10 + col * (slotSize + 5), position.y + 40 + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5),
+                    position.getY() + 40 + row * (slotSize + 5));
             merchantSlotUIs[i] = new InventorySlotUI(slotPos, slotSize, merchant.getInventory().getSlot(i));
             addComponent(merchantSlotUIs[i]);
 
             // Add buy button for each slot
             if (!merchant.getInventory().getSlot(i).isEmpty()) {
-                UIButton buyButton = new UIButton(new Vector2(slotPos.x, slotPos.y + slotSize), new Vector2(slotSize, 20), "Buy");
-                buyButton.addActionListener(new BuyActionListener(merchant.getInventory().getSlot(i).getItem()));
+                UIButton buyButton = new UIButton(new Vector2(slotPos.getX(), slotPos.getY() + slotSize),
+                        new Vector2(slotSize, 20), "Buy",
+                        new BuyActionListener(merchant.getInventory().getSlot(i).getItem()));
                 addComponent(buyButton);
             }
         }
@@ -50,38 +53,39 @@ public class ShopGUI extends UIPanel {
         // Player inventory slots for selling
         int numPlayerSlots = player.getInventory().getSize();
         playerSlotUIs = new InventorySlotUI[numPlayerSlots];
-        int startY = position.y + 40 + (numMerchantSlots / slotsPerRow + 1) * (slotSize + 5) + 20;
+        int startY = position.getY() + 40 + (numMerchantSlots / slotsPerRow + 1) * (slotSize + 5) + 20;
         for (int i = 0; i < numPlayerSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.x + 10 + col * (slotSize + 5), startY + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5), startY + row * (slotSize + 5));
             playerSlotUIs[i] = new InventorySlotUI(slotPos, slotSize, player.getInventory().getSlot(i));
             addComponent(playerSlotUIs[i]);
 
             // Add sell button for each slot
             if (!player.getInventory().getSlot(i).isEmpty()) {
-                UIButton sellButton = new UIButton(new Vector2(slotPos.x, slotPos.y + slotSize), new Vector2(slotSize, 20), "Sell");
-                sellButton.addActionListener(new SellActionListener(player.getInventory().getSlot(i).getItem()));
+                UIButton sellButton = new UIButton(new Vector2(slotPos.getX(), slotPos.getY() + slotSize),
+                        new Vector2(slotSize, 20), "Sell",
+                        new SellActionListener(player.getInventory().getSlot(i).getItem()));
+
                 addComponent(sellButton);
             }
         }
     }
 
-    private class BuyActionListener implements UIButtonActionListener {
+    private class BuyActionListener implements IUIActionListener {
         private Item item;
 
         public BuyActionListener(Item item) {
             this.item = item;
         }
 
-        @Override
-        public void actionPerformed() {
+        public void performAction() {
             player.getInventory().buyItem(item, 1, merchant.getInventory());
             updateSlots();
         }
     }
 
-    private class SellActionListener implements UIButtonActionListener {
+    private class SellActionListener implements IUIActionListener {
         private Item item;
 
         public SellActionListener(Item item) {
@@ -89,7 +93,7 @@ public class ShopGUI extends UIPanel {
         }
 
         @Override
-        public void actionPerformed() {
+        public void performAction() {
             player.getInventory().sellItem(item, 1, merchant.getInventory());
             updateSlots();
         }
@@ -98,11 +102,13 @@ public class ShopGUI extends UIPanel {
     public void updateSlots() {
         // Update merchant slots
         for (int i = 0; i < merchantSlotUIs.length; i++) {
-            merchantSlotUIs[i] = new InventorySlotUI(merchantSlotUIs[i].getPosition(), slotSize, merchant.getInventory().getSlot(i));
+            merchantSlotUIs[i] = new InventorySlotUI(merchantSlotUIs[i].getPosition(), slotSize,
+                    merchant.getInventory().getSlot(i));
         }
         // Update player slots
         for (int i = 0; i < playerSlotUIs.length; i++) {
-            playerSlotUIs[i] = new InventorySlotUI(playerSlotUIs[i].getPosition(), slotSize, player.getInventory().getSlot(i));
+            playerSlotUIs[i] = new InventorySlotUI(playerSlotUIs[i].getPosition(), slotSize,
+                    player.getInventory().getSlot(i));
         }
     }
 }

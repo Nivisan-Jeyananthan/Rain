@@ -11,7 +11,7 @@ import ch.nivisan.rain.game.utils.Vector2;
 
 public class UIPanel extends UIComponent {
     private final List<UIComponent> components = new ArrayList<UIComponent>();
-    private final Vector2 position;
+    protected final Vector2 position;
     private final Vector2 size;
     private final Color color;
 

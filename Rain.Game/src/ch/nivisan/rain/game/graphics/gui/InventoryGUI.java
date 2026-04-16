@@ -23,7 +23,7 @@ public class InventoryGUI extends UIPanel {
         for (int i = 0; i < numSlots; i++) {
             int row = i / slotsPerRow;
             int col = i % slotsPerRow;
-            Vector2 slotPos = new Vector2(position.x + 10 + col * (slotSize + 5), position.y + 10 + row * (slotSize + 5));
+            Vector2 slotPos = new Vector2(position.getX() + 10 + col * (slotSize + 5), position.getY() + 10 + row * (slotSize + 5));
             slotUIs[i] = new InventorySlotUI(slotPos, slotSize, inventory.getSlot(i));
             addComponent(slotUIs[i]);
         }

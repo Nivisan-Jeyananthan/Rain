@@ -65,7 +65,7 @@ public class PlayerUI {
 		
 		UIPanel inventoryPanel = new UIPanel(new Vector2(startPosition.getX(), height + offsetHeight * 3),
 				new Vector2(componentPositionX,barSize.getY() + 20),0xfff);
-	//	mainPanel.addComponent(inventoryPanel);
+		mainPanel.addComponent(inventoryPanel);
 
 		BufferedImage image = null, hoverImage = null;
 		Vector2 size = new Vector2(maxComponentWidth, maxComponentWidth);
