@@ -184,6 +184,10 @@ public class Audio {
 				return resampleToOldFormat(audioData);
 			} else if (format.isFallback()) {
 				return resampleToFallbackFormat(audioData);
+			} else if (format.isCompat()) {
+				return resampleToCompatFormat(audioData);
+			} else if (format.isHigher()) {
+				return resampleToHigherSampleRate(audioData);
 			}
 		} catch (Exception e) {
 			// Fallback to deprecated flags
@@ -194,7 +198,6 @@ public class Audio {
 			}
 		}
 
-		// Return as-is for default format
 		return audioData;
 	}
 
@@ -217,6 +220,10 @@ public class Audio {
 				return resampleFromOldFormat(audioData);
 			} else if (format.isFallback()) {
 				return resampleFromFallbackFormat(audioData);
+			} else if (format.isCompat()) {
+				return resampleFromCompatFormat(audioData);
+			} else if (format.isHigher()) {
+				return resampleFromHigherSampleRate(audioData);
 			}
 		} catch (Exception e) {
 			// Fallback to deprecated flags
@@ -227,8 +234,39 @@ public class Audio {
 			}
 		}
 
-		// Return as-is for default format
 		return audioData;
+	}
+
+	public static byte[] resampleToOutputFormat(byte[] audioData) {
+		if (audioData == null || audioData.length == 0) {
+			return audioData;
+		}
+
+		try {
+			ch.nivisan.raincloud.network.client.AudioFormatType format = DeviceSettings.getOutputFormat();
+			if (format.isLegacy()) {
+				return resampleToOldFormat(audioData);
+			} else if (format.isFallback()) {
+				return resampleToFallbackFormat(audioData);
+			} else if (format.isCompat()) {
+				return resampleToCompatFormat(audioData);
+			} else if (format.isHigher()) {
+				return resampleToHigherSampleRate(audioData);
+			}
+		} catch (Exception e) {
+			// No output format configured, fallback to default
+		}
+
+		return audioData;
+	}
+
+	public static byte[] resampleToFormat(byte[] audioData, AudioFormat targetFormat) {
+		if (audioData == null || audioData.length == 0 || targetFormat == null) {
+			return audioData;
+		}
+
+		AudioResampler resampler = new AudioResampler(defaultFormat, targetFormat);
+		return resampler.resample(audioData);
 	}
 
 	/**

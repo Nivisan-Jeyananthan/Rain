@@ -219,22 +219,10 @@ class Client {
 		}
 
 		byte[] voiceData = StringCipher.decodeString(parts[1]);
-
-		// Apply format-specific resampling for playback
-		if (Audio.useLegacyFormat) {
-			voiceData = Audio.resampleToOldFormat(voiceData);
-		} else if (Audio.useFallbackFormat) {
-			voiceData = Audio.resampleToFallbackFormat(voiceData);
-		} else if (Audio.useHigherSampleRate) {
-			voiceData = Audio.resampleToHigherSampleRate(voiceData);
-		}
-
+		DeviceInfo selectedSpeaker = DeviceSettings.getSpeaker();
+		AudioFormat targetFormat = selectedSpeaker != null ? selectedSpeaker.format : Audio.defaultFormat;
+		voiceData = Audio.resampleToFormat(voiceData, targetFormat);
 		playVoice(voiceData);
-	}
-
-	void sendText(String message) {
-		message = message.replaceAll("/\\w/", "");
-		sendEncrypted(CMD_MESSAGE + message + CMD_ENCRYPTED);
 	}
 
 	void requestUsernames() {
@@ -323,47 +311,7 @@ class Client {
 		}
 
 		if (speakerLine == null) {
-			speakerLine = Audio.getSourceDataLine();
-			if (speakerLine != null && !speakerLine.isOpen()) {
-				try {
-					// Open speaker line in appropriate format with fallbacks
-					AudioFormat speakerFormat = Audio.defaultFormat;
-					if (Audio.useLegacyFormat) {
-						speakerFormat = Audio.oldFormat;
-					} else if (Audio.useFallbackFormat) {
-						speakerFormat = Audio.fallbackFormat;
-					} else if (Audio.useHigherSampleRate) {
-						speakerFormat = Audio.higherFormat;
-					} else {
-						// Try best available format with fallbacks
-						try {
-							speakerLine.open(Audio.defaultFormatStereo);
-							speakerLine.start();
-							return;
-						} catch (LineUnavailableException e1) {
-							try {
-								speakerLine.open(Audio.compatFormatStereo);
-								speakerLine.start();
-								return;
-							} catch (LineUnavailableException e2) {
-								try {
-									speakerLine.open(Audio.fallbackFormatStereo);
-									speakerLine.start();
-									return;
-								} catch (LineUnavailableException e3) {
-									// Fall through to mono format
-								}
-							}
-						}
-					}
-					speakerLine.open(speakerFormat);
-				} catch (LineUnavailableException e) {
-					e.printStackTrace();
-				}
-			}
-			if (speakerLine != null && !speakerLine.isRunning()) {
-				speakerLine.start();
-			}
+			speakerLine = createSpeakerLine(selectedSpeaker);
 		}
 
 		if (speakerLine != null) {
@@ -393,21 +341,7 @@ class Client {
 
 		try {
 			if (!line.isOpen()) {
-				// Try to open with best available format (with fallbacks)
-				try {
-					line.open(Audio.defaultFormatStereo);
-				} catch (LineUnavailableException e1) {
-					try {
-						line.open(Audio.compatFormatStereo);
-					} catch (LineUnavailableException e2) {
-						try {
-							line.open(Audio.fallbackFormatStereo);
-						} catch (LineUnavailableException e3) {
-							// Fallback to mono format
-							line.open(Audio.defaultFormat);
-						}
-					}
-				}
+				line.open(speaker.format);
 			}
 			if (!line.isRunning()) {
 				line.start();
@@ -543,18 +477,10 @@ class Client {
 					byte[] voiceData = new byte[bytesRead];
 					System.arraycopy(buffer, 0, voiceData, 0, bytesRead);
 
-					// Resample if necessary
+					// Resample capture to network format. The device-specific input format is
+					// handled by the AudioResampler based on the microphone's actual format.
 					if (resampler != null && resampler.needsResampling()) {
 						voiceData = resampler.resample(voiceData);
-					}
-
-					// Apply format-specific resampling
-					if (Audio.useLegacyFormat) {
-						voiceData = Audio.resampleToOldFormat(voiceData);
-					} else if (Audio.useFallbackFormat) {
-						voiceData = Audio.resampleToFallbackFormat(voiceData);
-					} else if (Audio.useHigherSampleRate) {
-						voiceData = Audio.resampleToHigherSampleRate(voiceData);
 					}
 				}
 				closeMicLine();

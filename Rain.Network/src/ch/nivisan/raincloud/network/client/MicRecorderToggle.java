@@ -70,11 +70,11 @@ class MicRecorderToggle extends JFrame {
 		comboInputFormats.setSelectedItem(DeviceSettings.getInputFormat());
 		add(comboInputFormats);
 
-		// Initialize device lists for the selected format
+		// Initialize device lists for the selected formats
 		List<DeviceInfo> inputDevices = findDevicesForFormat(TargetDataLine.class,
 				(AudioFormatType) comboInputFormats.getSelectedItem());
 		List<DeviceInfo> outputDevices = findDevicesForFormat(SourceDataLine.class,
-				(AudioFormatType) comboInputFormats.getSelectedItem());
+				(AudioFormatType) comboOutputFormats.getSelectedItem());
 
 		comboInputs = new JComboBox<>(inputDevices.toArray(new DeviceInfo[0]));
 		if (comboInputs.getItemCount() > 0) {
@@ -233,56 +233,77 @@ class MicRecorderToggle extends JFrame {
 	@SuppressWarnings("unchecked")
 	private <T extends DataLine> List<DeviceInfo> findDevicesForFormat(Class<T> lineClass, AudioFormatType formatType) {
 		List<DeviceInfo> primaryList = new ArrayList<>();
-		AudioFormat primaryFormat = formatType.getFormat();
+		AudioFormat[] candidateFormats = getCandidateFormats(formatType);
 
-		Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+		for (AudioFormat candidate : candidateFormats) {
+			for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+				String mixerName = mixerInfo.getName();
 
-		for (int i = 0; i < mixerInfos.length; i++) {
-			Mixer.Info mixerInfo = mixerInfos[i];
-			String mixerName = mixerInfo.getName();
-
-			// Skip problematic plughw devices on Linux - they often don't support the exact
-			// format
-			if (mixerName.contains("plughw")) {
-				System.out.println("Skipping problematic mixer: " + mixerName);
-				continue;
-			}
-
-			Mixer mixer = AudioSystem.getMixer(mixerInfo);
-
-			// Try with primary format first
-			DataLine.Info primaryInfo = new DataLine.Info(lineClass, primaryFormat);
-			if (mixer.isLineSupported(primaryInfo) && primaryInfo.isFormatSupported(primaryFormat)) {
-				try {
-					T line = (T) mixer.getLine(primaryInfo);
-
-					if (line instanceof TargetDataLine) {
-						((TargetDataLine) line).open(primaryFormat);
-					} else {
-						line.open();
-					}
-
-					line.close();
-					// Prefer default devices
-					if (mixerName.contains("default") || mixerName.contains("[hw:")) {
-						primaryList.add(0, new DeviceInfo(mixerInfo, primaryFormat));
-					} else {
-						primaryList.add(new DeviceInfo(mixerInfo, primaryFormat));
-					}
+				if (mixerName.contains("plughw")) {
+					System.out.println("Skipping problematic mixer: " + mixerName);
 					continue;
+				}
+
+				Mixer mixer = AudioSystem.getMixer(mixerInfo);
+				DataLine.Info info = new DataLine.Info(lineClass, candidate);
+
+				if (!mixer.isLineSupported(info) || !info.isFormatSupported(candidate)) {
+					continue;
+				}
+
+				try {
+					T line = (T) mixer.getLine(info);
+					line.open(candidate);
+					line.close();
+
+					DeviceInfo deviceInfo = new DeviceInfo(mixerInfo, candidate);
+					if (!primaryList.contains(deviceInfo)) {
+						if (mixerName.contains("default") || mixerName.contains("[hw:")) {
+							primaryList.add(0, deviceInfo);
+						} else {
+							primaryList.add(deviceInfo);
+						}
+					}
 				} catch (Exception e) {
-					System.err.println("Failed with format " + formatType.getDisplayName() + ": " + mixerName + " - "
-							+ e.getMessage());
+					System.err.println("Failed with format " + formatType.getDisplayName() + ": " + mixerName
+						+ " - " + e.getMessage());
 				}
 			}
-
+			if (!primaryList.isEmpty()) {
+				break; // use first supported candidate set
+			}
 		}
-		// If no devices found with any format, log error and return empty list
-		System.err.println("CRITICAL: No audio devices found for any format!");
+
+		if (primaryList.isEmpty()) {
+			System.err.println("CRITICAL: No audio devices found for format " + formatType.getDisplayName());
+		}
 		return primaryList;
 	}
 
-	private Thread runningThread;
+	private AudioFormat[] getCandidateFormats(AudioFormatType selected) {
+		if (selected == null) {
+			return new AudioFormat[] { Audio.defaultFormatStereo, Audio.compatFormatStereo, Audio.fallbackFormatStereo,
+				Audio.defaultFormat, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
+		}
+
+		if (selected.isLegacy()) {
+			return new AudioFormat[] { Audio.oldFormat, Audio.compatFormatStereo, Audio.fallbackFormatStereo,
+				Audio.defaultFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.defaultFormat };
+		} else if (selected.isFallback()) {
+			return new AudioFormat[] { Audio.fallbackFormat, Audio.fallbackFormatStereo, Audio.defaultFormatStereo,
+				Audio.compatFormatStereo, Audio.defaultFormat, Audio.compatFormat, Audio.oldFormat };
+		} else if (selected.isCompat()) {
+			return new AudioFormat[] { Audio.compatFormat, Audio.compatFormatStereo, Audio.defaultFormatStereo,
+				Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.fallbackFormat, Audio.oldFormat };
+		} else if (selected.isHigher()) {
+			return new AudioFormat[] { Audio.higherFormat, Audio.higherFormatStereo, Audio.defaultFormatStereo,
+				Audio.compatFormatStereo, Audio.fallbackFormatStereo, Audio.defaultFormat, Audio.compatFormat };
+		}
+
+		// Standard
+		return new AudioFormat[] { Audio.defaultFormat, Audio.defaultFormatStereo, Audio.compatFormatStereo,
+			Audio.fallbackFormatStereo, Audio.compatFormat, Audio.fallbackFormat, Audio.oldFormat };
+	}
 
 	private void deleteTempAudioFile() {
 		if (tempAudioFile != null && tempAudioFile.exists()) {

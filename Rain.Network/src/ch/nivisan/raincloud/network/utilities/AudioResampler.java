@@ -30,8 +30,8 @@ public class AudioResampler {
 			return audioData;
 		}
 
-		// If sample rates are the same, no resampling needed
-		if (Math.abs(sourceFormat.getSampleRate() - targetFormat.getSampleRate()) < 1.0f) {
+		// If all audio format properties match exactly, nothing has to be converted.
+		if (matchesExactly(sourceFormat, targetFormat)) {
 			return audioData;
 		}
 
@@ -112,9 +112,17 @@ public class AudioResampler {
 	}
 
 	/**
-	 * Check if resampling is needed
+	 * Check if resampling / format conversion is needed
 	 */
 	public boolean needsResampling() {
-		return Math.abs(sourceFormat.getSampleRate() - targetFormat.getSampleRate()) > 1.0f;
+		return !matchesExactly(sourceFormat, targetFormat);
+	}
+
+	private boolean matchesExactly(AudioFormat a, AudioFormat b) {
+		return a.getSampleRate() == b.getSampleRate()
+			&& a.getSampleSizeInBits() == b.getSampleSizeInBits()
+			&& a.getChannels() == b.getChannels()
+			&& a.isBigEndian() == b.isBigEndian()
+			&& a.getEncoding().equals(b.getEncoding());
 	}
 }
