@@ -32,7 +32,11 @@ public class Item {
 	}
 	
 	
-	public void render(Screen screen) {
+	public String getName() {
+        return name;
+    }
+
+    public void render(Screen screen) {
 		
 	}
 }

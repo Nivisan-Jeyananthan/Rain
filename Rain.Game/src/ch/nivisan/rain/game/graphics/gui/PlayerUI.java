@@ -33,38 +33,30 @@ public class PlayerUI {
 	}
 
 	private void initializeGUI() {
-		final int divisor = 100;
-		final int componentPositionX = (WindowManager.getScaledGUIWidth() / divisor);
-		final int maxComponentWidth = (WindowManager.getScaledGUIWidth() / divisor) * (divisor - 1);
-		final int widthOffset = (maxComponentWidth / divisor);
-		final int height = (WindowManager.getScaledWindowHeight() / 5) * 2;
-		final int offsetHeight = (height / 10);
+		final int padding = 14;
+		final int componentPositionX = padding;
+		final int contentWidth = WindowManager.getScaledGUIWidth() - padding * 2;
+		final int healthBarY = 60;
 
 		uiManager.addPanel(mainPanel);
-		UILabel nameLabel = new UILabel(new Vector2(componentPositionX, height), "Nivisan");
-		nameLabel.setColor(0xbbbbbbbb);
-		nameLabel.setFont(new Font("Courier New", Font.BOLD, 25));
+		UILabel nameLabel = new UILabel(new Vector2(componentPositionX, padding), player.getName());
+		nameLabel.setColor(0xffffffff);
+		nameLabel.setFont(new Font("Courier New", Font.BOLD, 28));
 		nameLabel.setShadow(true);
 
-		Vector2 startPosition = new Vector2(componentPositionX, height + offsetHeight);
-		Vector2 barSize = new Vector2(maxComponentWidth - widthOffset, 20);
+		Vector2 healthPosition = new Vector2(componentPositionX, healthBarY);
+		Vector2 barSize = new Vector2(contentWidth, 24);
 
-		uiHealthBar = new UILabeledProgressbar(startPosition, barSize, 0xee3030, 0xffffffff, "HP");
-		uiHealthBar.setColor(0x6a6a6a);
+		uiHealthBar = new UILabeledProgressbar(healthPosition, barSize, 0xee3030, 0xffffffff, "HP");
+		uiHealthBar.setColor(0x4f4f4f);
 		uiHealthBar.setShadow(true);
-
-		var buttonPos = new Vector2(componentPositionX * 25, height + (offsetHeight * 2));
-		UIButton button = new UIButton(buttonPos, new Vector2(barSize.getX() / 2, barSize.getY() + 20), "Button text",
-				new UIButtonActionListener());
-		button.setColor(new Color(0x64A108));
-		button.setTextColor(Color.BLACK);
 
 		mainPanel.addComponent(nameLabel);
 		mainPanel.addComponent(uiHealthBar);
-		mainPanel.addComponent(button);
-		
-		InventoryGUI inventoryGUI = new InventoryGUI(new Vector2(startPosition.getX(), height + offsetHeight * 3),
-				new Vector2(Math.max(componentPositionX, 250), 220), player.getInventory());
+
+		InventoryGUI inventoryGUI = new InventoryGUI(new Vector2(componentPositionX, healthBarY + barSize.getY() + 26),
+				new Vector2(contentWidth, WindowManager.getScaledWindowHeight() - (healthBarY + barSize.getY() + 26) - padding),
+				player.getInventory());
 		mainPanel.addComponent(inventoryGUI);
 
 		BufferedImage image = null, hoverImage = null;

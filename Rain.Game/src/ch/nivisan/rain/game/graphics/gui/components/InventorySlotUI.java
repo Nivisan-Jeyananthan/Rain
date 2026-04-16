@@ -1,5 +1,7 @@
 package ch.nivisan.rain.game.graphics.gui.components;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 
 import ch.nivisan.rain.game.inventory.InventorySlot;
@@ -22,20 +24,30 @@ public class InventorySlotUI extends UIComponent {
         int y = absolutePosition.getY();
 
         // Draw slot background
-        graphics.setColor(new java.awt.Color(0x333333));
-        graphics.fillRect(x, y, size, size);
-        graphics.setColor(new java.awt.Color(0x666666));
-        graphics.drawRect(x, y, size, size);
+        graphics.setColor(new Color(0x272c33));
+        graphics.fillRoundRect(x, y, size, size, 10, 10);
+        graphics.setColor(new Color(0x4f5862));
+        graphics.drawRoundRect(x, y, size, size, 10, 10);
 
         if (slot != null && !slot.isEmpty()) {
-            graphics.setColor(new java.awt.Color(0xAAAAAA));
-            graphics.fillRect(x + 2, y + 2, size - 4, size - 4);
+            graphics.setColor(new Color(0x5a6772));
+            graphics.fillRoundRect(x + 4, y + 4, size - 8, size - 8, 8, 8);
 
-            // Draw count if >1
+            String name = slot.getItem().getName();
+            graphics.setColor(Color.WHITE);
+            graphics.setFont(new Font("Courier New", Font.BOLD, 10));
+            graphics.drawString(name, x + 6, y + size / 2);
+
             if (slot.getCount() > 1) {
-                graphics.setColor(java.awt.Color.WHITE);
-                graphics.drawString(String.valueOf(slot.getCount()), x + size - 15, y + size - 5);
+                graphics.setColor(new Color(0x202b34));
+                graphics.fillOval(x + size - 18, y + size - 18, 16, 16);
+                graphics.setColor(Color.WHITE);
+                graphics.setFont(new Font("Courier New", Font.BOLD, 11));
+                graphics.drawString(String.valueOf(slot.getCount()), x + size - 14, y + size - 6);
             }
+        } else {
+            graphics.setColor(new Color(0x1f242a));
+            graphics.fillRoundRect(x + 4, y + 4, size - 8, size - 8, 8, 8);
         }
     }
 
