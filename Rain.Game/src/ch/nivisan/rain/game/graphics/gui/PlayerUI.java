@@ -54,13 +54,19 @@ public class PlayerUI {
 		mainPanel.addComponent(nameLabel);
 		mainPanel.addComponent(uiHealthBar);
 
-		InventoryGUI inventoryGUI = new InventoryGUI(new Vector2(componentPositionX, healthBarY + barSize.getY() + 26),
-				new Vector2(contentWidth, WindowManager.getScaledWindowHeight() - (healthBarY + barSize.getY() + 26) - padding),
+		Vector2 inventoryPanelPosition = new Vector2(componentPositionX, healthBarY + barSize.getY() + 26);
+		Vector2 inventoryPanelSize = new Vector2(contentWidth,
+				WindowManager.getScaledWindowHeight() - inventoryPanelPosition.getY() - padding);
+		UIPanel inventoryPanel = new UIPanel(inventoryPanelPosition, inventoryPanelSize, 0x2e343a);
+
+		InventoryGUI inventoryGUI = new InventoryGUI(new Vector2(8, 8),
+				new Vector2(inventoryPanelSize.getX() - 16, inventoryPanelSize.getY() - 16),
 				player.getInventory());
-		mainPanel.addComponent(inventoryGUI);
+		inventoryPanel.addComponent(inventoryGUI);
+		mainPanel.addComponent(inventoryPanel);
 
 		BufferedImage image = null, hoverImage = null;
-		Vector2 size = new Vector2(maxComponentWidth, maxComponentWidth);
+		Vector2 size = new Vector2(1, 1);
 		try {
 			image = ImageIO.read(PlayerUI.class.getResource(imagePath));
 			size = new Vector2(image.getWidth(null), image.getHeight(null));

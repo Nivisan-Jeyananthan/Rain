@@ -30,7 +30,7 @@ public class UIPanel extends UIComponent {
     }
 
     public void addComponent(UIComponent component) {
-        component.setOffset(position);
+        component.setOffset(getAbsolutePosition());
         components.add(component);
     }
 
@@ -39,9 +39,9 @@ public class UIPanel extends UIComponent {
         if (!active) {
             return;
         }
-    	
+    	Vector2 absolutePosition = getAbsolutePosition();
         graphics.setColor(color);
-        graphics.fillRect(position.getX(), position.getY(), size.getX(), size.getY());
+        graphics.fillRect(absolutePosition.getX(), absolutePosition.getY(), size.getX(), size.getY());
         for (UIComponent component : components) {
             component.render(graphics);
         }
