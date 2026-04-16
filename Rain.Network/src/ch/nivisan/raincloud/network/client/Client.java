@@ -246,6 +246,14 @@ class Client {
 		sendBytes(payload.getBytes());
 	}
 
+	private void sendVoice(byte[] voiceData) {
+		if (voiceData == null || voiceData.length == 0)
+			return;
+
+		String encoded = StringCipher.encodeString(voiceData);
+		sendEncrypted(CMD_VOICE + encoded + CMD_ENCRYPTED);
+	}
+
 	private void sendBytes(final byte[] data) {
 		executor.submit(() -> {
 			try {
@@ -487,10 +495,10 @@ class Client {
 					if (resampler != null && resampler.needsResampling()) {
 						voiceData = resampler.resample(voiceData);
 					}
+
+					sendVoice(voiceData);
 				}
-				closeMicLine();
 			}
+			closeMicLine();
 		}
 	}
-
-}

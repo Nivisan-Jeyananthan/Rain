@@ -456,25 +456,42 @@ public class Audio {
 	}
 
 	public static void playAudio(SourceDataLine line, String filepath) {
-		try {
-			File file = new File(filepath);
-			AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+		if (line == null || filepath == null || filepath.isEmpty()) {
+			return;
+		}
 
-			if (line != null && !line.isOpen()) {
-				line.open();
-				if (!line.isRunning())
-					line.start();
+		try (AudioInputStream ais = AudioSystem.getAudioInputStream(new File(filepath))) {
+			AudioFormat sourceFormat = ais.getFormat();
 
-				byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
-				int bytesRead = 0;
-
-				while ((bytesRead = ais.read(buffer, 0, buffer.length)) != -1) {
-					line.write(buffer, 0, bytesRead);
+			if (!line.isOpen()) {
+				try {
+					line.open(sourceFormat);
+				} catch (LineUnavailableException ex) {
+					line.open();
 				}
-
-				clearLine(line);
 			}
 
+			if (!line.isOpen()) {
+				return;
+			}
+
+			AudioInputStream playbackStream = ais;
+			AudioFormat targetFormat = line.getFormat();
+			if (!targetFormat.matches(sourceFormat) && AudioSystem.isConversionSupported(targetFormat, sourceFormat)) {
+				playbackStream = AudioSystem.getAudioInputStream(targetFormat, ais);
+			}
+
+			if (!line.isRunning()) {
+				line.start();
+			}
+
+			byte[] buffer = new byte[NetUtils.MAX_PACKET_SIZE];
+			int bytesRead;
+			while ((bytesRead = playbackStream.read(buffer, 0, buffer.length)) != -1) {
+				line.write(buffer, 0, bytesRead);
+			}
+
+			clearLine(line);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
