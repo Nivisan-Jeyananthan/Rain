@@ -64,8 +64,8 @@ jobs:
         sudo apt install openjdk-25-jdk
 
     - name: Create App-Image
-      run:
-        ls -Rlah &&
+      working-directory: Rain.Network
+      run: |
         jpackage --input ./ --type deb --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
     
     - name: Upload Debian artifact
@@ -113,13 +113,13 @@ jobs:
     - name: Build Flatpak
       working-directory: Rain.Network
       run: |
-        sudo flatpak-builder --force-clean build-dir com.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
+        sudo flatpak-builder --force-clean build-dir ch.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
     
     - name: Create Flatpak Bundle
       working-directory: Rain.Network
       run: |
         if [ -d "build-dir" ]; then
-          sudo flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client || echo "Bundle creation failed"
+          sudo flatpak build-bundle build-dir rainchat.flatpak ch.nivisan.raincloud.network.client || echo "Bundle creation failed"
         else
           echo "Build directory not found, skipping bundle creation"
         fi
