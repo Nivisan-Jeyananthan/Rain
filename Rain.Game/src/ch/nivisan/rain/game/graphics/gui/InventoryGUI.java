@@ -31,7 +31,7 @@ public class InventoryGUI extends UIPanel {
 
     public void updateSlots() {
         for (int i = 0; i < slotUIs.length; i++) {
-            slotUIs[i] = new InventorySlotUI(slotUIs[i].getPosition(), slotSize, inventory.getSlot(i));
+            slotUIs[i] = new InventorySlotUI(slotUIs[i].getAbsolutePosition(), slotSize, inventory.getSlot(i));
         }
     }
 }

@@ -102,12 +102,12 @@ public class ShopGUI extends UIPanel {
     public void updateSlots() {
         // Update merchant slots
         for (int i = 0; i < merchantSlotUIs.length; i++) {
-            merchantSlotUIs[i] = new InventorySlotUI(merchantSlotUIs[i].getPosition(), slotSize,
+            merchantSlotUIs[i] = new InventorySlotUI(merchantSlotUIs[i].getAbsolutePosition(), slotSize,
                     merchant.getInventory().getSlot(i));
         }
         // Update player slots
         for (int i = 0; i < playerSlotUIs.length; i++) {
-            playerSlotUIs[i] = new InventorySlotUI(playerSlotUIs[i].getPosition(), slotSize,
+            playerSlotUIs[i] = new InventorySlotUI(playerSlotUIs[i].getAbsolutePosition(), slotSize,
                     player.getInventory().getSlot(i));
         }
     }
