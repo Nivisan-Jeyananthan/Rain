@@ -6,8 +6,6 @@ import ch.nivisan.rain.game.graphics.gui.components.InventorySlotUI;
 import ch.nivisan.rain.game.graphics.gui.components.UIPanel;
 import ch.nivisan.rain.game.graphics.gui.components.UILabel;
 import ch.nivisan.rain.game.graphics.gui.components.button.UIButton;
-import ch.nivisan.rain.game.graphics.gui.components.button.UIButtonActionListener;
-import ch.nivisan.rain.game.inventory.InventorySlot;
 import ch.nivisan.rain.game.item.Item;
 import ch.nivisan.rain.game.utils.Vector2;
 
