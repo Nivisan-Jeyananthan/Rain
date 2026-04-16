@@ -65,7 +65,8 @@ jobs:
 
     - name: Create App-Image
       run:
-        jpackage --input . --type deb --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
+        ls -Rlah &&
+        jpackage --input ./ --type deb --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan"
     
     - name: Upload Debian artifact
       uses: actions/upload-artifact@v4
