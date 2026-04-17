@@ -1,16 +1,20 @@
 {
     "app-id": "ch.nivisan.raincloud.network.client",
     "runtime": "org.freedesktop.Platform",
-    "runtime-version": "25.08",
+    "runtime-version": "24.08",
     "sdk": "org.freedesktop.Sdk",
     "command": "rainchat",
     "finish-args": [
         "--share=network",
         "--device=all",
         "--socket=pulseaudio",
-        "--socket=fallback-x11",
+        "--socket=x11",
         "--socket=wayland",
-        "--filesystem=xdg-run/pulse:ro"
+        "--filesystem=xdg-run/pulse:ro",
+        "--talk-name=org.freedesktop.Notifications",
+        "--env=DISPLAY=$DISPLAY",
+        "--env=XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR",
+        "--env=WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
     ],
     "modules": [
         {
@@ -23,8 +27,8 @@
             "sources": [
                 {
                     "type": "file",
-                    "url": "https://download.java.net/java/GA/jdk25/bd75d5f9689641da8e1daabeccb5528b/36/GPL/openjdk-25_linux-x64_bin.tar.gz",
-                    "sha256": "59cdcaf255add4721de38eb411d4ecfe779356b61fb671aee63c7dec78054c2b"
+                    "url": "https://download.java.net/java/GA/jdk21.0.2/806491f548cfc4c2225ff82e4a005fdf/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz",
+                    "sha256": "e184dc29a6712c1f78754ab36fb488005af1372b5aa7dc55890a819bd4953c3751"
                 }
             ]
         },

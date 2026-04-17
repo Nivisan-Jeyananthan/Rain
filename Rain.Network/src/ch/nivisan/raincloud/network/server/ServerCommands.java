@@ -75,7 +75,7 @@ public class ServerCommands {
 			public void run() {
 
 				while (server.clients.size() != 0) {
-					server.kickClient(server.clients.getFirst().Id);
+					server.kickClient(server.clients.get(0).Id);
 				}
 
 				synchronized (server.socket) {

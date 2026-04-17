@@ -22,8 +22,8 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
-        distribution: 'oracle'
+        java-version: '21'
+        distribution: 'temurin'
     
     - name: Compile Java sources
       working-directory: Rain.Network
@@ -61,7 +61,7 @@ jobs:
     - name: Install Java
       run: |
         sudo apt update && 
-        sudo apt install openjdk-25-jdk
+        sudo apt install openjdk-21-jdk
 
     - name: Create App-Image
       working-directory: Rain.Network
@@ -107,7 +107,7 @@ jobs:
     
     - name: Install Flatpak Runtime (system-wide)
       run: |
-        sudo flatpak install --system -y flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08 || true
+        sudo flatpak install --system -y flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08 || true
       continue-on-error: true
     
     - name: Build Flatpak
@@ -148,8 +148,8 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
-        distribution: 'oracle'
+        java-version: '21'
+        distribution: 'temurin'
     
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
@@ -197,7 +197,7 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
+        java-version: '21'
         distribution: 'oracle'
     
     - name: Convert ICO to ICNS for macOS
