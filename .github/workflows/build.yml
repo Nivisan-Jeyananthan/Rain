@@ -154,7 +154,7 @@ jobs:
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
       run: |
-        set "SHORT_WORK=%RUNNER_TEMP%\\rainchat"
+        set "SHORT_WORK=C:\\rainchat"
         if exist "%SHORT_WORK%" rmdir /s /q "%SHORT_WORK%"
         mkdir "%SHORT_WORK%"
         copy /Y "Client.jar" "%SHORT_WORK%\\"
