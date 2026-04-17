@@ -145,75 +145,48 @@ jobs:
         name: Client.jar
         path: Rain.Network/
     
-    - name: Set up JDK 25
+    - name: Install Python for icon creation
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    
+    - name: Install Pillow for icon creation
+      run: |
+        python -m pip install --upgrade pip
+        pip install Pillow
+    
+    - name: Create icon
+      run: |
+        python create-icon.py
+    
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '25'
+        java-version: '21'
         distribution: 'temurin'
     
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
       run: |
-        set "SHORT_WORK=C:\\rct"
-        set "JPKG_TEMP=%SHORT_WORK%\\jptemp"
-        echo ===== SETUP =====
-        if exist "%SHORT_WORK%" rmdir /s /q "%SHORT_WORK%"
-        mkdir "%SHORT_WORK%"
-        echo Setup complete
-        
-        echo ===== COPY FILES =====
-        copy /Y "Client.jar" "%SHORT_WORK%\\c.jar"
-        if %ERRORLEVEL% NEQ 0 (
-          echo ERROR: Client.jar copy failed
-          exit /b 1
-        )
-        
-        if exist "icon.ico" copy /Y "icon.ico" "%SHORT_WORK%\\i.ico"
-        
-        pushd "%SHORT_WORK%"
-        echo ===== FILES READY =====
-        dir /B
-        
-        echo ===== ATTEMPT 1: Build WITHOUT icon =====
-        jpackage --input . --type app-image --app-version 2.0 --name RC --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "N" --temp "%JPKG_TEMP%"
-        
-        if %ERRORLEVEL% EQU 0 (
-          echo SUCCESS: Build completed without icon
-          echo Checking output directory:
-          dir /B
-          if exist "RC" (
-            echo RC directory found
-            dir /s "RC"
-          ) else (
-            echo RC directory not found, checking for other output
-            dir /s
-          )
-        ) else (
-          echo FAILED: Build failed even without icon (exit code %ERRORLEVEL%)
-          dir /s "%SHORT_WORK%"
-          exit /b %ERRORLEVEL%
-        )
-        
-        popd
-      shell: cmd
+        jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --win-console
     
     - name: Create ZIP from app-image
       working-directory: Rain.Network
       run: |
-        if exist RainChat (
-          7z a -r RainChat-Windows-Portable.zip RainChat
-        ) else (
-          echo App-image directory not found
-          dir
-        )
-      shell: cmd
+        if (Test-Path RainChat) {
+          Compress-Archive -Path RainChat -DestinationPath RainChat-Windows.zip
+        } else {
+          Write-Host "App-image directory not found"
+          Get-ChildItem
+        }
     
-    - name: Upload Windows Portable ZIP artifact
+    - name: Upload Windows ZIP artifact
       uses: actions/upload-artifact@v4
       with:
-        name: RainChat-Windows-Portable
-        path: Rain.Network/RainChat-Windows-Portable.zip
+        name: RainChat-Windows
+        path: Rain.Network/RainChat-Windows.zip
         retention-days: 5
+
 
   build-macos-dmg:
     name: Build macOS DMG
