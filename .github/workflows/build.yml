@@ -113,17 +113,15 @@ jobs:
     - name: Build Flatpak
       working-directory: Rain.Network
       run: |
-        sudo flatpak-builder --force-clean build-dir ch.nivisan.raincloud.network.client.json 2>&1 | tail -20 || echo "Flatpak build failed"
+        # Remove previous build directory to ensure clean build
+        sudo rm -rf build-dir
+        # Build flatpak (without --force-clean)
+        sudo flatpak-builder build-dir ch.nivisan.raincloud.network.client.json 2>&1 | tail -20
     
     - name: Create Flatpak Bundle
       working-directory: Rain.Network
       run: |
-        if [ -d "build-dir" ]; then
-          sudo flatpak build-bundle build-dir rainchat.flatpak ch.nivisan.raincloud.network.client || echo "Bundle creation failed"
-        else
-          echo "Build directory not found, skipping bundle creation"
-        fi
-      continue-on-error: true
+        sudo flatpak build-bundle build-dir rainchat.flatpak ch.nivisan.raincloud.network.client
     
     - name: Upload Flatpak artifact (if exists)
       uses: actions/upload-artifact@v4

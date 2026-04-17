@@ -31,9 +31,13 @@ if [ ! -f "Client.jar" ]; then
     exit 1
 fi
 
-# Build the flatpak (with increased timeout for CI)
+# Clean existing build directory
+echo -e "${GREEN}Cleaning build directory...${NC}"
+rm -rf build-dir
+
+# Build the flatpak (without --force-clean for better bundle compatibility)
 echo -e "${GREEN}Building Flatpak...${NC}"
-flatpak-builder --force-clean --default-permissions build-dir com.nivisan.raincloud.network.client.json
+sudo flatpak-builder --default-permissions build-dir com.nivisan.raincloud.network.client.json
 
 # Create bundle
 echo -e "${GREEN}Creating bundle...${NC}"
