@@ -22,7 +22,7 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
     
     - name: Compile Java sources
@@ -61,7 +61,7 @@ jobs:
     - name: Install Java
       run: |
         sudo apt update && 
-        sudo apt install openjdk-21-jdk
+        sudo apt install openjdk-25-jdk || sudo apt install openjdk-24-jdk || sudo apt install openjdk-23-jdk
 
     - name: Create App-Image
       working-directory: Rain.Network
@@ -148,7 +148,7 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
     
     - name: Build Windows EXE with jpackage
@@ -159,7 +159,7 @@ jobs:
         echo ===== SETUP =====
         if exist "%SHORT_WORK%" rmdir /s /q "%SHORT_WORK%"
         mkdir "%SHORT_WORK%"
-        echo Setup complete - NOT pre-creating temp dir
+        echo Setup complete
         
         echo ===== COPY FILES =====
         copy /Y "Client.jar" "%SHORT_WORK%\\c.jar"
@@ -167,54 +167,23 @@ jobs:
           echo ERROR: Client.jar copy failed
           exit /b 1
         )
-        echo Client.jar copied successfully
         
-        if exist "icon.ico" (
-          copy /Y "icon.ico" "%SHORT_WORK%\\i.ico"
-          if %ERRORLEVEL% NEQ 0 (
-            echo ERROR: icon.ico copy failed
-            exit /b 1
-          )
-          echo icon.ico copied successfully
-        ) else (
-          echo WARNING: icon.ico not found
-        )
+        if exist "icon.ico" copy /Y "icon.ico" "%SHORT_WORK%\\i.ico"
         
         pushd "%SHORT_WORK%"
-        echo ===== ENVIRONMENT SETUP =====
-        echo Current directory: %CD%
-        echo JPKG_TEMP (path for jpackage): %JPKG_TEMP%
-        
-        echo ===== VERIFY FILES =====
-        echo Files in %CD%:
+        echo ===== FILES READY =====
         dir /B
         
-        echo ===== JAVA INFO =====
-        java -version
-        echo.
-        where jpackage
-        jpackage --version
+        echo ===== ATTEMPT 1: Build WITHOUT icon =====
+        jpackage --input . --type app-image --app-version 2.0 --name RC --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "N" --temp "%JPKG_TEMP%"
         
-        echo ===== RUNNING JPACKAGE =====
-        if exist "i.ico" (
-          echo jpackage WITH icon...
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --icon i.ico --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%"
+        if %ERRORLEVEL% EQU 0 (
+          echo SUCCESS: Build completed without icon
         ) else (
-          echo jpackage WITHOUT icon...
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%"
-        )
-        
-        if %ERRORLEVEL% NEQ 0 (
-          echo ERROR: jpackage failed with exit code %ERRORLEVEL%
-          echo.
-          echo Contents of SHORT_WORK after failure:
+          echo FAILED: Build failed even without icon (exit code %ERRORLEVEL%)
           dir /s "%SHORT_WORK%"
           exit /b %ERRORLEVEL%
         )
-        
-        echo ===== RESULT =====
-        echo Build successful. Checking output:
-        dir /s RainChat
         
         popd
       shell: cmd
@@ -254,7 +223,7 @@ jobs:
     - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
     
     - name: Convert ICO to ICNS for macOS
