@@ -37,11 +37,11 @@ rm -rf build-dir repo
 
 # Build the flatpak with repository
 echo -e "${GREEN}Building Flatpak...${NC}"
-sudo flatpak-builder --repo=repo --default-permissions build-dir com.nivisan.raincloud.network.client.json
+sudo flatpak-builder --repo=repo --default-permissions build-dir ch.nivisan.raincloud.network.client.json
 
 # Create bundle from repository
 echo -e "${GREEN}Creating bundle...${NC}"
-flatpak build-bundle repo rainchat.flatpak com.nivisan.raincloud.network.client
+flatpak build-bundle repo rainchat.flatpak ch.nivisan.raincloud.network.client
 
 # Cleanup build directories to save space
 rm -rf build-dir repo

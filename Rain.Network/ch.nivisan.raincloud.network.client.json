@@ -1,7 +1,7 @@
 {
     "app-id": "ch.nivisan.raincloud.network.client",
     "runtime": "org.freedesktop.Platform",
-    "runtime-version": "24.08",
+    "runtime-version": "23.08",
     "sdk": "org.freedesktop.Sdk",
     "command": "rainchat",
     "finish-args": [
