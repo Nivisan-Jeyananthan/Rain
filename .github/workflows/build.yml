@@ -179,6 +179,15 @@ jobs:
         
         if %ERRORLEVEL% EQU 0 (
           echo SUCCESS: Build completed without icon
+          echo Checking output directory:
+          dir /B
+          if exist "RC" (
+            echo RC directory found
+            dir /s "RC"
+          ) else (
+            echo RC directory not found, checking for other output
+            dir /s
+          )
         ) else (
           echo FAILED: Build failed even without icon (exit code %ERRORLEVEL%)
           dir /s "%SHORT_WORK%"
