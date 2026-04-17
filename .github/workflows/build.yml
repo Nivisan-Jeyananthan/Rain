@@ -154,14 +154,20 @@ jobs:
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
       run: |
-        if not exist "%RUNNER_TEMP%\\jpackage-temp" mkdir "%RUNNER_TEMP%\\jpackage-temp"
-        set "JPACKAGE_TEMP=%RUNNER_TEMP%\\jpackage-temp"
-        if exist icon.ico (
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --temp "%JPACKAGE_TEMP%"
+        set "SHORT_WORK=%RUNNER_TEMP%\\rainchat"
+        if exist "%SHORT_WORK%" rmdir /s /q "%SHORT_WORK%"
+        mkdir "%SHORT_WORK%"
+        copy /Y "Client.jar" "%SHORT_WORK%\\"
+        if exist "icon.ico" copy /Y "icon.ico" "%SHORT_WORK%\\"
+        if not exist "%SHORT_WORK%\\temp" mkdir "%SHORT_WORK%\\temp"
+        pushd "%SHORT_WORK%"
+        if exist "icon.ico" (
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --temp "%SHORT_WORK%\\temp" --dest "%SHORT_WORK%"
         ) else (
           echo Icon not found, building without icon...
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan" --temp "%JPACKAGE_TEMP%"
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan" --temp "%SHORT_WORK%\\temp" --dest "%SHORT_WORK%"
         )
+        popd
       shell: cmd
     
     - name: Create ZIP from app-image
