@@ -156,30 +156,97 @@ jobs:
       run: |
         set "SHORT_WORK=C:\\rct"
         set "JPKG_TEMP=%SHORT_WORK%\\jptemp"
+        echo ===== SETUP =====
         if exist "%SHORT_WORK%" rmdir /s /q "%SHORT_WORK%"
         mkdir "%SHORT_WORK%"
-        copy /Y "Client.jar" "%SHORT_WORK%\\"
-        if exist "icon.ico" copy /Y "icon.ico" "%SHORT_WORK%\\"
-        if exist "%JPKG_TEMP%" rmdir /s /q "%JPKG_TEMP%"
+        mkdir "%JPKG_TEMP%"
+        echo Setup complete
+        
+        echo ===== COPY FILES =====
+        copy /Y "Client.jar" "%SHORT_WORK%\\c.jar"
+        if %ERRORLEVEL% NEQ 0 (
+          echo ERROR: Client.jar copy failed
+          exit /b 1
+        )
+        echo Client.jar copied successfully
+        
+        if exist "icon.ico" (
+          copy /Y "icon.ico" "%SHORT_WORK%\\i.ico"
+          if %ERRORLEVEL% NEQ 0 (
+            echo ERROR: icon.ico copy failed
+            exit /b 1
+          )
+          echo icon.ico copied successfully
+        ) else (
+          echo WARNING: icon.ico not found
+        )
+        
         pushd "%SHORT_WORK%"
+        echo ===== ENVIRONMENT SETUP =====
         set "TMP=%JPKG_TEMP%"
         set "TEMP=%JPKG_TEMP%"
         set "JAVA_TOOL_OPTIONS=-Djava.io.tmpdir=%JPKG_TEMP%"
         echo Current directory: %CD%
-        echo SHORT_WORK=%SHORT_WORK%
-        echo JPKG_TEMP=%JPKG_TEMP%
-        echo TEMP=%TEMP%
-        echo TMP=%TMP%
-        echo JAVA_TOOL_OPTIONS=%JAVA_TOOL_OPTIONS%
-        where jpackage
-        if exist "icon.ico" (
-          echo Running jpackage with icon...
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%" --dest "%SHORT_WORK%"
+        echo JPKG_TEMP: %JPKG_TEMP%
+        echo TMP: %TMP%
+        echo TEMP: %TEMP%
+        
+        echo ===== VERIFY FILES =====
+        echo Files in %CD%:
+        dir /B
+        echo.
+        echo File details:
+        if exist "c.jar" (
+          echo c.jar found - size:
+          for %%F in (c.jar) do echo %%~zF bytes
         ) else (
-          echo Icon not found, building without icon...
-          echo Running jpackage without icon...
-          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%" --dest "%SHORT_WORK%"
+          echo ERROR: c.jar not found
+          exit /b 1
         )
+        
+        if exist "i.ico" (
+          echo i.ico found - size:
+          for %%F in (i.ico) do echo %%~zF bytes
+        ) else (
+          echo i.ico not found - will build without icon
+        )
+        
+        echo ===== JAVA INFO =====
+        java -version
+        echo.
+        where jpackage
+        jpackage --version
+        
+        echo ===== TEMP DIR CHECK =====
+        if exist "%JPKG_TEMP%" (
+          echo Temp directory exists: %JPKG_TEMP%
+          dir "%JPKG_TEMP%"
+        ) else (
+          echo ERROR: Temp directory does not exist: %JPKG_TEMP%
+          exit /b 1
+        )
+        
+        echo ===== RUNNING JPACKAGE =====
+        if exist "i.ico" (
+          echo jpackage WITH icon...
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --icon i.ico --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%"
+        ) else (
+          echo jpackage WITHOUT icon...
+          jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar c.jar --main-class ch.nivisan.raincloud.network.client.Main --vendor "Nivisan-Jeyananthan" --temp "%JPKG_TEMP%"
+        )
+        
+        if %ERRORLEVEL% NEQ 0 (
+          echo ERROR: jpackage failed with exit code %ERRORLEVEL%
+          echo.
+          echo Contents of SHORT_WORK after failure:
+          dir /s
+          exit /b %ERRORLEVEL%
+        )
+        
+        echo ===== RESULT =====
+        echo Build successful. Checking output:
+        dir /s RainChat
+        
         popd
       shell: cmd
     
