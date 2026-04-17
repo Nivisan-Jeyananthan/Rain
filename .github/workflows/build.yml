@@ -168,7 +168,7 @@ jobs:
     - name: Build Windows EXE with jpackage
       working-directory: Rain.Network
       run: |
-        jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --win-console
+        jpackage --input . --type app-image --app-version 2.0 --name RainChat --main-jar Client.jar --main-class ch.nivisan.raincloud.network.client.Main --icon icon.ico --vendor "Nivisan-Jeyananthan" --win-menu --win-shortcut
     
     - name: Create ZIP from app-image
       working-directory: Rain.Network
