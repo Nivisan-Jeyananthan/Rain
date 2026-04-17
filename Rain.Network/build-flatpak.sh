@@ -31,20 +31,20 @@ if [ ! -f "Client.jar" ]; then
     exit 1
 fi
 
-# Clean existing build directory
-echo -e "${GREEN}Cleaning build directory...${NC}"
-rm -rf build-dir
+# Clean existing build directories
+echo -e "${GREEN}Cleaning build directories...${NC}"
+rm -rf build-dir repo
 
-# Build the flatpak (without --force-clean for better bundle compatibility)
+# Build the flatpak with repository
 echo -e "${GREEN}Building Flatpak...${NC}"
-sudo flatpak-builder --default-permissions build-dir com.nivisan.raincloud.network.client.json
+sudo flatpak-builder --repo=repo --default-permissions build-dir com.nivisan.raincloud.network.client.json
 
-# Create bundle
+# Create bundle from repository
 echo -e "${GREEN}Creating bundle...${NC}"
-flatpak build-bundle build-dir rainchat.flatpak com.nivisan.raincloud.network.client
+flatpak build-bundle repo rainchat.flatpak com.nivisan.raincloud.network.client
 
-# Cleanup build directory to save space
-rm -rf build-dir
+# Cleanup build directories to save space
+rm -rf build-dir repo
 
 echo -e "${GREEN}Flatpak bundle created: rainchat.flatpak${NC}"
 echo -e "${YELLOW}To install: flatpak install rainchat.flatpak${NC}"
