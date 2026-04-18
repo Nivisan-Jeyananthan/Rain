@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=RainChat
+Comment=A chat application built with Java
+Exec=rainchat
+Icon=ch.nivisan.raincloud.network.client
+Categories=Network;Utility;Chat;
+StartupNotify=true
+Terminal=false
+X-Flatpak=ch.nivisan.raincloud.network.client

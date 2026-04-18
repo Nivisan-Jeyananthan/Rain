@@ -11,6 +11,7 @@
         "--socket=x11",
         "--socket=wayland",
         "--filesystem=xdg-run/pulse:ro",
+        "--filesystem=xdg-data/applications:ro",
         "--talk-name=org.freedesktop.Notifications",
         "--env=DISPLAY=$DISPLAY",
         "--env=XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR",
@@ -37,7 +38,12 @@
             "buildsystem": "simple",
             "build-commands": [
                 "mkdir -p /app/bin",
+                "mkdir -p /app/share/applications",
+                "mkdir -p /app/share/appdata",
+                "mkdir -p /app/share/icons/hicolor/scalable/apps",
                 "cp Client.jar /app/bin/",
+                "cp ch.nivisan.raincloud.network.client.desktop /app/share/applications/",
+                "cp ch.nivisan.raincloud.network.client.appdata.xml /app/share/appdata/",
                 "echo '#!/bin/bash' > /app/bin/rainchat",
                 "echo 'cd /app/bin' >> /app/bin/rainchat",
                 "echo 'exec /app/jdk/bin/java -jar Client.jar' >> /app/bin/rainchat",
@@ -47,6 +53,14 @@
                 {
                     "type": "file",
                     "path": "Client.jar"
+                },
+                {
+                    "type": "file",
+                    "path": "ch.nivisan.raincloud.network.client.desktop"
+                },
+                {
+                    "type": "file",
+                    "path": "ch.nivisan.raincloud.network.client.appdata.xml"
                 }
             ]
         }

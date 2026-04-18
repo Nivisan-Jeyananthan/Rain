@@ -31,6 +31,18 @@ if [ ! -f "Client.jar" ]; then
     exit 1
 fi
 
+# Check if desktop entry exists
+if [ ! -f "ch.nivisan.raincloud.network.client.desktop" ]; then
+    echo -e "${RED}.desktop file not found.${NC}"
+    exit 1
+fi
+
+# Check if appdata file exists
+if [ ! -f "ch.nivisan.raincloud.network.client.appdata.xml" ]; then
+    echo -e "${RED}.appdata.xml file not found.${NC}"
+    exit 1
+fi
+
 # Clean existing build directories
 echo -e "${GREEN}Cleaning build directories...${NC}"
 rm -rf build-dir repo

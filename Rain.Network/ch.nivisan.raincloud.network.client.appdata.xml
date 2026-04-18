@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>ch.nivisan.raincloud.network.client</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>MIT</project_license>
+    <name>RainChat</name>
+    <summary>A chat application built with Java</summary>
+    <description>
+        <p>RainChat is a network-based chat application built with Java. It provides a modern interface for real-time communication.</p>
+    </description>
+    <releases>
+        <release version="2.0" date="2024-01-01">
+            <description>
+                <p>Initial Flatpak release</p>
+            </description>
+        </release>
+    </releases>
+    <url type="homepage">https://github.com/Nivisan-Jeyananthan/Rain</url>
+    <screenshots>
+    </screenshots>
+    <content_rating type="oars-1.1"/>
+</component>
