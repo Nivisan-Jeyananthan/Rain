@@ -29,7 +29,7 @@ jobs:
       working-directory: Rain.Network
       run: |
         find src -name '*.java' > /tmp/rain_java_files.txt
-        javac @/tmp/rain_java_files.txt -d bin
+        javac --release 23 @/tmp/rain_java_files.txt -d bin
     
     - name: Create JAR with Manifest
       working-directory: Rain.Network

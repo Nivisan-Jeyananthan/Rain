@@ -61,7 +61,7 @@ jpackage --input . --type dmg --app-version 2.0 --name RainChat --main-jar Clien
 ```bash
 cd Rain.Network
 find src -name '*.java' > /tmp/files.txt
-javac @/tmp/files.txt -d bin
+javac --release 23 @/tmp/files.txt -d bin
 echo "Main-Class: ch.nivisan.raincloud.network.client.Main" > MANIFEST.MF
 jar cfm Client.jar MANIFEST.MF -C bin .
 ```
