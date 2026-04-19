@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build script for RainChat Flatpak
 
-set -e
+set -euo pipefail
 
 # Colors for output (disable in CI)
 if [ -t 1 ]; then
@@ -50,12 +50,14 @@ if [ ! -f "ch.nivisan.raincloud.network.client.svg" ]; then
 fi
 
 # Clean existing build directories
-echo -e "${GREEN}Cleaning build directories...${NC}"
-rm -rf build-dir repo
+if [ -d build-dir ] || [ -d repo ] || [ -d .flatpak-builder ]; then
+    echo -e "${GREEN}Cleaning existing build directories...${NC}"
+    rm -rf build-dir repo .flatpak-builder 2>/dev/null || sudo rm -rf build-dir repo .flatpak-builder
+fi
 
 # Build the flatpak with repository
 echo -e "${GREEN}Building Flatpak...${NC}"
-sudo flatpak-builder --repo=repo --default-permissions build-dir ch.nivisan.raincloud.network.client.json
+flatpak-builder --repo=repo build-dir ch.nivisan.raincloud.network.client.json
 
 # Create bundle from repository
 echo -e "${GREEN}Creating bundle...${NC}"

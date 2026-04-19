@@ -9,8 +9,7 @@
         "--socket=pulseaudio",
         "--socket=x11",
         "--socket=wayland",
-        "--filesystem=xdg-run/pulse:ro",
-        "--talk-name=org.freedesktop.Notifications"
+        "--filesystem=xdg-run/pulse:ro"
     ],
     "modules": [
         {
@@ -18,7 +17,7 @@
             "buildsystem": "simple",
             "build-commands": [
                 "mkdir -p /app/jdk",
-                "tar -xf *.tar.gz -C /app/jdk --strip-components=1"
+                "tar --extract --gzip --no-same-owner --no-same-permissions -f *.tar.gz -C /app/jdk --strip-components=1"
             ],
             "sources": [
                 {
