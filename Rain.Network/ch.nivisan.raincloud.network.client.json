@@ -6,16 +6,11 @@
     "command": "rainchat",
     "finish-args": [
         "--share=network",
-        "--device=all",
         "--socket=pulseaudio",
         "--socket=x11",
         "--socket=wayland",
         "--filesystem=xdg-run/pulse:ro",
-        "--filesystem=xdg-data/applications:ro",
-        "--talk-name=org.freedesktop.Notifications",
-        "--env=DISPLAY=$DISPLAY",
-        "--env=XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR",
-        "--env=WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
+        "--talk-name=org.freedesktop.Notifications"
     ],
     "modules": [
         {
