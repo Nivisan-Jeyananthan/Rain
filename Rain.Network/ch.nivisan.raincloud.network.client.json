@@ -8,8 +8,7 @@
         "--share=network",
         "--socket=pulseaudio",
         "--socket=x11",
-        "--socket=wayland",
-        "--filesystem=xdg-run/pulse:ro"
+        "--socket=wayland"
     ],
     "modules": [
         {
