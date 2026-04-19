@@ -44,6 +44,7 @@
                 "cp Client.jar /app/bin/",
                 "cp ch.nivisan.raincloud.network.client.desktop /app/share/applications/",
                 "cp ch.nivisan.raincloud.network.client.appdata.xml /app/share/appdata/",
+                "cp ch.nivisan.raincloud.network.client.svg /app/share/icons/hicolor/scalable/apps/ch.nivisan.raincloud.network.client.svg",
                 "echo '#!/bin/bash' > /app/bin/rainchat",
                 "echo 'cd /app/bin' >> /app/bin/rainchat",
                 "echo 'exec /app/jdk/bin/java -jar Client.jar' >> /app/bin/rainchat",
@@ -61,6 +62,10 @@
                 {
                     "type": "file",
                     "path": "ch.nivisan.raincloud.network.client.appdata.xml"
+                },
+                {
+                    "type": "file",
+                    "path": "ch.nivisan.raincloud.network.client.svg"
                 }
             ]
         }

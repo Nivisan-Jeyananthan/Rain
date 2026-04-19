@@ -43,6 +43,12 @@ if [ ! -f "ch.nivisan.raincloud.network.client.appdata.xml" ]; then
     exit 1
 fi
 
+# Check if icon file exists
+if [ ! -f "ch.nivisan.raincloud.network.client.svg" ]; then
+    echo -e "${RED}.svg icon file not found.${NC}"
+    exit 1
+fi
+
 # Clean existing build directories
 echo -e "${GREEN}Cleaning build directories...${NC}"
 rm -rf build-dir repo
@@ -60,4 +66,4 @@ rm -rf build-dir repo
 
 echo -e "${GREEN}Flatpak bundle created: rainchat.flatpak${NC}"
 echo -e "${YELLOW}To install: flatpak install rainchat.flatpak${NC}"
-echo -e "${YELLOW}To run: flatpak run com.nivisan.raincloud.network.client${NC}"
+echo -e "${YELLOW}To run: flatpak run ch.nivisan.raincloud.network.client${NC}"

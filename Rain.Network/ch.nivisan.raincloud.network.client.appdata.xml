@@ -16,7 +16,10 @@
         </release>
     </releases>
     <url type="homepage">https://github.com/Nivisan-Jeyananthan/Rain</url>
-    <screenshots>
-    </screenshots>
+    <icon>ch.nivisan.raincloud.network.client</icon>
+    <categories>
+        <category>Network</category>
+        <category>Utility</category>
+    </categories>
     <content_rating type="oars-1.1"/>
 </component>
