@@ -3,11 +3,11 @@ name: Build and Publish Docker Image for Rain.Network
 on:
   push:
     branches:
-      - main
+      - master
       - 'release/*'
   pull_request:
     branches:
-      - main
+      - master
       - 'release/*'
 
 jobs:
