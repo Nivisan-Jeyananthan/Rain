@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.sound.sampled.AudioFormat;
@@ -16,7 +17,9 @@ import javax.sound.sampled.TargetDataLine;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -27,7 +30,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JLabel;
 
 class MicRecorderToggle extends JFrame {
 
@@ -138,7 +140,7 @@ class MicRecorderToggle extends JFrame {
 			System.out.println("Aufnahme gestartet: " + mic.mixerInfo.getName());
 
 			startFromDevice(mic, TargetDataLine.class,
-					() -> new RecordingThread(Audio.getTargetDataLine(mic)), btnRecordInput, "Start test",
+					line -> new RecordingThread((TargetDataLine) line), btnRecordInput, "Start test",
 					"Stop test");
 		});
 
@@ -178,7 +180,7 @@ class MicRecorderToggle extends JFrame {
 			System.out.println("Playback gestartet: " + speaker.mixerInfo.getName());
 
 			startFromDevice(speaker, SourceDataLine.class,
-					() -> new PlaybackThread(Audio.getSourceDataLine(speaker)), btnPlaybackAudio, "Start playback",
+					line -> new PlaybackThread((SourceDataLine) line), btnPlaybackAudio, "Start playback",
 					"Stop playback");
 		});
 
@@ -349,7 +351,7 @@ class MicRecorderToggle extends JFrame {
 
 	@SuppressWarnings("unchecked")
 	private <T extends DataLine> void startFromDevice(DeviceInfo device, Class<T> lineClass,
-			Supplier<Thread> threadFactory, JButton btn, String startText, String stopText) {
+			Function<T, Thread> threadFactory, JButton btn, String startText, String stopText) {
 
 		Thread existing = getRunningThread();
 		if (existing != null) {
@@ -363,31 +365,51 @@ class MicRecorderToggle extends JFrame {
 			return;
 		}
 
-		try {
-			Mixer mixer = AudioSystem.getMixer(device.mixerInfo);
-			DataLine.Info lineInfo = new DataLine.Info(lineClass, device.format);
+		btn.setEnabled(false);
+		btn.setText("Wird gestartet...");
 
-			T line = (T) mixer.getLine(lineInfo);
-			if (line instanceof TargetDataLine) {
-				((TargetDataLine) line).open(device.format);
-			} else {
-				line.open();
+		Thread initThread = new Thread(() -> {
+			try {
+				Mixer mixer = AudioSystem.getMixer(device.mixerInfo);
+				DataLine.Info lineInfo = new DataLine.Info(lineClass, device.format);
+
+				T line = (T) mixer.getLine(lineInfo);
+				if (line instanceof TargetDataLine) {
+					((TargetDataLine) line).open(device.format);
+				} else {
+					line.open();
+				}
+
+				line.start();
+
+				Thread thread = threadFactory.apply(line);
+				storeRunningThread(thread);
+				thread.start();
+
+				SwingUtilities.invokeLater(() -> {
+					btn.setEnabled(true);
+					btn.setText(stopText);
+				});
+			} catch (LineUnavailableException ex) {
+				SwingUtilities.invokeLater(() -> {
+					btn.setEnabled(true);
+					btn.setText(startText);
+					JOptionPane.showMessageDialog(MicRecorderToggle.this,
+						"Gerät nicht verfügbar: " + device.mixerInfo.getName(), "Fehler",
+						JOptionPane.ERROR_MESSAGE);
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
+				SwingUtilities.invokeLater(() -> {
+					btn.setEnabled(true);
+					btn.setText(startText);
+				});
 			}
-
-			line.start();
-
-			Thread thread = threadFactory.get();
-			storeRunningThread(thread);
-
-			thread.start();
-			btn.setText(stopText);
-
-		} catch (LineUnavailableException ex) {
-			JOptionPane.showMessageDialog(this, "Gerät nicht verfügbar: " + device.mixerInfo.getName(), "Fehler",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
+		initThread.setDaemon(true);
+		initThread.setName("AudioDeviceInit-" + device.mixerInfo.getName());
+		initThread.setPriority(Thread.NORM_PRIORITY + 1);
+		initThread.start();
 	}
 
 	private class PlaybackThread extends Thread {
