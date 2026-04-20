@@ -6,9 +6,13 @@
     "command": "rainchat",
     "finish-args": [
         "--share=network",
+        "--share=ipc",
         "--socket=pulseaudio",
         "--socket=x11",
-        "--socket=wayland"
+        "--socket=wayland",
+        "--device=dri",
+        "--env=GDK_SCALE=1",
+        "--env=GDK_DPI_SCALE=1"
     ],
     "modules": [
         {
@@ -40,7 +44,17 @@
                 "cp ch.nivisan.raincloud.network.client.svg /app/share/icons/hicolor/scalable/apps/ch.nivisan.raincloud.network.client.svg",
                 "echo '#!/bin/bash' > /app/bin/rainchat",
                 "echo 'cd /app/bin' >> /app/bin/rainchat",
-                "echo 'exec /app/jdk/bin/java -jar Client.jar' >> /app/bin/rainchat",
+                "echo 'export GTK_IM_MODULE=ibus' >> /app/bin/rainchat",
+                "echo 'exec /app/jdk/bin/java \\' >> /app/bin/rainchat",
+                "echo '-Dawt.useSystemAAFontSettings=on \\' >> /app/bin/rainchat",
+                "echo '-Dswing.aatext=true \\' >> /app/bin/rainchat",
+                "echo '-Dswing.smoothFont=true \\' >> /app/bin/rainchat",
+                "echo '-Dswing.useSystemFontSettings=true \\' >> /app/bin/rainchat",
+                "echo '-Djdk.gtk.version=3 \\' >> /app/bin/rainchat",
+                "echo '-Dsun.java2d.uiScale=1.0 \\' >> /app/bin/rainchat",
+                "echo '-XX:+UseG1GC \\' >> /app/bin/rainchat",
+                "echo '-XX:MaxGCPauseMillis=200 \\' >> /app/bin/rainchat",
+                "echo '-jar Client.jar \"$@\"' >> /app/bin/rainchat",
                 "chmod +x /app/bin/rainchat"
             ],
             "sources": [
