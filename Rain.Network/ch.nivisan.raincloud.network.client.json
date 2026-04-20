@@ -6,13 +6,10 @@
     "command": "rainchat",
     "finish-args": [
         "--share=network",
-        "--share=ipc",
         "--socket=pulseaudio",
         "--socket=x11",
         "--socket=wayland",
-        "--device=dri",
-        "--env=GDK_SCALE=1",
-        "--env=GDK_DPI_SCALE=1"
+        "--device=dri"
     ],
     "modules": [
         {
@@ -44,26 +41,7 @@
                 "cp ch.nivisan.raincloud.network.client.svg /app/share/icons/hicolor/scalable/apps/ch.nivisan.raincloud.network.client.svg",
                 "echo '#!/bin/bash' > /app/bin/rainchat",
                 "echo 'cd /app/bin' >> /app/bin/rainchat",
-                "echo 'export GTK_IM_MODULE=ibus' >> /app/bin/rainchat",
-                "echo 'exec /app/jdk/bin/java \\' >> /app/bin/rainchat",
-                "echo '-Dawt.useSystemAAFontSettings=on \\' >> /app/bin/rainchat",
-                "echo '-Dswing.aatext=true \\' >> /app/bin/rainchat",
-                "echo '-Dswing.smoothFont=true \\' >> /app/bin/rainchat",
-                "echo '-Dswing.useSystemFontSettings=true \\' >> /app/bin/rainchat",
-                "echo '-Djdk.gtk.version=3 \\' >> /app/bin/rainchat",
-                "echo '-Dsun.java2d.uiScale=1.0 \\' >> /app/bin/rainchat",
-                "echo '-XX:+UseG1GC \\' >> /app/bin/rainchat",
-                "echo '-XX:MaxGCPauseMillis=50 \\' >> /app/bin/rainchat",
-                "echo '-XX:ParallelGCThreads=2 \\' >> /app/bin/rainchat",
-                "echo '-XX:ConcGCThreads=1 \\' >> /app/bin/rainchat",
-                "echo '-XX:+UnlockExperimentalVMOptions \\' >> /app/bin/rainchat",
-                "echo '-XX:G1NewCollectionHeapPercent=20 \\' >> /app/bin/rainchat",
-                "echo '-XX:G1MaxNewGenPercent=30 \\' >> /app/bin/rainchat",
-                "echo '-XX:+ParallelRefProcEnabled \\' >> /app/bin/rainchat",
-                "echo '-Dcom.sun.management.jmxremote=false \\' >> /app/bin/rainchat",
-                "echo '-Dcom.sun.management.jmxremote.authenticate=false \\' >> /app/bin/rainchat",
-                "echo '-Dsun.io.useFileChannelCache=false \\' >> /app/bin/rainchat",
-                "echo '-jar Client.jar \"$@\"' >> /app/bin/rainchat",
+                "echo 'exec /app/jdk/bin/java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.smoothFont=true -Dswing.useSystemFontSettings=true -Djdk.gtk.version=3 -jar Client.jar' >> /app/bin/rainchat",
                 "chmod +x /app/bin/rainchat"
             ],
             "sources": [
