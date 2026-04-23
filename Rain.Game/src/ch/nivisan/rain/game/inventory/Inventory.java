@@ -14,22 +14,32 @@ public abstract class Inventory {
 		}
 	}
 	
+	/**
+	 * Tries to add item to inventory by going through bunch of steps: 
+	 * 1. Try to add to existing slot with same item, if it can returns true
+	 * 2. Find empty slot, try to add the Item there.
+	 * when even that fails it will return false
+	 * 
+	 * @param item
+	 * @param count
+	 * @return status of if the item was added successfully - true for success
+	 */
 	public boolean addItem(Item item, int count) {
-		// First, try to add to existing slot with same item
+		
 		for (InventorySlot slot : itemSlots) {
 			if (!slot.isEmpty() && slot.getItem() == item) {
 				slot.addItem(item, count);
 				return true;
 			}
 		}
-		// Then, find empty slot
+		
 		for (InventorySlot slot : itemSlots) {
 			if (slot.isEmpty()) {
 				slot.addItem(item, count);
 				return true;
 			}
 		}
-		return false; // Inventory full
+		return false;
 	}
 	
 	public boolean removeItem(Item item, int count) {
