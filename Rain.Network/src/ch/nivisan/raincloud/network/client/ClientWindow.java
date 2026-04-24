@@ -247,12 +247,12 @@ class ClientWindow extends JFrame {
 					}
 
 					if (message.startsWith("/m/")) {
-						int endIndex = message.indexOf("/e/", 3);
+						int endIndex = message.indexOf("/m/", 3);
 						if (endIndex > 3) {
 							writeConsole(message.substring(3, endIndex));
 						}
 					} else if (message.startsWith("/u/")) {
-						int endIndex = message.indexOf("/e/", 3);
+						int endIndex = message.indexOf("/u/", 3);
 						if (endIndex < 0)
 							endIndex = message.length();
 						String payload = message.substring(3, endIndex);

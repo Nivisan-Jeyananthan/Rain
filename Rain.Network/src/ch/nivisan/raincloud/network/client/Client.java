@@ -83,7 +83,7 @@ class Client {
 		handshakeComplete = false;
 		keyPair = StringCipher.generateRSAKey();
 		String clientPubKey = StringCipher.encodeString(keyPair.getPublic().getEncoded());
-		sendBytes(("/c/" + name + "/" + clientPubKey + "/e/").getBytes());
+		sendBytes((CMD_CONNECT + name + "/" + clientPubKey + CMD_CONNECT).getBytes());
 
 		long deadline = System.currentTimeMillis() + 8000;
 		while (System.currentTimeMillis() < deadline) {
@@ -155,14 +155,14 @@ class Client {
 	}
 
 	private String decryptMessage(String message) {
-		int endIndex = message.lastIndexOf(CMD_ENCRYPTED);
+		int endIndex = message.indexOf(CMD_ENCRYPTED,3);
 		if (endIndex <= CMD_ENCRYPTED.length()) {
 			return "";
 		}
 
-		String encoded = message.substring(CMD_ENCRYPTED.length(), endIndex);
+		String encoded = message.split(CMD_ENCRYPTED)[1];
 		try {
-			byte[] cipherText = Base64.getDecoder().decode(encoded);
+			byte[] cipherText = StringCipher.decodeString(encoded);
 			return StringCipher.decrypt(cipherText, sessionKey, sessionIv);
 		} catch (Exception e) {
 			return "";
@@ -170,7 +170,7 @@ class Client {
 	}
 
 	private void handleConnectResponse(String message) {
-		String[] parts = message.split(CMD_CONNECT + "|" + CMD_ENCRYPTED);
+		String[] parts = message.split(CMD_CONNECT);
 		if (parts.length > 1) {
 			Id = Integer.parseInt(parts[1]);
 			connected = true;
@@ -178,14 +178,14 @@ class Client {
 	}
 
 	private void handleKeySync(String message) {
-		int endIndex = message.indexOf(CMD_ENCRYPTED);
+		int endIndex = message.indexOf(CMD_KEY_SYNC,3);
 		if (endIndex <= CMD_KEY_SYNC.length()) {
 			return;
 		}
 
 		String payload = message.substring(CMD_KEY_SYNC.length(), endIndex);
 		try {
-			byte[] encrypted = Base64.getUrlDecoder().decode(payload);
+			byte[] encrypted = StringCipher.decodeString(payload);
 			String decrypted = StringCipher.decryptRSA(encrypted, keyPair.getPrivate());
 			if (decrypted == null || !decrypted.startsWith("SYMMETRIC:")) {
 				return;
@@ -208,7 +208,7 @@ class Client {
 
 	private void handleKeepAlive() {
 		if (Id >= 0) {
-			sendBytes((CMD_KEEP_ALIVE + Id + CMD_ENCRYPTED).getBytes());
+			sendBytes((CMD_KEEP_ALIVE + Id + CMD_KEEP_ALIVE).getBytes());
 		}
 	}
 
@@ -227,7 +227,7 @@ class Client {
 
 	void sendText(String message) {
 		message = message.replaceAll("/\\w/", "");
-		sendEncrypted(CMD_MESSAGE + message + CMD_ENCRYPTED);
+		sendEncrypted(CMD_MESSAGE + message + CMD_MESSAGE);
 	}
 
 	void requestUsernames() {
@@ -238,7 +238,7 @@ class Client {
 		if (handshakeComplete && sessionKey != null && sessionIv != null) {
 			byte[] encrypted = StringCipher.encrypt(payload, sessionKey, sessionIv);
 			if (encrypted != null) {
-				String encoded = Base64.getEncoder().encodeToString(encrypted);
+				String encoded = StringCipher.encodeString(encrypted);
 				sendBytes((CMD_ENCRYPTED + encoded + CMD_ENCRYPTED).getBytes());
 				return;
 			}
@@ -251,7 +251,7 @@ class Client {
 			return;
 
 		String encoded = StringCipher.encodeString(voiceData);
-		sendEncrypted(CMD_VOICE + encoded + CMD_ENCRYPTED);
+		sendEncrypted(CMD_VOICE + encoded + CMD_VOICE);
 	}
 
 	private void sendBytes(final byte[] data) {
@@ -279,7 +279,7 @@ class Client {
 			return;
 
 		if (!kicked) {
-			sendEncrypted(CMD_DISCONNECT + Id + CMD_ENCRYPTED);
+			sendEncrypted(CMD_DISCONNECT + Id + CMD_DISCONNECT);
 		}
 
 		new Thread(() -> {
