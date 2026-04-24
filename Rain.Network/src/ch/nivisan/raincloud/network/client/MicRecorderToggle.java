@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -395,8 +393,8 @@ class MicRecorderToggle extends JFrame {
 					btn.setEnabled(true);
 					btn.setText(startText);
 					JOptionPane.showMessageDialog(MicRecorderToggle.this,
-						"Gerät nicht verfügbar: " + device.mixerInfo.getName(), "Fehler",
-						JOptionPane.ERROR_MESSAGE);
+							"Gerät nicht verfügbar: " + device.mixerInfo.getName(), "Fehler",
+							JOptionPane.ERROR_MESSAGE);
 				});
 			} catch (Exception e) {
 				e.printStackTrace();

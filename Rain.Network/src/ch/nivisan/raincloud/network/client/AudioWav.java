@@ -7,7 +7,7 @@ import java.io.RandomAccessFile;
 
 public class AudioWav {
 	private RandomAccessFile raf;
-	private long dataSize = 0; 
+	private long dataSize = 0;
 	private final int sampleRate = 48000;
 	private final short channels = 1;
 	private final short bitsPerSample = 16;
@@ -26,7 +26,7 @@ public class AudioWav {
 
 	/**
 	 * Writes the header entry for the file.
-	 * 1. Clears the file 
+	 * 1. Clears the file
 	 * 2. Sets ChunkIDs as RIFF
 	 * 3. Sets ChunkSize as 0
 	 * 4. Sets Format as Wave
@@ -42,12 +42,12 @@ public class AudioWav {
 			raf.setLength(0);
 
 			raf.writeBytes("RIFF");
-			writeLEInt(raf, 0); 
-			raf.writeBytes("WAVE"); 
+			writeLEInt(raf, 0);
+			raf.writeBytes("WAVE");
 
 			// fmt‑Chunk
 			raf.writeBytes("fmt ");
-			writeLEInt(raf, 16); 
+			writeLEInt(raf, 16);
 			writeLEShort(raf, (short) 1);
 			writeLEShort(raf, channels);
 			writeLEInt(raf, sampleRate);
@@ -59,8 +59,8 @@ public class AudioWav {
 			writeLEShort(raf, blockAlign);
 			writeLEShort(raf, bitsPerSample);
 
-			raf.writeBytes("data"); 
-			writeLEInt(raf, 0); 
+			raf.writeBytes("data");
+			writeLEInt(raf, 0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -72,10 +72,10 @@ public class AudioWav {
 			raf.write(data);
 			dataSize += data.length;
 
-			updateHeader(); 
+			updateHeader();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+		}
 
 	}
 
@@ -106,7 +106,9 @@ public class AudioWav {
 	}
 
 	/**
-	 * Writes the value of a int or intlike value into the file as byte using little endian
+	 * Writes the value of a int or intlike value into the file as byte using little
+	 * endian
+	 * 
 	 * @param raf
 	 * @param value
 	 */
@@ -124,6 +126,7 @@ public class AudioWav {
 
 	/**
 	 * Writes the value of a short into the file as byte using little endian
+	 * 
 	 * @param raf
 	 * @param value
 	 */

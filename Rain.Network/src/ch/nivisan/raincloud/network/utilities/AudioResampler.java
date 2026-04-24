@@ -21,7 +21,8 @@ public class AudioResampler {
 	/**
 	 * Resample audio data from source format to target format.
 	 * Uses linear interpolation for smooth resampling.
-	 * Handles different sample sizes (8-bit/16-bit) and channel counts (mono/stereo).
+	 * Handles different sample sizes (8-bit/16-bit) and channel counts
+	 * (mono/stereo).
 	 */
 	public byte[] resample(byte[] audioData) {
 		if (audioData == null || audioData.length == 0) {
@@ -56,7 +57,8 @@ public class AudioResampler {
 				// Use last frame
 				for (int ch = 0; ch < targetChannels; ch++) {
 					int sourceCh = Math.min(ch, sourceChannels - 1); // Handle mono->stereo or stereo->mono
-					short sample = getSample(audioData, (sourceFrameCount - 1) * sourceChannels + sourceCh, sourceSampleSizeInBytes);
+					short sample = getSample(audioData, (sourceFrameCount - 1) * sourceChannels + sourceCh,
+							sourceSampleSizeInBytes);
 					putSample(resampled, i * targetChannels + ch, sample, targetSampleSizeInBytes);
 				}
 			} else {
@@ -64,8 +66,10 @@ public class AudioResampler {
 				for (int ch = 0; ch < targetChannels; ch++) {
 					int sourceCh = Math.min(ch, sourceChannels - 1); // Handle mono->stereo or stereo->mono
 
-					short sample1 = getSample(audioData, sourceFrameIndex * sourceChannels + sourceCh, sourceSampleSizeInBytes);
-					short sample2 = getSample(audioData, (sourceFrameIndex + 1) * sourceChannels + sourceCh, sourceSampleSizeInBytes);
+					short sample1 = getSample(audioData, sourceFrameIndex * sourceChannels + sourceCh,
+							sourceSampleSizeInBytes);
+					short sample2 = getSample(audioData, (sourceFrameIndex + 1) * sourceChannels + sourceCh,
+							sourceSampleSizeInBytes);
 					short interpolated = (short) (sample1 * (1.0f - fraction) + sample2 * fraction);
 					putSample(resampled, i * targetChannels + ch, interpolated, targetSampleSizeInBytes);
 				}
@@ -118,9 +122,9 @@ public class AudioResampler {
 
 	private boolean matchesExactly(AudioFormat a, AudioFormat b) {
 		return a.getSampleRate() == b.getSampleRate()
-			&& a.getSampleSizeInBits() == b.getSampleSizeInBits()
-			&& a.getChannels() == b.getChannels()
-			&& a.isBigEndian() == b.isBigEndian()
-			&& a.getEncoding().equals(b.getEncoding());
+				&& a.getSampleSizeInBits() == b.getSampleSizeInBits()
+				&& a.getChannels() == b.getChannels()
+				&& a.isBigEndian() == b.isBigEndian()
+				&& a.getEncoding().equals(b.getEncoding());
 	}
 }

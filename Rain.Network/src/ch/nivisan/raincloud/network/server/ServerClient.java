@@ -43,8 +43,10 @@ public class ServerClient {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null || getClass() != obj.getClass()) return false;
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
 		ServerClient that = (ServerClient) obj;
 		return Id == that.Id;
 	}

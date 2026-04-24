@@ -42,8 +42,6 @@ public class CipherMain {
 
 		StringCipher.decryptRSA(rsaCipherText, keyPair.getPrivate());
 
-
-
 	}
 
 	private static void printHex(int value) {

@@ -9,7 +9,7 @@ public class MessageType {
 	public static final String MESSAGE = "/m/";
 	public static final String USERS = "/u/";
 	public static final String DISCONNECT = "/d/";
-	
-	private MessageType() {}
-	
+
+	private MessageType() {
+	}
 }

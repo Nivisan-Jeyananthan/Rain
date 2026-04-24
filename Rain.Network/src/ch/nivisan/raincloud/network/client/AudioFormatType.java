@@ -21,7 +21,8 @@ public enum AudioFormatType {
 	private final boolean isHigher;
 	private final boolean isCompat;
 
-	AudioFormatType(String displayName, AudioFormat format, boolean isLegacy, boolean isFallback, boolean isHigher, boolean isCompat) {
+	AudioFormatType(String displayName, AudioFormat format, boolean isLegacy, boolean isFallback, boolean isHigher,
+			boolean isCompat) {
 		this.displayName = displayName;
 		this.format = format;
 		this.isLegacy = isLegacy;

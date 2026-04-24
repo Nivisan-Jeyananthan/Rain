@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
-import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,8 +25,6 @@ import ch.nivisan.raincloud.network.utilities.NetUtils;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
 class Client {
-
-
 	private DatagramSocket socket;
 	private InetAddress ip;
 	final int port;
@@ -149,7 +146,7 @@ class Client {
 	}
 
 	private String decryptMessage(String message) {
-		int endIndex = message.indexOf(MessageType.ENCRYPTED,3);
+		int endIndex = message.indexOf(MessageType.ENCRYPTED, 3);
 		if (endIndex <= MessageType.ENCRYPTED.length()) {
 			return "";
 		}
@@ -172,7 +169,7 @@ class Client {
 	}
 
 	private void handleKeySync(String message) {
-		int endIndex = message.indexOf(MessageType.KEY_SYNC,3);
+		int endIndex = message.indexOf(MessageType.KEY_SYNC, 3);
 		if (endIndex <= MessageType.KEY_SYNC.length()) {
 			return;
 		}

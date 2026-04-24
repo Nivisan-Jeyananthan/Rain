@@ -47,8 +47,8 @@ public class FileService {
             e.printStackTrace();
             return null;
         } catch (Exception e) {
-			return null;
-		}
+            return null;
+        }
         return buffer;
     }
 

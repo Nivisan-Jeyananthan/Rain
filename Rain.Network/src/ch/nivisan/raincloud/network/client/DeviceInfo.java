@@ -26,10 +26,10 @@ public class DeviceInfo {
 			return false;
 		DeviceInfo other = (DeviceInfo) obj;
 		return mixerInfo.getName().equals(other.mixerInfo.getName())
-			&& format.getSampleRate() == other.format.getSampleRate()
-			&& format.getSampleSizeInBits() == other.format.getSampleSizeInBits()
-			&& format.getChannels() == other.format.getChannels()
-			&& format.isBigEndian() == other.format.isBigEndian();
+				&& format.getSampleRate() == other.format.getSampleRate()
+				&& format.getSampleSizeInBits() == other.format.getSampleSizeInBits()
+				&& format.getChannels() == other.format.getChannels()
+				&& format.isBigEndian() == other.format.isBigEndian();
 	}
 
 	@Override

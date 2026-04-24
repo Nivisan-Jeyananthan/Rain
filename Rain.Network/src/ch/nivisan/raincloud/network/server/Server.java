@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashSet;
@@ -138,8 +137,7 @@ class Server implements Runnable {
 			} else {
 				sendBytes(getOnlineUsers().getBytes(), packet.getAddress(), packet.getPort());
 			}
-		} 
-		else {
+		} else {
 			System.out.println(value);
 		}
 	}
@@ -171,12 +169,14 @@ class Server implements Runnable {
 			byte[] encrypted = StringCipher.encryptRSA(plainToken, serverClient.clientPublicKey);
 			if (encrypted != null) {
 				String payload = StringCipher.encodeString(encrypted);
-				sendBytes((MessageType.KEY_SYNC + payload + MessageType.KEY_SYNC).getBytes(), packet.getAddress(), packet.getPort());
+				sendBytes((MessageType.KEY_SYNC + payload + MessageType.KEY_SYNC).getBytes(), packet.getAddress(),
+						packet.getPort());
 			}
 
 			clients.add(serverClient);
 			sendConnectionId(serverClient);
-			String message = MessageType.MESSAGE+" >>" + serverClient.name + " has joined the Chat <<" + MessageType.MESSAGE;
+			String message = MessageType.MESSAGE + " >>" + serverClient.name + " has joined the Chat <<"
+					+ MessageType.MESSAGE;
 			relayMessage(message);
 		} catch (Exception e) {
 			return;
@@ -214,7 +214,6 @@ class Server implements Runnable {
 		return client;
 	}
 
-
 	private void disconnectClient(ServerClient client, ClientDisconnectType status) {
 		clients.remove(client);
 
@@ -232,7 +231,8 @@ class Server implements Runnable {
 			message = "Client " + client.name + "(" + client.Id + ")" + "@" + client.address.toString() + ":"
 					+ client.port + " kicked out";
 			sendBytes("/d/".getBytes(), client.address, client.port);
-			relayMessage(MessageType.MESSAGE +" ---- Server: The user (" + client.name + ") has been kicked from the server ----" + MessageType.MESSAGE);
+			relayMessage(MessageType.MESSAGE + " ---- Server: The user (" + client.name
+					+ ") has been kicked from the server ----" + MessageType.MESSAGE);
 		}
 
 		System.out.println(message);
@@ -309,7 +309,8 @@ class Server implements Runnable {
 			byte[] encrypted = StringCipher.encrypt(message, client.sessionKey, client.sessionIv);
 			if (encrypted != null) {
 				String payload = StringCipher.encodeString(encrypted);
-				sendBytes((MessageType.ENCRYPTED + payload + MessageType.ENCRYPTED).getBytes(), client.address, client.port);
+				sendBytes((MessageType.ENCRYPTED + payload + MessageType.ENCRYPTED).getBytes(), client.address,
+						client.port);
 				return;
 			}
 		}
@@ -390,11 +391,9 @@ class Server implements Runnable {
 			clientResponses.add(id);
 		} else if (value.startsWith(MessageType.USERS)) {
 			sendToClient(getOnlineUsers(), client);
-		}
-		else if (value.startsWith(MessageType.VOICE)){
+		} else if (value.startsWith(MessageType.VOICE)) {
 			relayMessageExcept(value, client);
-		}
-		else {
+		} else {
 			System.out.println("Unknown Message-Type decrypted command: " + value);
 		}
 	}
