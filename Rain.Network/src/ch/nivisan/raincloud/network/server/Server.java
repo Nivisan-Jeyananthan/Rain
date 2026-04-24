@@ -20,6 +20,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 import ch.nivisan.raincloud.network.utilities.StringCipher;
+import ch.nivisan.raincloud.network.utilities.MessageType;
 import ch.nivisan.raincloud.network.utilities.NetUtils;
 
 class Server implements Runnable {
@@ -74,7 +75,7 @@ class Server implements Runnable {
 			String text = scanner.nextLine();
 			if (text.startsWith("-m")) {
 				text = text.split("-m")[1].trim();
-				relayMessage("/m/Server:" + text + "/e/");
+				relayMessage(MessageType.MESSAGE + "Server:" + text + MessageType.MESSAGE);
 				continue;
 			}
 
@@ -113,24 +114,24 @@ class Server implements Runnable {
 			System.out.println("Raw: " + value);
 		}
 
-		if (value.startsWith("/c/")) {
+		if (value.startsWith(MessageType.CONNECT)) {
 			registerClient(packet, value);
-		} else if (value.startsWith("/e/")) {
+		} else if (value.startsWith(MessageType.ENCRYPTED)) {
 			handleEncryptedMessage(packet, value);
-		} else if (value.startsWith("/m/")) {
+		} else if (value.startsWith(MessageType.MESSAGE)) {
 			relayMessage(value);
 			return;
-		} else if (value.startsWith("/d/")) {
+		} else if (value.startsWith(MessageType.DISCONNECT)) {
 			// Unencrypted disconnects are only honored for non-handshake or legacy cases.
 			ServerClient client = getClient(packet.getAddress(), packet.getPort());
 			if (client == null || !client.handshakeComplete) {
-				int index = Integer.parseInt(value.split("/d/|/e/")[1]);
+				int index = Integer.parseInt(value.split(MessageType.DISCONNECT)[1]);
 				disconnectClient(getClient(index), ClientDisconnectType.Disconnect);
 			}
-		} else if (value.startsWith("/i/")) {
-			int id = Integer.parseInt(value.split("/i/")[1]);
+		} else if (value.startsWith(MessageType.KEEP_ALIVE)) {
+			int id = Integer.parseInt(value.split(MessageType.KEEP_ALIVE)[1]);
 			clientResponses.add(id);
-		} else if (value.startsWith("/u/")) {
+		} else if (value.startsWith(MessageType.USERS)) {
 			ServerClient client = getClient(packet.getAddress(), packet.getPort());
 			if (client != null && client.handshakeComplete) {
 				sendToClient(getOnlineUsers(), client);
@@ -144,7 +145,7 @@ class Server implements Runnable {
 	}
 
 	private void registerClient(DatagramPacket packet, String value) {
-		final int endIndex = value.indexOf("/c/", 3);
+		final int endIndex = value.indexOf(MessageType.CONNECT, 3);
 		if (endIndex <= 3)
 			return;
 		final String body = value.substring(3, endIndex);
@@ -170,12 +171,12 @@ class Server implements Runnable {
 			byte[] encrypted = StringCipher.encryptRSA(plainToken, serverClient.clientPublicKey);
 			if (encrypted != null) {
 				String payload = StringCipher.encodeString(encrypted);
-				sendBytes(("/ks/" + payload + "/ks/").getBytes(), packet.getAddress(), packet.getPort());
+				sendBytes((MessageType.KEY_SYNC + payload + MessageType.KEY_SYNC).getBytes(), packet.getAddress(), packet.getPort());
 			}
 
 			clients.add(serverClient);
 			sendConnectionId(serverClient);
-			String message = "/m/ >>" + serverClient.name + " has joined the Chat << /e/";
+			String message = MessageType.MESSAGE+" >>" + serverClient.name + " has joined the Chat <<" + MessageType.MESSAGE;
 			relayMessage(message);
 		} catch (Exception e) {
 			return;
@@ -183,7 +184,7 @@ class Server implements Runnable {
 	}
 
 	private void handleEncryptedMessage(DatagramPacket packet, String value) {
-		int endIndex = value.lastIndexOf("/e/");
+		int endIndex = value.lastIndexOf(MessageType.ENCRYPTED);
 		if (endIndex <= 3)
 			return;
 		String encoded = value.substring(3, endIndex);
@@ -213,11 +214,7 @@ class Server implements Runnable {
 		return client;
 	}
 
-	/**
-	 * 
-	 * @param id
-	 * @param status client closed = true, unnatural causes = false
-	 */
+
 	private void disconnectClient(ServerClient client, ClientDisconnectType status) {
 		clients.remove(client);
 
@@ -235,7 +232,7 @@ class Server implements Runnable {
 			message = "Client " + client.name + "(" + client.Id + ")" + "@" + client.address.toString() + ":"
 					+ client.port + " kicked out";
 			sendBytes("/d/".getBytes(), client.address, client.port);
-			relayMessage("/m/ ---- Server: The user (" + client.name + ") has been kicked from the server ----");
+			relayMessage(MessageType.MESSAGE +" ---- Server: The user (" + client.name + ") has been kicked from the server ----" + MessageType.MESSAGE);
 		}
 
 		System.out.println(message);
@@ -312,7 +309,7 @@ class Server implements Runnable {
 			byte[] encrypted = StringCipher.encrypt(message, client.sessionKey, client.sessionIv);
 			if (encrypted != null) {
 				String payload = StringCipher.encodeString(encrypted);
-				sendBytes(("/e/" + payload + "/e/").getBytes(), client.address, client.port);
+				sendBytes((MessageType.ENCRYPTED + payload + MessageType.ENCRYPTED).getBytes(), client.address, client.port);
 				return;
 			}
 		}
@@ -321,7 +318,7 @@ class Server implements Runnable {
 
 	protected String getOnlineUsers() {
 		if (clients.isEmpty()) {
-			return "/u//e/";
+			return MessageType.USERS + MessageType.USERS;
 		}
 
 		StringBuilder usernames = new StringBuilder("/u/");
@@ -336,7 +333,7 @@ class Server implements Runnable {
 			usernames.append(client.name);
 			added++;
 		}
-		usernames.append("/e/");
+		usernames.append(MessageType.USERS);
 		return usernames.toString();
 	}
 
@@ -375,31 +372,30 @@ class Server implements Runnable {
 	}
 
 	private void sendConnectionId(ServerClient client) {
-		String message = "/c/" + client.getId() + "/c/";
+		String message = MessageType.CONNECT + client.getId() + MessageType.CONNECT;
 		sendBytes(message.getBytes(), client.address, client.port);
 		System.out.println("Client created with ID: " + client.getId());
 	}
 
 	private void processDecryptedPacket(String value, ServerClient client) {
-		System.out.println("Message ist: " + value);
-		if (value.startsWith("/m/")) {
+		if (value.startsWith(MessageType.MESSAGE)) {
 			relayMessage(value);
-		} else if (value.startsWith("/d/")) {
-			int index = Integer.parseInt(value.split("/d/")[1]);
+		} else if (value.startsWith(MessageType.DISCONNECT)) {
+			int index = Integer.parseInt(value.split(MessageType.DISCONNECT)[1]);
 			if (index == client.Id) {
 				disconnectClient(client, ClientDisconnectType.Disconnect);
 			}
-		} else if (value.startsWith("/i/")) {
-			int id = Integer.parseInt(value.split("/i/")[1]);
+		} else if (value.startsWith(MessageType.KEEP_ALIVE)) {
+			int id = Integer.parseInt(value.split(MessageType.KEEP_ALIVE)[1]);
 			clientResponses.add(id);
-		} else if (value.startsWith("/u/")) {
+		} else if (value.startsWith(MessageType.USERS)) {
 			sendToClient(getOnlineUsers(), client);
 		}
-		else if (value.startsWith("/v/")){
+		else if (value.startsWith(MessageType.VOICE)){
 			relayMessageExcept(value, client);
 		}
 		else {
-			System.out.println("Server decrypted command: " + value);
+			System.out.println("Unknown Message-Type decrypted command: " + value);
 		}
 	}
 
