@@ -31,6 +31,9 @@ public class Item {
 		this.price = price;
 	}
 	
+	public int getMaxStackSize() {
+		return maxStack;
+	}
 	
 	public String getName() {
         return name;

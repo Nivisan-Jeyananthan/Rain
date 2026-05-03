@@ -15,7 +15,8 @@ public class InventorySlot {
 		if (this.item == null) {
 			this.item = item;
 			this.count = amount;
-		} else if (this.item == item) {
+		} else if (this.item.equals(item) && this.item.getMaxStackSize() > this.count) {
+			
 			this.count += amount;
 		}
 	}
