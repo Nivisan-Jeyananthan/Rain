@@ -11,6 +11,8 @@ import ch.nivisan.raincloud.serialization.SerializationWriter;
 import ch.nivisan.raincloud.serialization.arrays.*;
 
 public class Main {
+    private static String filePath = "./data.rain";
+
     private static void printHex(int value) {
         System.out.printf("%x\n", value);
     }
@@ -95,15 +97,15 @@ public class Main {
 
         System.out.println("Obj Size : " + obj.getSize());
 
-        database.addObject(obj);
+        //database.addObject(obj);
         database.addObject(new RCObject("Nivisan"));
         System.out.println("Size : " + database.getSize());
         byte[] dataNew = new byte[database.getSize()];
         database.getBytes(dataNew, 0);
-        // FileService.saveToFile("./data.rain", dataNew);
-        FileService.saveOptimized("./data.rain", dataNew);
+        //FileService.saveToFile(filePath, dataNew);
+        FileService.saveOptimized(filePath, dataNew);
 
-        // printBytes(dataNew);
+        printBytes(dataNew);
 
         IO.println("");
 
@@ -111,7 +113,7 @@ public class Main {
     }
 
     static void deserializationTest() {
-        byte[] dbData = FileService.getFromFile("./data.rain");
+        byte[] dbData = FileService.getFromFile(filePath);
         RCDatabase database = DbDeserializer.Deserialize(dbData);
         System.out.println(database.getName());
 
@@ -121,9 +123,9 @@ public class Main {
         System.out.println("");
         System.out.println("Data comes: ");
 
-        // serializationTest();
+        serializationTest();
 
-        // deserializationTest();
+        deserializationTest();
 
         Sandbox sandbox = new Sandbox();
         sandbox.play();
