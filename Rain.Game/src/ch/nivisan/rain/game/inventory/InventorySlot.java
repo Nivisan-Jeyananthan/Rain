@@ -16,9 +16,19 @@ public class InventorySlot {
 			this.item = item;
 			this.count = amount;
 		} else if (this.item.equals(item) && this.item.getMaxStackSize() > this.count) {
-			
-			this.count += amount;
+			while(amount-- + this.count < this.item.getMaxStackSize() && amount != 0) {
+				this.count++;
+			}
 		}
+	}
+	
+	public boolean removeItem(boolean removeAll) {
+		if(removeAll) {
+			this.item  = null;
+			this.count = 0;
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean removeItem(int amount) {
