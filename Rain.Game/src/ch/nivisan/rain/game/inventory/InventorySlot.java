@@ -2,6 +2,10 @@ package ch.nivisan.rain.game.inventory;
 
 import ch.nivisan.rain.game.item.Item;
 
+/**
+ * InventorySlot represents a single slot in the inventory, it can hold a certain amount of a specific item.
+ * It provides methods to add and remove items, as well as to check if the slot is empty and to get the current item and count.
+ */
 public class InventorySlot {
 	private int count;
 	private Item item;
