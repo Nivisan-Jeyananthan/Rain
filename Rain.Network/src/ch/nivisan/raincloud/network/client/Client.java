@@ -24,6 +24,10 @@ import ch.nivisan.raincloud.network.utilities.MessageType;
 import ch.nivisan.raincloud.network.utilities.NetUtils;
 import ch.nivisan.raincloud.network.utilities.StringCipher;
 
+/**
+ * Client class for handling network communication with the server, including connection management, message sending/receiving, and voice data handling.
+ * It manages the client's state, encryption keys, and audio input/output for voice communication.
+ */
 class Client {
 	private DatagramSocket socket;
 	private InetAddress ip;

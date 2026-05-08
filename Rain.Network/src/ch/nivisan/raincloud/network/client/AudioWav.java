@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+/**
+ * Utility class for creating and writing to WAV audio files.
+ * It handles the WAV file structure, allowing for appending audio data and updating the header accordingly.
+ */
 public class AudioWav {
 	private RandomAccessFile raf;
 	private long dataSize = 0;
@@ -94,7 +98,6 @@ public class AudioWav {
 
 	}
 
-	// ------------------------------------------------------------
 	public synchronized void close() {
 		updateHeader(); // letztes Update
 		try {

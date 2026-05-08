@@ -7,6 +7,9 @@ import java.awt.Graphics;
 import ch.nivisan.rain.game.inventory.InventorySlot;
 import ch.nivisan.rain.game.utils.Vector2;
 
+/**
+ * Represents a single inventory slot in the GUI, displaying the item and its count if present.
+ */
 public class InventorySlotUI extends UIComponent {
     private InventorySlot slot;
     private int size;
