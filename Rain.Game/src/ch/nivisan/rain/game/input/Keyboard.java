@@ -3,6 +3,11 @@ package ch.nivisan.rain.game.input;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * Keyboard class implements KeyListener to handle keyboard input for the game. 
+ * It maintains an array of boolean values to track which keys are currently pressed,
+ * and provides public boolean variables for common actions such as movement and interaction.
+ */
 public class Keyboard implements KeyListener {
     private final boolean[] keys = new boolean[256];
     public boolean up, down, left, right, interact;

@@ -9,6 +9,12 @@ import ch.nivisan.rain.game.events.mouse.MouseMovedEvent;
 import ch.nivisan.rain.game.events.mouse.MousePressedEvent;
 import ch.nivisan.rain.game.events.mouse.MouseReleasedEvent;
 
+
+/**
+ * Mouse class implements MouseListener and MouseMotionListener to handle mouse input for the game. 
+ * It maintains static variables to track the current mouse position and button state, and provides methods to retrieve this information.
+ * It also sends events to the event listener when mouse actions occur, such as pressing
+ */
 public class Mouse implements MouseListener, MouseMotionListener {
     private static final MouseButton[] mouseButtons = MouseButton.values();
     private static int mouseX = -1;
