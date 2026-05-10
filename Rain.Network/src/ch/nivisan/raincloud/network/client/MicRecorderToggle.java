@@ -29,6 +29,9 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * The view to test input and output devices for audio.
+ */
 class MicRecorderToggle extends JFrame {
 
 	private static final long serialVersionUID = 1L;
