@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * The view to test input and output devices for audio.
+ * Different audio formats can be tested, in case the device is not compatible with 48Hz.
  */
 class MicRecorderToggle extends JFrame {
 
